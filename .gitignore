@@ -5,8 +5,11 @@
 *.pem
 .claude/settings.local.json
 
-# --- Sponsor material (internal use only; never commit) ----------------------
+# --- Submission deliverables -------------------------------------------------
+# Ignore PDFs by default, but allow required competition submissions.
 *.pdf
+!deliverables/
+!deliverables/*.pdf
 
 # --- Python -----------------------------------------------------------------
 __pycache__/

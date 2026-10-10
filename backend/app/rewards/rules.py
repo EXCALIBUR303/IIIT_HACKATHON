@@ -47,6 +47,13 @@ def disqualifier(kind: str, result: dict[str, Any]) -> str | None:
     elif kind == "savings":
         if result.get("borrowed", 0) > 0:
             return "borrowing to cover the emergency"
+    elif kind == "money_lab":
+        plan = result.get("plan") or {}
+        total = sum(plan.values()) or 1
+        if result.get("borrowed", 0) > 0:
+            return "borrowing to cover the surprise when money was available"
+        if plan.get("growth", 0) / total > 0.7:
+            return "putting most of the money into the growth basket"
     elif kind == "investing":
         if (result.get("components") or {}).get("concentration", 15) == 0:
             return "putting most of the money into single companies"
@@ -64,6 +71,7 @@ _SIM_CONCEPT = {
     "savings": "saving_habit",
     "investing": "diversification",
     "safety": "phishing_links",
+    "money_lab": "goal_setting",
 }
 
 

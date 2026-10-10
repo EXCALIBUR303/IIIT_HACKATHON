@@ -247,5 +247,6 @@
        "verdict": "genuine", "red_flags": [], "safe_actions": ["proceed_normally", "verify_official"], "best_action": "proceed_normally",
        "explanation": "A notification inside an app you installed from the official store, asking you to pay inside the same app. No link, no data request."}
     ]}
-  }
+  },
+  {"slug": "money-lab-500", "module": "save-and-manage", "kind": "money_lab", "difficulty": 2, "persona": null, "stages": ["builder", "future_planner", "investor_sandbox"], "title": "The ₹500 Money Lab", "intro": "You have a fictional ₹500. You want a good pair of earphones in six months, but prices creep up and surprises happen. Split the money across four buckets, then see what time, inflation and a surprise do to your plan.", "objective": "Balance goals, spending, liquidity, risk and inflation in one small decision.", "config": {"total": 500, "essential_min": 100, "months": 6, "goal": {"label": "Earphones", "amount": 250}, "inflation": 0.06, "deposit_rate": 0.06, "borrow_cost_rate": 0.1, "event": {"month": 3, "title": "Bicycle tyre burst", "description": "Your bicycle tyre bursts on the way to school. The repair costs ₹120 and cannot wait.", "amount": 120}, "growth_paths": [{"key": "steady", "label": "Steady climb", "monthly_pct": [2, 1, 2, 1, 2, 1]}, {"key": "dip", "label": "Dip, then recovery", "monthly_pct": [-8, -6, 3, 5, 6, 4]}, {"key": "slump", "label": "Early drop, slow recovery", "monthly_pct": [-12, -5, -3, 2, 3, 3]}]}}
 ]

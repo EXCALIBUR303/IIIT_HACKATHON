@@ -25,7 +25,7 @@ from sqlalchemy.orm import Session
 
 from app.core.db import advisory_lock
 from app.core.errors import ApiError, conflict
-from app.engine import budget, investing, safety, savings
+from app.engine import budget, investing, money_lab, safety, savings
 from app.engine.money import SimulationError
 from app.learning import mastery
 from app.models import Scenario, SimulationDecision, SimulationSession, User
@@ -101,6 +101,41 @@ def initial_state(scenario: Scenario) -> tuple[str, dict[str, Any]]:
                 for k in cfg["assets"]
             ],
             "disclaimer": investing.DISCLAIMER,
+        }
+    if scenario.kind == "money_lab":
+        sc = money_lab.scenario_from_config(cfg)
+        return "plan", {
+            "total": float(sc.total),
+            "essential_min": float(sc.essential_min),
+            "months": sc.months,
+            "goal": {"label": sc.goal_label, "amount": float(sc.goal_amount)},
+            "inflation_pct": float(sc.inflation * 100),
+            "buckets": [
+                {
+                    "key": "spend",
+                    "label": "Spend now",
+                    "note": "Things you want or need today. Gone for good.",
+                },
+                {
+                    "key": "ready",
+                    "label": "Keep ready",
+                    "note": "Cash at hand. Earns nothing but is always available.",
+                },
+                {
+                    "key": "deposit",
+                    "label": "Steady deposit",
+                    "note": (
+                        f"A fictional deposit paying {float(sc.deposit_rate * 100):.0f}% a year, "
+                        "added monthly."
+                    ),
+                },
+                {
+                    "key": "growth",
+                    "label": "Growth basket",
+                    "note": "A fictional basket of many companies. It can rise or fall each month.",
+                },
+            ],
+            "assumptions": money_lab.assumptions(sc),
         }
     if scenario.kind == "safety":
         messages = safety.scenario_from_config(cfg)
@@ -312,6 +347,40 @@ def _investing(session: SimulationSession, dtype: str, payload: dict) -> tuple[d
     return {"score": result["score"]}, True
 
 
+def _money_lab(session: SimulationSession, dtype: str, payload: dict) -> tuple[dict, bool]:
+    sc = money_lab.scenario_from_config(session.scenario.config)
+    path = money_lab.pick_path(sc, session.seed)
+    if session.phase == "plan":
+        _require(session, "plan", "plan", dtype)
+        plan = money_lab.parse_plan(sc, payload)
+        before = money_lab.balances_at_event(sc, plan, path)
+        session.state = {
+            **session.state,
+            "plan": plan.as_dict(),
+            "at_event": {k: float(v) for k, v in before.items()},
+            "event": {
+                "month": sc.event_month,
+                "title": sc.event_title,
+                "description": sc.event_description,
+                "amount": float(sc.event_amount),
+            },
+            "options": money_lab.event_options(sc, plan, path),
+        }
+        session.phase = "respond_event"
+        return {"plan": plan.as_dict()}, False
+    _require(session, "respond_event", "respond_event", dtype)
+    plan = money_lab.parse_plan(sc, _raw_decision(session, "plan"))
+    outcome = money_lab.resolve_event(sc, plan, path, str(payload.get("source", "")))
+    session.result = {
+        "plan": plan.as_dict(),
+        "event": session.state["event"],
+        "assumptions": money_lab.assumptions(sc),
+        **outcome.as_dict(),
+    }
+    session.score = outcome.score
+    return outcome.as_dict(), True
+
+
 def _safety(session: SimulationSession, dtype: str, payload: dict) -> tuple[dict, bool]:
     _require(session, "classify", "classify", dtype)
     messages = {m.id: m for m in safety.scenario_from_config(session.scenario.config)}
@@ -336,7 +405,13 @@ def _safety(session: SimulationSession, dtype: str, payload: dict) -> tuple[dict
     return evaluation, True
 
 
-HANDLERS = {"budget": _budget, "savings": _savings, "investing": _investing, "safety": _safety}
+HANDLERS = {
+    "budget": _budget,
+    "savings": _savings,
+    "investing": _investing,
+    "safety": _safety,
+    "money_lab": _money_lab,
+}
 
 
 def decide(

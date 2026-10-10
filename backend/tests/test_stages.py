@@ -71,6 +71,9 @@ def test_grade_constraint_accepts_7_to_13_and_rejects_others(client):
 def test_migration_downgrade_and_upgrade_round_trip():
     cfg = Config(os.path.join(os.path.dirname(__file__), "..", "alembic.ini"))
     cfg.set_main_option("script_location", os.path.join(os.path.dirname(__file__), "..", "alembic"))
+    with SessionLocal() as db:  # a downgrade refuses to narrow constraints under newer content
+        db.execute(text("TRUNCATE scenarios CASCADE"))
+        db.commit()
     command.downgrade(cfg, "0001")
     command.upgrade(cfg, "head")
     with SessionLocal() as db:  # the round trip drops content; restore it for later tests

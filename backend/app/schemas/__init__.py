@@ -17,7 +17,7 @@ Role = Literal["student", "educator", "admin"]
 Language = Literal["en", "hi", "te"]
 LearningLevel = Literal["beginner", "intermediate", "advanced"]
 Pillar = Literal["budgeting", "saving", "investing", "safety"]
-ScenarioKind = Literal["budget", "savings", "investing", "safety"]
+ScenarioKind = Literal["budget", "savings", "investing", "safety", "money_lab"]
 
 USERNAME_PATTERN = r"^[a-zA-Z0-9_.-]{3,40}$"
 

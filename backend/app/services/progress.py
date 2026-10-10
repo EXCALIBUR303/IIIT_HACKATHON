@@ -58,9 +58,7 @@ def snapshot(db: Session, student: User) -> adaptive.Snapshot:
         for a in db.scalars(select(Assessment).where(Assessment.kind == "module"))
     }
     stage = stages.stage_for(profile.grade if profile else None)
-    scenarios_db = [
-        s for s in db.scalars(select(Scenario)) if stages.is_eligible(stage, s.stages)
-    ]
+    scenarios_db = [s for s in db.scalars(select(Scenario)) if stages.is_eligible(stage, s.stages)]
     module_slug_by_id = {m.id: m.slug for m in modules_db}
     modules = []
     for m in modules_db:

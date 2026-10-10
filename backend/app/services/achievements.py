@@ -57,6 +57,8 @@ def after_simulation(
             earned.append("steady_hand")
         if result.get("diversification", 0) >= 0.5:
             earned.append("basket_spreader")
+    elif kind == "money_lab":
+        earned.append("lab_finisher")
     elif kind == "safety":
         if result.get("total") and result.get("correct_verdicts") == result.get("total"):
             earned.append("scam_spotter")

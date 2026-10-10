@@ -40,5 +40,6 @@
    "example": "'Pay ₹499 registration to start earning ₹3,000/day' is a fake job."},
   {"key": "personal_data_privacy", "pillar": "safety", "title": "Protecting personal data",
    "explanation": "Aadhaar, PAN, photos, addresses and contacts can be misused to take loans in your name or to blackmail. Share them only with verified institutions for a clear reason.",
-   "example": "A giveaway asking for your Aadhaar photo is collecting data for fraud."}
+   "example": "A giveaway asking for your Aadhaar photo is collecting data for fraud."},
+  {"key": "inflation", "pillar": "saving", "title": "Inflation", "explanation": "Inflation means prices rise over time, so the same rupees buy a little less each year. Money that earns nothing slowly loses buying power, which is why a goal can cost more by the time you get there.", "example": "A ₹250 pair of earphones costing 6% more next year needs ₹265 then, so cash kept under a mattress buys less."}
 ]

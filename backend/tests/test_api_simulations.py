@@ -229,3 +229,42 @@ def test_concurrent_starts_do_not_error(client, student):
         results = list(pool.map(attempt, range(8)))
     assert all(r.status_code == 201 for r in results), [r.status_code for r in results]
     assert len({r.json()["attempt_id"] for r in results}) == 1  # all resume the same attempt
+
+
+def test_money_lab_flow_scores_rewards_and_hides_future(client, student):
+    s = client.post(SESSIONS, headers=student, json={"scenario_slug": "money-lab-500"}).json()
+    assert s["kind"] == "money_lab" and s["phase"] == "plan"
+    assert s["state"]["assumptions"]["limitations"] and "growth_paths" not in str(s["state"])
+    bad = decide(
+        client,
+        student,
+        s["id"],
+        "plan",
+        {"spend": 100, "ready": 100, "deposit": 100, "growth": 100},
+    )
+    assert bad.status_code == 422 and bad.json()["error"]["code"] == "allocation_total"
+    r = decide(
+        client, student, s["id"], "plan", {"spend": 100, "ready": 150, "deposit": 250, "growth": 0}
+    )
+    assert r.status_code == 200 and r.json()["phase"] == "respond_event"
+    assert {o["key"] for o in r.json()["state"]["options"]} == {
+        "ready",
+        "deposit",
+        "growth",
+        "borrow",
+    }
+    r = decide(client, student, s["id"], "respond_event", {"source": "ready"})
+    assert r.status_code == 200 and r.json()["status"] == "completed"
+    result = r.json()["result"]
+    assert result["goal_reached"] and result["score"] >= 80 and result["assumptions"]["months"] == 6
+    assert "lab_finisher" in r.json()["new_achievements"]
+    assert result["rewards"] and client.get("/api/v1/wallet", headers=student).json()["balance"] > 0
+    status = client.get("/api/v1/learning/status", headers=student).json()
+    assert status["score"]["total"] > 0
+
+
+def test_money_lab_is_not_offered_to_explorers(client):
+    h, _ = register_student(client)
+    client.put("/api/v1/students/me/profile", headers=h, json={"grade": 7})
+    r = client.post(SESSIONS, headers=h, json={"scenario_slug": "money-lab-500"})
+    assert r.status_code == 403

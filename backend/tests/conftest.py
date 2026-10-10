@@ -42,7 +42,11 @@ USER_TABLES = (
 def database():
     cfg = Config(os.path.join(os.path.dirname(__file__), "..", "alembic.ini"))
     cfg.set_main_option("script_location", os.path.join(os.path.dirname(__file__), "..", "alembic"))
-    command.downgrade(cfg, "base")
+    # Start from an empty schema so leftovers from earlier runs (e.g. kinds a downgrade would
+    # refuse) cannot interfere, then build it with the real migrations.
+    with engine.begin() as conn:
+        conn.execute(text("DROP SCHEMA public CASCADE"))
+        conn.execute(text("CREATE SCHEMA public"))
     command.upgrade(cfg, "head")
     with SessionLocal() as db:
         seed_content(db)

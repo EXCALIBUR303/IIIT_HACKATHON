@@ -23,7 +23,10 @@ import type {
   TokenResponse,
   TutorAnswer,
   User,
+  LearningStatus,
   PortfolioView,
+  ReflectionPrompt,
+  ReflectionResult,
   TradeQuote,
   Wallet,
 } from './types'
@@ -42,6 +45,14 @@ export const api = {
     reset: (request_id: string) => http.post<PortfolioView>('/portfolio/reset', { request_id, confirm: true }),
     transfer: (request_id: string, amount: number) =>
       http.post<PortfolioView>('/portfolio/transfer', { request_id, amount, confirm: true }),
+  },
+  learning: {
+    status: () => http.get<LearningStatus>('/learning/status'),
+  },
+  reflections: {
+    prompt: (session_id: string) => http.get<ReflectionPrompt>(`/reflections/prompt?session_id=${q(session_id)}`),
+    answer: (body: { session_id: string; question_key: string; selected: string; confidence?: 'low' | 'medium' | 'high' }) =>
+      http.post<ReflectionResult>('/reflections', body),
   },
   wallet: {
     get: (limit = 50) => http.get<Wallet>(`/wallet?limit=${limit}`),

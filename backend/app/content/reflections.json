@@ -346,5 +346,92 @@
     "explanation": "Small payments are how scams start. Do not send anything."
    }
   ]
+ },
+ {
+  "key": "refl-lab-inflation",
+  "kind": "money_lab",
+  "concept": "inflation",
+  "prompt": "By month six the earphones cost more than they did at the start. What does that show?",
+  "options": [
+   {
+    "key": "a",
+    "text": "Prices rise over time, so money that earns nothing buys a little less later.",
+    "correct": true,
+    "misconception": null,
+    "explanation": "That is inflation. Keeping some money in something that earns helps protect buying power."
+   },
+   {
+    "key": "b",
+    "text": "The shop made a mistake.",
+    "correct": false,
+    "misconception": "inflation_myth",
+    "explanation": "Gradual price rises are normal across the whole economy. It is not a mistake."
+   },
+   {
+    "key": "c",
+    "text": "Saving is pointless because prices always win.",
+    "correct": false,
+    "misconception": "saving_is_pointless",
+    "explanation": "Saving still works, especially when your money earns at least something."
+   }
+  ]
+ },
+ {
+  "key": "refl-lab-liquidity",
+  "kind": "money_lab",
+  "concept": "emergency_fund",
+  "prompt": "Why did money that was 'kept ready' make the surprise easier?",
+  "options": [
+   {
+    "key": "a",
+    "text": "It was available instantly with no loss, which is what liquidity means.",
+    "correct": true,
+    "misconception": null,
+    "explanation": "Liquid money can be used right away without selling at a bad price or borrowing."
+   },
+   {
+    "key": "b",
+    "text": "Cash always earns the most interest.",
+    "correct": false,
+    "misconception": "cash_earns_most",
+    "explanation": "Cash earns nothing. It is useful for being available, not for growing."
+   },
+   {
+    "key": "c",
+    "text": "Surprises only matter if you have no goal.",
+    "correct": false,
+    "misconception": "no_emergencies",
+    "explanation": "Surprises can derail any goal. Being ready is how you protect it."
+   }
+  ]
+ },
+ {
+  "key": "refl-lab-risk",
+  "kind": "money_lab",
+  "concept": "risk_return",
+  "prompt": "Why is putting most of the ₹500 in the growth basket risky for a goal six months away?",
+  "options": [
+   {
+    "key": "a",
+    "text": "A poor period can shrink it, and there may not be time to recover before you need the money.",
+    "correct": true,
+    "misconception": null,
+    "explanation": "Short deadlines leave little room to wait out a fall."
+   },
+   {
+    "key": "b",
+    "text": "Because the growth basket always loses money.",
+    "correct": false,
+    "misconception": "investing_is_gambling",
+    "explanation": "It can also gain. The point is that it is uncertain, so it suits money you do not need soon."
+   },
+   {
+    "key": "c",
+    "text": "Because deposits never lose value to inflation.",
+    "correct": false,
+    "misconception": "deposit_beats_inflation",
+    "explanation": "Deposits can lose buying power too if their rate is below inflation."
+   }
+  ]
  }
 ]

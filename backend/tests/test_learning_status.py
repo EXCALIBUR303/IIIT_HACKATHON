@@ -3,6 +3,7 @@
 import dataclasses
 
 from app.learning import levels, score
+from app.services.reflections import total_available
 from tests.conftest import answer_all, complete_budget, register_educator, register_student
 
 STATUS = "/api/v1/learning/status"
@@ -228,7 +229,7 @@ def test_correct_reflection_pays_once_and_adds_evidence(client, student):
     assert client.get("/api/v1/wallet", headers=student).json()["balance"] == wallet_before + 10
     s = client.get(STATUS, headers=student).json()
     refl = next(c for c in s["score"]["components"] if c["key"] == "reflection")
-    assert refl["score"] == round(100 * 1 / 12)
+    assert refl["score"] == round(100 * 1 / total_available())
 
 
 def test_wrong_reflection_names_the_misconception_and_pays_nothing(client, student):
@@ -264,3 +265,22 @@ def test_prompts_move_through_the_bank_then_run_out(client, student):
         assert answer(client, student, sid, p["question_key"], "a").status_code == 200
     assert len(set(seen)) == 3
     assert prompt(client, student, sid).json()["available"] is False
+
+
+def test_money_lab_has_its_own_reflection_bank(client, student):
+    s = client.post(
+        "/api/v1/simulations/sessions", headers=student, json={"scenario_slug": "money-lab-500"}
+    ).json()
+    sid = s["id"]
+    client.post(
+        f"/api/v1/simulations/sessions/{sid}/decisions",
+        headers=student,
+        json={"type": "plan", "payload": {"spend": 100, "ready": 150, "deposit": 250, "growth": 0}},
+    )
+    client.post(
+        f"/api/v1/simulations/sessions/{sid}/decisions",
+        headers=student,
+        json={"type": "respond_event", "payload": {"source": "ready"}},
+    )
+    p = prompt(client, student, sid).json()
+    assert p["available"] and p["question_key"].startswith("refl-lab")

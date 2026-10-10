@@ -7,7 +7,7 @@ export type Role = 'student' | 'educator' | 'admin'
 export type Language = 'en' | 'hi' | 'te'
 export type LearningLevel = 'beginner' | 'intermediate' | 'advanced'
 export type Pillar = 'budgeting' | 'saving' | 'investing' | 'safety'
-export type ScenarioKind = 'budget' | 'savings' | 'investing' | 'safety'
+export type ScenarioKind = 'budget' | 'savings' | 'investing' | 'safety' | 'money_lab'
 export type Tone = 'positive' | 'caution' | 'negative'
 
 export interface User {
@@ -342,7 +342,55 @@ export type BudgetSession = SessionBase<'budget', BudgetState, BudgetResult>
 export type SavingsSession = SessionBase<'savings', SavingsState, SavingsResult>
 export type InvestingSession = SessionBase<'investing', InvestingState, InvestingResult>
 export type SafetySession = SessionBase<'safety', SafetyState, SafetyResult>
-export type Session = BudgetSession | SavingsSession | InvestingSession | SafetySession
+export interface MoneyLabState {
+  total: number
+  essential_min: number
+  months: number
+  goal: { label: string; amount: number }
+  inflation_pct: number
+  buckets: { key: 'spend' | 'ready' | 'deposit' | 'growth'; label: string; note: string }[]
+  assumptions: MoneyLabAssumptions
+  plan?: Record<'spend' | 'ready' | 'deposit' | 'growth', number>
+  at_event?: Record<'ready' | 'deposit' | 'growth', number>
+  event?: { month: number; title: string; description: string; amount: number }
+  options?: { key: 'ready' | 'deposit' | 'growth' | 'borrow'; label: string; note: string; available: number | null; feasible: boolean }[]
+}
+
+export interface MoneyLabAssumptions {
+  starting_amount: number
+  months: number
+  contributions: string
+  deposit_rate_pct: number
+  inflation_pct: number
+  borrow_extra_pct: number
+  growth: string
+  limitations: string[]
+  disclaimer: string
+}
+
+export interface MoneyLabResult {
+  plan: Record<'spend' | 'ready' | 'deposit' | 'growth', number>
+  event: NonNullable<MoneyLabState['event']>
+  assumptions: MoneyLabAssumptions
+  source: string
+  final: Record<'ready' | 'deposit' | 'growth', number>
+  saved_total: number
+  goal_price: number
+  goal_reached: boolean
+  real_value: number
+  inflation_drag: number
+  borrowed: number
+  repay_extra: number
+  score: number
+  components: Record<string, number>
+  feedback: Feedback[]
+  path_label: string
+  timeline: { month: number; ready: number; deposit: number; growth: number; total: number }[]
+  rewards?: ResultReward[]
+}
+
+export type MoneyLabSession = SessionBase<'money_lab', MoneyLabState, MoneyLabResult>
+export type Session = BudgetSession | SavingsSession | InvestingSession | SafetySession | MoneyLabSession
 
 export interface SessionSummary {
   id: string
@@ -650,4 +698,49 @@ export interface TradeQuote {
   cash_after_paise: number
   warnings: string[]
   disclaimer: string
+}
+
+// --- Learning status and reflections ------------------------------------------------
+
+export interface ScoreComponent {
+  key: 'assessments' | 'decisions' | 'reflection' | 'safe_behavior'
+  score: number
+  weight: number
+  points: number
+  explanation: string
+  recovery: string
+}
+
+export interface LevelRequirement {
+  key: string
+  label: string
+  met: boolean
+}
+
+export interface LevelInfo {
+  level: number
+  title: string
+  summary: string
+  unlocked: boolean
+  requirements: LevelRequirement[]
+}
+
+export interface LearningStatus {
+  score: { total: number; components: ScoreComponent[]; note: string }
+  level: { current: number; current_title: string; levels: LevelInfo[]; next: LevelInfo | null }
+}
+
+export interface ReflectionPrompt {
+  available: boolean
+  question_key: string | null
+  prompt: string | null
+  options: { key: string; text: string }[]
+}
+
+export interface ReflectionResult {
+  correct: boolean
+  explanation: string
+  correct_option: { key: string; text: string }
+  misconception: string | null
+  rewards: RewardEntry[]
 }

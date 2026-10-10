@@ -58,6 +58,7 @@ export const KIND_TO_PILLAR: Record<ScenarioKind, Pillar> = {
   savings: 'saving',
   investing: 'investing',
   safety: 'safety',
+  money_lab: 'saving',
 }
 
 export function PillarIcon({ pillar, size = 40 }: { pillar: Pillar; size?: number }) {

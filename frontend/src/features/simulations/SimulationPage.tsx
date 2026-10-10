@@ -15,6 +15,8 @@ import { errorMessage, useAsync } from '@/lib/useAsync'
 import { BudgetSimulator } from './kinds/BudgetSimulator'
 import { InvestingSimulator } from './kinds/InvestingSimulator'
 import { SafetyChallenge } from './kinds/SafetyChallenge'
+import { ReflectionCard } from './ReflectionCard'
+import { MoneyLabSimulator } from './kinds/MoneyLabSimulator'
 import { SavingsSimulator } from './kinds/SavingsSimulator'
 import { ResultHeader } from './shared'
 
@@ -40,6 +42,11 @@ const PHASES: Record<Session['kind'], { key: string; label: string }[]> = {
     { key: 'allocate', label: 'Choose a mix' },
     { key: 'respond_event', label: 'React to the market' },
     { key: 'done', label: 'See outcomes' },
+  ],
+  money_lab: [
+    { key: 'plan', label: 'Split the ₹500' },
+    { key: 'respond_event', label: 'Handle the surprise' },
+    { key: 'done', label: 'See the result' },
   ],
   safety: [
     { key: 'classify', label: 'Judge each message' },
@@ -198,7 +205,9 @@ export default function SimulationPage() {
           {session.kind === 'budget' && <BudgetSimulator key={session.id} session={session} decide={decide} busy={busy} error={error} />}
           {session.kind === 'savings' && <SavingsSimulator key={session.id} session={session} decide={decide} busy={busy} error={error} />}
           {session.kind === 'investing' && <InvestingSimulator key={session.id} session={session} decide={decide} busy={busy} error={error} />}
+          {session.kind === 'money_lab' && <MoneyLabSimulator key={session.id} session={session} decide={decide} busy={busy} error={error} />}
           {session.kind === 'safety' && <SafetyChallenge key={session.id} session={session} decide={decide} busy={busy} error={error} />}
+          {session.status === 'completed' && <ReflectionCard key={`reflect-${session.id}`} sessionId={session.id} />}
         </>
       )}
     </div>

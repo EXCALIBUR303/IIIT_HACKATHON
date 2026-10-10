@@ -50,7 +50,7 @@ test('budgeting challenge: allocate, survive a surprise, see consequences and re
   await page.getByRole('button', { name: 'Confirm my choice' }).click()
 
   await expect(page.getByText(/Attempt 1 complete/)).toBeVisible()
-  await expect(page.getByText('What happened')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'What happened' })).toBeVisible()
   await page.getByRole('button', { name: /try a different strategy/i }).click()
   await expect(page.getByRole('button', { name: /lock in my budget/i })).toBeVisible()
 })

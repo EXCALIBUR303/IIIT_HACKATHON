@@ -2,10 +2,12 @@ import { defineConfig, devices } from '@playwright/test'
 
 /**
  * End-to-end tests run the real stack: FastAPI on :8001 against a dedicated
- * PostgreSQL database (default rupeerise_e2e) and the Vite dev server on :5174.
+ * PostgreSQL database (default rupeerise_e2e) and the Vite dev server on :5174 (override with E2E_WEB_PORT).
  * Override the database with E2E_DATABASE_URL.
  */
 const databaseUrl = process.env.E2E_DATABASE_URL ?? 'postgresql+psycopg://localhost:5432/rupeerise_e2e'
+
+const webPort = process.env.E2E_WEB_PORT ?? '5174'
 
 export default defineConfig({
   testDir: './e2e',
@@ -15,7 +17,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['list']] : 'list',
   use: {
-    baseURL: 'http://localhost:5174',
+    baseURL: `http://localhost:${webPort}`,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
@@ -35,8 +37,8 @@ export default defineConfig({
       timeout: 120_000,
     },
     {
-      command: 'npm run dev -- --port 5174 --strictPort',
-      url: 'http://localhost:5174',
+      command: `npm run dev -- --port ${webPort} --strictPort`,
+      url: `http://localhost:${webPort}`,
       env: { VITE_DEV_API_PROXY: 'http://localhost:8001' },
       reuseExistingServer: false,
       timeout: 120_000,

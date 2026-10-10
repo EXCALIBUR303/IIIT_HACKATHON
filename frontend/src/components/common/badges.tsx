@@ -38,7 +38,7 @@ export function AchievementTile({ a }: { a: Achievement }) {
     <div
       className={cn(
         'flex items-center gap-3 rounded-xl border p-3',
-        a.earned ? 'border-emerald-200 bg-accent-soft/60' : 'border-line bg-canvas opacity-75',
+        a.earned ? 'border-emerald-200 bg-accent-soft/60' : 'border-line bg-canvas',
       )}
     >
       <span

@@ -11,8 +11,9 @@ export function LogoMark({ size = 36, className, title = 'RupeeRise' }: { size?:
       width={size}
       height={size}
       viewBox="105 110 1045 1040"
-      role="img"
-      aria-label={title}
+      role={title ? 'img' : undefined}
+      aria-label={title || undefined}
+      aria-hidden={title ? undefined : true}
       className={cn('shrink-0', className)}
     >
       <rect x="105" y="110" width="1045" height="1040" rx="190" fill="#131A26" />

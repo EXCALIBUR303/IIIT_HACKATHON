@@ -28,3 +28,14 @@ export function relativeDate(iso: string | null | undefined): string {
   const days = Math.round(hours / 24)
   return `${days} day${days === 1 ? '' : 's'} ago`
 }
+
+/** Whole paise -> '₹1,234.50'. Portfolio money is integer paise end to end. */
+export function inrPaise(paise: number): string {
+  return rupees2.format(paise / 100)
+}
+
+/** Signed paise with an explicit ▲/▼ so gain and loss never rely on colour alone. */
+export function signedPaise(paise: number): string {
+  if (paise === 0) return '₹0.00'
+  return `${paise > 0 ? '▲ +' : '▼ −'}${rupees2.format(Math.abs(paise) / 100)}`
+}

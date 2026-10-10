@@ -86,6 +86,7 @@ erDiagram
 | | `question_responses` | Answer, confidence, response time, misconception | unique (`attempt`, `question`); confidence check |
 | | `concept_mastery` | Aggregated evidence per concept | PK (`student`, `concept`); `0 ≤ mastery ≤ 1`; `weighted_correct ≤ weighted_total` |
 | | `student_achievements` | Earned badges | PK (`student`, `achievement`) |
+| Portfolio Quest | `portfolios`, `portfolio_holdings`, `portfolio_transactions` | One active run per student (cash, round, seed); holdings with cost basis; append-only log with `request_id` idempotency | `cash >= 0`, `round 0–10`, `quantity > 0`, unique (`student`, `request_id`); money in integer paise; cascade on user delete |
 | Rewards | `reward_ledger` | Append-only fictional learning money; balance = `SUM(amount)` | unique (`student`, `idempotency_key`); `amount_sign` check; cascade on user delete |
 
 ## Privacy by design

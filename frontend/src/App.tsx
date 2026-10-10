@@ -17,6 +17,7 @@ const AssessmentsPage = lazy(() => import('@/features/assessments/AssessmentsPag
 const TakeAssessmentPage = lazy(() => import('@/features/assessments/TakeAssessmentPage'))
 const AttemptResultPage = lazy(() => import('@/features/assessments/AttemptResultPage'))
 const ProgressPage = lazy(() => import('@/features/progress/ProgressPage'))
+const PortfolioPage = lazy(() => import('@/features/portfolio/PortfolioPage'))
 const WalletPage = lazy(() => import('@/features/wallet/WalletPage'))
 const SettingsPage = lazy(() => import('@/features/settings/SettingsPage'))
 const EducatorDashboard = lazy(() => import('@/features/educator/EducatorDashboard'))
@@ -57,6 +58,7 @@ export function AppRoutes() {
           <Route path="results/:attemptId" element={<AttemptResultPage />} />
           <Route path="progress" element={<ProgressPage />} />
           <Route path="wallet" element={<WalletPage />} />
+          <Route path="portfolio" element={<PortfolioPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
         <Route

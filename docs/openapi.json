@@ -1331,6 +1331,377 @@
         }
       }
     },
+    "/api/v1/portfolio": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Get Portfolio",
+        "operationId": "get_portfolio_api_v1_portfolio_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Portfolio Api V1 Portfolio Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/open": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Open Portfolio",
+        "operationId": "open_portfolio_api_v1_portfolio_open_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Open Portfolio Api V1 Portfolio Open Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/quote": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Quote",
+        "operationId": "quote_api_v1_portfolio_quote_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuoteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Quote Api V1 Portfolio Quote Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/trades": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Trade",
+        "operationId": "trade_api_v1_portfolio_trades_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Trade Api V1 Portfolio Trades Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/advance": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Advance",
+        "operationId": "advance_api_v1_portfolio_advance_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Advance Api V1 Portfolio Advance Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/reset": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Reset",
+        "operationId": "reset_api_v1_portfolio_reset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Reset Api V1 Portfolio Reset Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/transfer": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Transfer",
+        "operationId": "transfer_api_v1_portfolio_transfer_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Transfer Api V1 Portfolio Transfer Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/transactions": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "summary": "Transactions",
+        "operationId": "transactions_api_v1_portfolio_transactions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Transactions Api V1 Portfolio Transactions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tutor/ask": {
       "post": {
         "tags": [
@@ -1849,6 +2220,26 @@
         ],
         "title": "ConceptProgress"
       },
+      "ConfirmIn": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          },
+          "confirm": {
+            "type": "boolean",
+            "title": "Confirm",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "title": "ConfirmIn"
+      },
       "DecisionIn": {
         "properties": {
           "type": {
@@ -2176,6 +2567,21 @@
           "completed"
         ],
         "title": "ModuleProgressOut"
+      },
+      "OpenIn": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "title": "OpenIn"
       },
       "OptionOut": {
         "properties": {
@@ -2657,6 +3063,34 @@
           "rapid"
         ],
         "title": "QuestionResult"
+      },
+      "QuoteIn": {
+        "properties": {
+          "instrument_key": {
+            "type": "string",
+            "maxLength": 30,
+            "title": "Instrument Key"
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "buy",
+              "sell"
+            ],
+            "title": "Side"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "instrument_key",
+          "side",
+          "quantity"
+        ],
+        "title": "QuoteIn"
       },
       "Recommendation": {
         "properties": {
@@ -3379,6 +3813,72 @@
           "user"
         ],
         "title": "TokenOut"
+      },
+      "TradeIn": {
+        "properties": {
+          "instrument_key": {
+            "type": "string",
+            "maxLength": 30,
+            "title": "Instrument Key"
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "buy",
+              "sell"
+            ],
+            "title": "Side"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          },
+          "confirm": {
+            "type": "boolean",
+            "title": "Confirm",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "instrument_key",
+          "side",
+          "quantity",
+          "request_id"
+        ],
+        "title": "TradeIn"
+      },
+      "TransferIn": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          },
+          "confirm": {
+            "type": "boolean",
+            "title": "Confirm",
+            "default": false
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount",
+            "description": "Whole rupees moved from the learning wallet"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "amount"
+        ],
+        "title": "TransferIn"
       },
       "TutorAnswer": {
         "properties": {

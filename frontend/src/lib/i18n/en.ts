@@ -7,6 +7,7 @@ export const en = {
   'nav.assessments': 'Checks & quizzes',
   'nav.progress': 'My progress',
   'nav.wallet': 'Learning wallet',
+  'nav.portfolio': 'Portfolio Quest',
   'nav.settings': 'Settings',
   'nav.educator': 'Cohort dashboard',
   'nav.signOut': 'Sign out',

@@ -556,3 +556,98 @@ export interface ResultReward {
   rule_key: string
   concept: string | null
 }
+
+// --- Portfolio Quest (fictional practice portfolio; money in integer paise) -------
+
+export interface PortfolioAccess {
+  open: boolean
+  reason: string | null
+  single_company_unlocked: boolean
+  single_company_reason: string | null
+  stage: StageKey
+}
+
+export interface PortfolioInstrument {
+  key: string
+  label: string
+  description: string
+  risk_level: 'low' | 'medium' | 'high' | 'very_high'
+  single_company: boolean
+  locked: boolean
+  lock_reason: string | null
+  price_paise: number
+  price_history_paise?: number[]
+}
+
+export interface PortfolioHoldingRow {
+  instrument_key: string
+  quantity: number
+  cost_paise: number
+  avg_cost_paise: number
+  price_paise: number
+  value_paise: number
+  gain_paise: number
+  weight_pct: number
+}
+
+export interface PortfolioState {
+  run_number: number
+  round: number
+  max_round: number
+  complete: boolean
+  starting_cash_paise: number
+  transferred_paise: number
+  transfer_remaining_rupees: number
+  cash_paise: number
+  invested_paise: number
+  total_paise: number
+  contributed_paise: number
+  gain_paise: number
+  holdings: PortfolioHoldingRow[]
+  history: { round: number; total_paise: number }[]
+}
+
+export interface PortfolioTx {
+  id: number
+  run_number: number
+  round: number
+  kind: 'open' | 'buy' | 'sell' | 'transfer_in' | 'advance' | 'reset'
+  instrument_key: string | null
+  quantity: number | null
+  price_paise: number | null
+  amount_paise: number
+  cash_after_paise: number
+  note: string | null
+  created_at: string
+}
+
+export interface PortfolioEvent {
+  round: number
+  market_change_pct: number
+  headline: string
+  reflection: string[]
+}
+
+export interface PortfolioView {
+  access: PortfolioAccess
+  disclaimer: string
+  wallet_balance: number
+  transfer_cap_rupees: number
+  portfolio: PortfolioState | null
+  instruments: PortfolioInstrument[]
+  transactions: PortfolioTx[]
+  event?: PortfolioEvent
+  replayed?: boolean
+}
+
+export interface TradeQuote {
+  instrument_key: string
+  label: string
+  side: 'buy' | 'sell'
+  quantity: number
+  price_paise: number
+  total_paise: number
+  cash_after_paise: number
+  warnings: string[]
+  disclaimer: string
+}

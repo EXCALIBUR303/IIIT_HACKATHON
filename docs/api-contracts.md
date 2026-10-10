@@ -57,6 +57,9 @@
 | `GET /progress/me` | student | Modules, concept mastery, strengths, practice areas, pre/post, recent, recommendation |
 | `GET /progress/me/recommendation` | student | Next activity + reason |
 | `GET /achievements/me` | student | Catalogue with earned flags |
+| `GET /portfolio` | student | Portfolio Quest view: `access` (gates + reasons), `portfolio` (cash, invested, total, gain, holdings, per-year history; integer **paise**), `instruments` (fictional; price history only up to the current year), `transactions`, `wallet_balance` |
+| `POST /portfolio/open` · `/quote` · `/trades` · `/advance` · `/reset` · `/transfer` | student | Mutations need `request_id` (8–64 chars; a repeat is applied once) and `confirm: true`. Trades: `{instrument_key, side: buy|sell, quantity}`. Transfer: `{amount}` whole rupees from the learning wallet (one-way, capped per run). The server computes every price and total. Errors: `locked` 403, `insufficient_funds` / `insufficient_holdings` / `insufficient_wallet` / `transfer_cap` / `confirmation_required` 422, `run_complete` / `request_id_reused` 409 |
+| `GET /portfolio/transactions?limit=` | student | Append-only transaction history across runs |
 | `GET /wallet?limit=` | student | Educational reward wallet: `balance`, `total_earned`, `history[]` (amount, reason, source, concept, time). Read-only; amounts come only from the server-side ledger. Simulation results and assessment results also carry the `rewards` just issued |
 | `GET /educator/cohorts` · `POST /educator/cohorts` | educator | List / create (`{name}` → join code) |
 | `GET /educator/cohorts/{id}/overview` | educator (same org) | Participation, module completion, concept mastery, pre/post, support topics, misconceptions, student rows (nicknames) |

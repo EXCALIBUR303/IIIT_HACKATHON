@@ -23,12 +23,26 @@ import type {
   TokenResponse,
   TutorAnswer,
   User,
+  PortfolioView,
+  TradeQuote,
   Wallet,
 } from './types'
 
 const q = (v: string) => encodeURIComponent(v)
 
 export const api = {
+  portfolio: {
+    get: () => http.get<PortfolioView>('/portfolio'),
+    open: (request_id: string) => http.post<PortfolioView>('/portfolio/open', { request_id }),
+    quote: (body: { instrument_key: string; side: 'buy' | 'sell'; quantity: number }) =>
+      http.post<TradeQuote>('/portfolio/quote', body),
+    trade: (body: { request_id: string; instrument_key: string; side: 'buy' | 'sell'; quantity: number }) =>
+      http.post<PortfolioView>('/portfolio/trades', { ...body, confirm: true }),
+    advance: (request_id: string) => http.post<PortfolioView>('/portfolio/advance', { request_id, confirm: true }),
+    reset: (request_id: string) => http.post<PortfolioView>('/portfolio/reset', { request_id, confirm: true }),
+    transfer: (request_id: string, amount: number) =>
+      http.post<PortfolioView>('/portfolio/transfer', { request_id, amount, confirm: true }),
+  },
   wallet: {
     get: (limit = 50) => http.get<Wallet>(`/wallet?limit=${limit}`),
   },

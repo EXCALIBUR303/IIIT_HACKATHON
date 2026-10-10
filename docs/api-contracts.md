@@ -34,14 +34,14 @@
 | `POST /auth/register/educator` | – | `{…, invite_code, organization_name}` → `TokenOut` (201) |
 | `POST /auth/login` | – | `{username, password}` → `TokenOut` |
 | `GET /auth/me` | any | `UserOut` |
-| `GET /students/me/profile` | student | `ProfileOut` (grade, language, level, persona, onboarding flag, preferences, cohorts) |
+| `GET /students/me/profile` | student | `ProfileOut` (grade 7–13, derived `stage`, language, level, persona, onboarding flag, preferences, cohorts) |
 | `PUT /students/me/profile` | student | Partial `ProfileUpdate`; completing onboarding requires a persona |
 | `POST /students/me/cohorts` | student | `{join_code}` join a class |
 | `DELETE /students/me` | student | Delete account and all learning data (204) |
 | `GET /personas` | – | Fictional personas |
 | `GET /concepts` | – | 14-concept glossary (also the tutor's fallback knowledge) |
 | `GET /modules` | any | Modules with scenarios and quiz slug |
-| `GET /scenarios?kind=` · `GET /scenarios/{slug}` | any | Scenario summaries / detail (safety answers never included) |
+| `GET /scenarios?kind=` · `GET /scenarios/{slug}` | any | Scenario summaries / detail, filtered to the student's stage (safety answers never included). Starting an ineligible scenario returns 403 |
 | `GET /catalog/investing` · `GET /catalog/safety` | any | Fictional assets & paths · red flags & actions |
 | `POST /simulations/sessions` | student | `{scenario_slug}` → new attempt (`SessionOut`, 201). Abandons an open attempt |
 | `GET /simulations/sessions?scenario_slug=` | student | Attempt history |

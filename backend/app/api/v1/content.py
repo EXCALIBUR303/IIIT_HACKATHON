@@ -10,7 +10,8 @@ from app.api.deps import DB, CurrentUser
 from app.content import loader
 from app.core.errors import not_found
 from app.engine import investing, safety
-from app.models import Assessment, LearningModule, Scenario
+from app.learning import stages
+from app.models import Assessment, LearningModule, Scenario, User
 from app.schemas import (
     ConceptOut,
     ModuleOut,
@@ -21,6 +22,18 @@ from app.schemas import (
 )
 
 router = APIRouter(tags=["content"])
+
+
+def stage_of(user: User) -> str | None:
+    """Stage for students; educators (no profile) see all content."""
+    if user.role != "student":
+        return None
+    return stages.stage_for(user.profile.grade if user.profile else None)
+
+
+def eligible(user: User, s: Scenario) -> bool:
+    stage = stage_of(user)
+    return stage is None or stages.is_eligible(stage, s.stages)
 
 
 def scenario_summary(s: Scenario) -> dict:
@@ -34,6 +47,7 @@ def scenario_summary(s: Scenario) -> dict:
         "persona_key": s.persona_key,
         "module_slug": s.module.slug,
         "pillar": s.module.pillar,
+        "stages": s.stages,
     }
 
 
@@ -49,7 +63,7 @@ def concepts() -> list[dict]:
 
 
 @router.get("/modules", response_model=list[ModuleOut])
-def modules(db: DB, _: CurrentUser) -> list[dict]:
+def modules(db: DB, user: CurrentUser) -> list[dict]:
     quizzes = {
         a.module_id: a.slug
         for a in db.scalars(select(Assessment).where(Assessment.kind == "module"))
@@ -73,6 +87,7 @@ def modules(db: DB, _: CurrentUser) -> list[dict]:
                 "scenarios": [
                     scenario_summary(s)
                     for s in sorted(m.scenarios, key=lambda s: (s.difficulty, s.slug))
+                    if eligible(user, s)
                 ],
             }
         )
@@ -80,11 +95,13 @@ def modules(db: DB, _: CurrentUser) -> list[dict]:
 
 
 @router.get("/scenarios", response_model=list[ScenarioSummary])
-def list_scenarios(db: DB, _: CurrentUser, kind: ScenarioKind | None = None) -> list[dict]:
+def list_scenarios(
+    db: DB, user: CurrentUser, kind: ScenarioKind | None = None
+) -> list[dict]:
     q = select(Scenario).order_by(Scenario.kind, Scenario.difficulty, Scenario.slug)
     if kind:
         q = q.where(Scenario.kind == kind)
-    return [scenario_summary(s) for s in db.scalars(q)]
+    return [scenario_summary(s) for s in db.scalars(q) if eligible(user, s)]
 
 
 @router.get("/scenarios/{slug}", response_model=ScenarioDetail)

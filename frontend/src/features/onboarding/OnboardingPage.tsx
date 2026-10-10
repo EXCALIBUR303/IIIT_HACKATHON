@@ -8,7 +8,7 @@ import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Field, Input } from '@/components/ui/form'
 import { api } from '@/lib/api/endpoints'
-import type { Language, LearningLevel, Persona } from '@/lib/api/types'
+import type { Language, LearningLevel, Persona, Profile } from '@/lib/api/types'
 import { inr } from '@/lib/format'
 import { LANGUAGES, useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
@@ -97,7 +97,7 @@ export default function OnboardingPage() {
   const personas = useAsync(() => api.content.personas(), [])
   const [step, setStep] = useState(0)
   const [name, setName] = useState('')
-  const [grade, setGrade] = useState<11 | 12 | 13 | null>(null)
+  const [grade, setGrade] = useState<Profile['grade']>(null)
   const [language, setLanguage] = useState<Language>('en')
   const [level, setLevel] = useState<LearningLevel>('beginner')
   const [persona, setPersona] = useState<string | null>(null)
@@ -184,8 +184,12 @@ export default function OnboardingPage() {
                   </Field>
                   <fieldset>
                     <legend className="mb-2 text-sm font-semibold">{t('onboarding.grade')}</legend>
-                    <div className="grid gap-3 sm:grid-cols-3" role="radiogroup">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4" role="radiogroup">
                       {([
+                        [7, 'Class 7'],
+                        [8, 'Class 8'],
+                        [9, 'Class 9'],
+                        [10, 'Class 10'],
                         [11, 'Class 11'],
                         [12, 'Class 12'],
                         [13, 'Finished Class 12'],

@@ -6,11 +6,23 @@ from sqlalchemy import select
 from app.api.deps import DB, Student
 from app.content import loader
 from app.core.errors import ApiError, conflict
+from app.learning import stages
 from app.models import Cohort, CohortMembership, User
 from app.schemas import JoinCohort, ProfileOut, ProfileUpdate, UserOut
 from app.services import achievements
 
 router = APIRouter(prefix="/students/me", tags=["students"])
+
+
+def stage_out(grade: int | None) -> dict:
+    info = stages.info(stages.stage_for(grade))
+    return {
+        "key": info.key,
+        "label": info.label,
+        "grades": info.grades,
+        "tagline": info.tagline,
+        "portfolio_quest": info.portfolio_quest,
+    }
 
 
 def _profile_out(db, user: User) -> ProfileOut:
@@ -23,6 +35,7 @@ def _profile_out(db, user: User) -> ProfileOut:
     return ProfileOut(
         user=UserOut.model_validate(user),
         grade=p.grade,
+        stage=stage_out(p.grade),
         language=p.language,
         learning_level=p.learning_level,
         persona_key=p.persona_key,

@@ -37,7 +37,7 @@ erDiagram
   }
   student_profiles {
     uuid user_id PK,FK
-    int grade "11|12|13 or null"
+    int grade "7..13 or null"
     string language "en|hi|te"
     string learning_level
     string persona_key
@@ -77,7 +77,7 @@ erDiagram
 | | `cohorts` | Classes with 6-char `join_code` | unique `join_code`; cascade with org |
 | | `cohort_memberships` | Student ↔ cohort | composite PK |
 | Content (seeded) | `learning_modules` | Four pillars | unique `slug`; `pillar` check |
-| | `scenarios` | Simulation configs (`config` JSONB) | unique `slug`; `kind`, `difficulty 1–3` checks |
+| | `scenarios` | Simulation configs (`config` JSONB, `stages` JSONB) | unique `slug`; `kind` (incl. `money_lab`), `difficulty 1–3` checks |
 | | `assessments`, `questions` | Checks and quizzes; options JSONB with correctness, misconception, explanation | unique slugs; `kind` check |
 | | `achievements` | Badge catalogue | unique `slug` |
 | Learning evidence | `simulation_sessions` | One attempt at a scenario | unique (`student`, `scenario`, `attempt_number`); `status` & `score 0–100` checks |

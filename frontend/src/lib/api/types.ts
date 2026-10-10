@@ -32,9 +32,20 @@ export interface Preferences {
   show_hints: boolean
 }
 
+export type StageKey = 'explorer' | 'builder' | 'future_planner' | 'investor_sandbox'
+
+export interface Stage {
+  key: StageKey
+  label: string
+  grades: string
+  tagline: string
+  portfolio_quest: boolean
+}
+
 export interface Profile {
   user: User
-  grade: 11 | 12 | 13 | null
+  grade: 7 | 8 | 9 | 10 | 11 | 12 | 13 | null
+  stage: Stage
   language: Language
   learning_level: LearningLevel
   persona_key: string | null
@@ -43,7 +54,7 @@ export interface Profile {
   cohorts: { id: number; name: string }[]
 }
 
-export type ProfileUpdate = Partial<Omit<Profile, 'user' | 'cohorts'>> & { display_name?: string }
+export type ProfileUpdate = Partial<Omit<Profile, 'user' | 'cohorts' | 'stage'>> & { display_name?: string }
 
 export interface Persona {
   key: string
@@ -77,6 +88,7 @@ export interface ScenarioSummary {
   persona_key: string | null
   module_slug: string
   pillar: Pillar
+  stages?: StageKey[]
 }
 
 export interface Module {

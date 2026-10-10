@@ -29,6 +29,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -105,7 +106,7 @@ class StudentProfile(Base):
     user: Mapped[User] = relationship(back_populates="profile")
 
     __table_args__ = (
-        CheckConstraint("grade IS NULL OR grade IN (11, 12, 13)", name="grade"),
+        CheckConstraint("grade IS NULL OR grade BETWEEN 7 AND 13", name="grade"),
         CheckConstraint("language IN ('en', 'hi', 'te')", name="language"),
         CheckConstraint(
             "learning_level IN ('beginner', 'intermediate', 'advanced')", name="learning_level"
@@ -183,12 +184,19 @@ class Scenario(Base):
     difficulty: Mapped[int] = mapped_column(Integer)
     persona_key: Mapped[str | None] = mapped_column(String(30))
     config: Mapped[dict[str, Any]] = mapped_column(JsonType)
+    stages: Mapped[list[str]] = mapped_column(
+        JsonType,
+        default=lambda: ["future_planner", "investor_sandbox"],
+        server_default=text("""'["future_planner", "investor_sandbox"]'::jsonb"""),
+    )
     version: Mapped[int] = mapped_column(Integer, default=1)
 
     module: Mapped[LearningModule] = relationship(back_populates="scenarios")
 
     __table_args__ = (
-        CheckConstraint("kind IN ('budget', 'savings', 'investing', 'safety')", name="kind"),
+        CheckConstraint(
+            "kind IN ('budget', 'savings', 'investing', 'safety', 'money_lab')", name="kind"
+        ),
         CheckConstraint("difficulty BETWEEN 1 AND 3", name="difficulty"),
     )
 

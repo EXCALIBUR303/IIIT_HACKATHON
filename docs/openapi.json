@@ -2247,6 +2247,9 @@
             ],
             "title": "Grade"
           },
+          "stage": {
+            "$ref": "#/components/schemas/StageOut"
+          },
           "language": {
             "type": "string",
             "enum": [
@@ -2297,6 +2300,7 @@
         "required": [
           "user",
           "grade",
+          "stage",
           "language",
           "learning_level",
           "persona_key",
@@ -2325,6 +2329,10 @@
               {
                 "type": "integer",
                 "enum": [
+                  7,
+                  8,
+                  9,
+                  10,
                   11,
                   12,
                   13
@@ -2803,6 +2811,14 @@
             ],
             "title": "Pillar"
           },
+          "stages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stages",
+            "default": []
+          },
           "config": {
             "additionalProperties": true,
             "type": "object",
@@ -2880,6 +2896,14 @@
               "safety"
             ],
             "title": "Pillar"
+          },
+          "stages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Stages",
+            "default": []
           }
         },
         "type": "object",
@@ -3104,6 +3128,39 @@
           "completed_at"
         ],
         "title": "SessionSummary"
+      },
+      "StageOut": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "grades": {
+            "type": "string",
+            "title": "Grades"
+          },
+          "tagline": {
+            "type": "string",
+            "title": "Tagline"
+          },
+          "portfolio_quest": {
+            "type": "boolean",
+            "title": "Portfolio Quest"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "grades",
+          "tagline",
+          "portfolio_quest"
+        ],
+        "title": "StageOut"
       },
       "StudentRegister": {
         "properties": {

@@ -1,6 +1,6 @@
 [
   {
-    "slug": "budget-meera-pocket-money", "module": "plan-and-budget", "kind": "budget", "difficulty": 1, "persona": "meera",
+    "slug": "budget-meera-pocket-money", "stages": ["explorer", "builder", "future_planner", "investor_sandbox"], "module": "plan-and-budget", "kind": "budget", "difficulty": 1, "persona": "meera",
     "title": "Meera's first monthly budget",
     "intro": "Meera just received ₹2,000 for the month. She needs to reach school, eat lunch and buy stationery, and she wants to save for a ₹1,200 scientific calculator in 3 months. Help her plan.",
     "objective": "Cover every need first, keep wants in check and save toward a goal.",
@@ -24,7 +24,7 @@
     }
   },
   {
-    "slug": "budget-lakshmi-stipend", "module": "plan-and-budget", "kind": "budget", "difficulty": 2, "persona": "lakshmi",
+    "slug": "budget-lakshmi-stipend", "stages": ["builder", "future_planner", "investor_sandbox"], "module": "plan-and-budget", "kind": "budget", "difficulty": 2, "persona": "lakshmi",
     "title": "Lakshmi's ₹5,000 hostel stipend",
     "intro": "Lakshmi's ₹5,000 scholarship must cover mess top-ups, transport, books, toiletries and her phone. She also wants to join a ₹2,500 spoken-English course in 3 months.",
     "objective": "Balance many needs on a fixed stipend while saving for a goal and staying ready for surprises.",
@@ -101,7 +101,7 @@
     }
   },
   {
-    "slug": "savings-meera-calculator", "module": "save-and-manage", "kind": "savings", "difficulty": 1, "persona": "meera",
+    "slug": "savings-meera-calculator", "stages": ["builder", "future_planner", "investor_sandbox"], "module": "save-and-manage", "kind": "savings", "difficulty": 1, "persona": "meera",
     "title": "Meera saves for her calculator",
     "intro": "After regular spending, Meera can save up to ₹600 a month. She needs ₹1,200 for a calculator within 4 months. Where will she keep the money, and what if a school trip fee pops up?",
     "objective": "Save regularly, keep a small emergency cushion and notice the difference interest makes.",
@@ -169,7 +169,7 @@
     "config": {"amount": 25000, "assets": ["steady_deposit", "balanced_basket", "growth_basket", "zippy_gadgets", "sunrise_solar"], "horizons": [3]}
   },
   {
-    "slug": "safety-inbox-basics", "module": "stay-safe", "kind": "safety", "difficulty": 1, "persona": null,
+    "slug": "safety-inbox-basics", "stages": ["explorer", "builder", "future_planner", "investor_sandbox"], "module": "stay-safe", "kind": "safety", "difficulty": 1, "persona": null,
     "title": "Spot the scam: inbox basics",
     "intro": "Your phone buzzes with four messages. Decide which are scams, spot the red flags and choose what to do. Some messages are genuine.",
     "objective": "Recognise common scam signals and learn that genuine messages exist too.",
@@ -193,7 +193,7 @@
     ]}
   },
   {
-    "slug": "safety-upi-and-jobs", "module": "stay-safe", "kind": "safety", "difficulty": 2, "persona": null,
+    "slug": "safety-upi-and-jobs", "stages": ["builder", "future_planner", "investor_sandbox"], "module": "stay-safe", "kind": "safety", "difficulty": 2, "persona": null,
     "title": "UPI tricks and fake jobs",
     "intro": "Scammers love UPI and online job offers. Review these five messages carefully. Look at what each one asks you to do.",
     "objective": "Understand that a PIN only sends money, and recognise fee-based job scams and impersonation calls.",

@@ -9,8 +9,9 @@ from fastapi import APIRouter
 from sqlalchemy import select
 
 from app.api.deps import DB, CurrentUser, Student
-from app.core.errors import not_found
+from app.core.errors import forbidden, not_found
 from app.engine import investing, savings
+from app.learning import stages
 from app.models import Scenario, SimulationSession
 from app.schemas import (
     DecisionIn,
@@ -56,6 +57,9 @@ def start_session(body: SessionCreate, user: Student, db: DB) -> SessionOut:
     scenario = db.scalar(select(Scenario).where(Scenario.slug == body.scenario_slug))
     if scenario is None:
         raise not_found("Scenario")
+    stage = stages.stage_for(user.profile.grade if user.profile else None)
+    if not stages.is_eligible(stage, scenario.stages):
+        raise forbidden("This scenario is not part of your learning stage yet.")
     session = simulations.start(db, user, scenario)
     db.commit()
     return session_out(session)

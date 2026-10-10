@@ -79,9 +79,18 @@ class Preferences(BaseModel):
     show_hints: bool = True
 
 
+class StageOut(BaseModel):
+    key: str
+    label: str
+    grades: str
+    tagline: str
+    portfolio_quest: bool
+
+
 class ProfileOut(BaseModel):
     user: UserOut
     grade: int | None
+    stage: StageOut
     language: Language
     learning_level: LearningLevel
     persona_key: str | None
@@ -92,7 +101,7 @@ class ProfileOut(BaseModel):
 
 class ProfileUpdate(BaseModel):
     display_name: str | None = Field(default=None, min_length=1, max_length=40)
-    grade: Literal[11, 12, 13] | None = None
+    grade: Literal[7, 8, 9, 10, 11, 12, 13] | None = None
     language: Language | None = None
     learning_level: LearningLevel | None = None
     persona_key: str | None = Field(default=None, max_length=30)
@@ -139,6 +148,7 @@ class ScenarioSummary(ORM):
     persona_key: str | None
     module_slug: str
     pillar: Pillar
+    stages: list[str] = []
 
 
 class ScenarioDetail(ScenarioSummary):

@@ -76,6 +76,7 @@ def seed_content(db: Session) -> None:
             difficulty=s["difficulty"],
             persona_key=s["persona"],
             config=s["config"],
+            stages=s.get("stages", ["future_planner", "investor_sandbox"]),
         )
     for a in loader.assessments():
         assessment = upsert(

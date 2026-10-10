@@ -1,7 +1,9 @@
 import { ArrowLeft, MessageCircleQuestion, RotateCcw, TrendingDown, TrendingUp } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import type { ResultReward } from '@/lib/api/types'
 import { NewAchievements } from '@/components/common/badges'
+import { RewardEarned } from '@/components/common/rewards'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ProgressRing } from '@/components/ui/progress'
@@ -83,11 +85,12 @@ export function MoneyControl({ id, label, value, max, onChange, hint, color, min
   )
 }
 
-export function ResultHeader({ score, previousBest, attempt, newAchievements, retry, moduleLink, sessionId, title }: {
+export function ResultHeader({ score, previousBest, attempt, newAchievements, rewards, retry, moduleLink, sessionId, title }: {
   score: number
   previousBest: number | null
   attempt: number
   newAchievements: string[]
+  rewards?: ResultReward[]
   retry: () => void
   moduleLink: string
   sessionId: string
@@ -124,6 +127,11 @@ export function ResultHeader({ score, previousBest, attempt, newAchievements, re
           </Button>
         </div>
       </div>
+      {rewards && rewards.length > 0 && (
+        <div className="border-t border-line p-4">
+          <RewardEarned rewards={rewards} />
+        </div>
+      )}
       {newAchievements.length > 0 && (
         <div className="border-t border-line p-4">
           <NewAchievements slugs={newAchievements} />

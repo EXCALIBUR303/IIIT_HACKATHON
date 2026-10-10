@@ -1,6 +1,7 @@
 import { AlertTriangle, ArrowRight, CheckCircle2, XCircle } from 'lucide-react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { NewAchievements } from '@/components/common/badges'
+import { RewardEarned } from '@/components/common/rewards'
 import { ErrorState, LoadingState } from '@/components/common/states'
 import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -45,6 +46,11 @@ export default function AttemptResultPage() {
             </p>
           </div>
         </div>
+        {r.rewards.length > 0 && (
+          <div className="mt-5">
+            <RewardEarned rewards={r.rewards} />
+          </div>
+        )}
         {r.new_achievements.length > 0 && (
           <div className="mt-5">
             <NewAchievements slugs={r.new_achievements} />

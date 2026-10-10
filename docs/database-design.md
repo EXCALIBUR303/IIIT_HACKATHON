@@ -86,6 +86,7 @@ erDiagram
 | | `question_responses` | Answer, confidence, response time, misconception | unique (`attempt`, `question`); confidence check |
 | | `concept_mastery` | Aggregated evidence per concept | PK (`student`, `concept`); `0 ≤ mastery ≤ 1`; `weighted_correct ≤ weighted_total` |
 | | `student_achievements` | Earned badges | PK (`student`, `achievement`) |
+| Rewards | `reward_ledger` | Append-only fictional learning money; balance = `SUM(amount)` | unique (`student`, `idempotency_key`); `amount_sign` check; cascade on user delete |
 
 ## Privacy by design
 

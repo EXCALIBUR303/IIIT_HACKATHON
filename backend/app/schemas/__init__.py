@@ -287,6 +287,25 @@ class QuestionResult(BaseModel):
     rapid: bool
 
 
+class RewardEntryOut(BaseModel):
+    id: int
+    entry_type: Literal["reward", "transfer_out"]
+    amount: int
+    reason: str
+    rule_key: str
+    source_type: str
+    source_ref: str | None
+    concept: str | None
+    created_at: datetime
+
+
+class WalletOut(BaseModel):
+    balance: int
+    total_earned: int
+    history: list[RewardEntryOut]
+    notice: str
+
+
 class AttemptResultOut(BaseModel):
     attempt_id: uuid.UUID
     assessment_slug: str
@@ -299,6 +318,7 @@ class AttemptResultOut(BaseModel):
     misconceptions: list[dict[str, str]]
     questions: list[QuestionResult]
     new_achievements: list[str] = []
+    rewards: list[RewardEntryOut] = []
     submitted_at: datetime
 
 

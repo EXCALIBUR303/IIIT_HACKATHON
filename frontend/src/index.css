@@ -45,6 +45,12 @@
   --color-safety: #b45309;
   --color-safety-soft: #fffbeb;
 
+  /* Educational rewards (fictional learning money) - kept visually distinct from
+     learning (indigo) and any simulated portfolio (teal). Text uses reward-ink. */
+  --color-reward: #e8a317;
+  --color-reward-soft: #fff6dd;
+  --color-reward-ink: #8a5a00;
+
   --radius-card: 1rem;
   --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.06);
   --shadow-raised: 0 2px 4px rgb(15 23 42 / 0.05), 0 12px 32px -8px rgb(67 56 202 / 0.18);

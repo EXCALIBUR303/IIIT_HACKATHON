@@ -57,6 +57,7 @@
 | `GET /progress/me` | student | Modules, concept mastery, strengths, practice areas, pre/post, recent, recommendation |
 | `GET /progress/me/recommendation` | student | Next activity + reason |
 | `GET /achievements/me` | student | Catalogue with earned flags |
+| `GET /wallet?limit=` | student | Educational reward wallet: `balance`, `total_earned`, `history[]` (amount, reason, source, concept, time). Read-only; amounts come only from the server-side ledger. Simulation results and assessment results also carry the `rewards` just issued |
 | `GET /educator/cohorts` · `POST /educator/cohorts` | educator | List / create (`{name}` → join code) |
 | `GET /educator/cohorts/{id}/overview` | educator (same org) | Participation, module completion, concept mastery, pre/post, support topics, misconceptions, student rows (nicknames) |
 | `POST /tutor/ask` | student | `{question, concept?, session_id?}` → `{answer, source: ai|fallback, concept, grounded_on[], disclaimer}` |

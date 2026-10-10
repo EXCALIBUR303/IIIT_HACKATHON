@@ -23,11 +23,15 @@ import type {
   TokenResponse,
   TutorAnswer,
   User,
+  Wallet,
 } from './types'
 
 const q = (v: string) => encodeURIComponent(v)
 
 export const api = {
+  wallet: {
+    get: (limit = 50) => http.get<Wallet>(`/wallet?limit=${limit}`),
+  },
   auth: {
     login: (username: string, password: string) => http.post<TokenResponse>('/auth/login', { username, password }),
     registerStudent: (body: { username: string; password: string; display_name: string; join_code?: string }) =>

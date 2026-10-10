@@ -29,8 +29,9 @@ from app.engine import budget, investing, safety, savings
 from app.engine.money import SimulationError
 from app.learning import mastery
 from app.models import Scenario, SimulationDecision, SimulationSession, User
+from app.rewards import rules as reward_rules
 
-from . import achievements
+from . import achievements, rewards
 
 
 def make_seed(student_id: Any, scenario_slug: str, attempt: int) -> int:
@@ -376,4 +377,20 @@ def decide(
         evidence = (session.result or {}).get("concept_evidence", {})
         mastery.record(db, student.id, mastery.simulation_evidence(evidence))
         new_badges = achievements.after_simulation(db, student, session, previous_best)
+        issued = rewards.issue(
+            db,
+            student,
+            reward_rules.simulation_awards(
+                session.scenario.slug, session.scenario.kind, session.score, session.result or {}
+            ),
+            source_type="simulation",
+            source_ref=str(session.id),
+        )
+        # JSON-safe summary kept with the result so the replay screen can show it.
+        session.result = {
+            **(session.result or {}),
+            "rewards": [
+                {k: e[k] for k in ("amount", "reason", "rule_key", "concept")} for e in issued
+            ],
+        }
     return outcome, new_badges, previous_best

@@ -8,7 +8,7 @@ import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { api } from '@/lib/api/endpoints'
-import type { Session } from '@/lib/api/types'
+import type { ResultReward, Session } from '@/lib/api/types'
 import { useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { errorMessage, useAsync } from '@/lib/useAsync'
@@ -188,6 +188,7 @@ export default function SimulationPage() {
               previousBest={session.previous_best}
               attempt={session.attempt_number}
               newAchievements={session.new_achievements}
+              rewards={(session.result as { rewards?: ResultReward[] } | null)?.rewards}
               retry={start}
               moduleLink={moduleLink}
               sessionId={session.id}

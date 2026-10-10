@@ -1377,6 +1377,56 @@
         ]
       }
     },
+    "/api/v1/wallet": {
+      "get": {
+        "tags": [
+          "wallet"
+        ],
+        "summary": "Get Wallet",
+        "operationId": "get_wallet_api_v1_wallet_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": [
@@ -1596,6 +1646,14 @@
             },
             "type": "array",
             "title": "New Achievements",
+            "default": []
+          },
+          "rewards": {
+            "items": {
+              "$ref": "#/components/schemas/RewardEntryOut"
+            },
+            "type": "array",
+            "title": "Rewards",
             "default": []
           },
           "submitted_at": {
@@ -2718,6 +2776,78 @@
         ],
         "title": "ResponseIn"
       },
+      "RewardEntryOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "entry_type": {
+            "type": "string",
+            "enum": [
+              "reward",
+              "transfer_out"
+            ],
+            "title": "Entry Type"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "rule_key": {
+            "type": "string",
+            "title": "Rule Key"
+          },
+          "source_type": {
+            "type": "string",
+            "title": "Source Type"
+          },
+          "source_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Ref"
+          },
+          "concept": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Concept"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "entry_type",
+          "amount",
+          "reason",
+          "rule_key",
+          "source_type",
+          "source_ref",
+          "concept",
+          "created_at"
+        ],
+        "title": "RewardEntryOut"
+      },
       "SavingsProjectionIn": {
         "properties": {
           "monthly_deposit": {
@@ -3420,6 +3550,37 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "WalletOut": {
+        "properties": {
+          "balance": {
+            "type": "integer",
+            "title": "Balance"
+          },
+          "total_earned": {
+            "type": "integer",
+            "title": "Total Earned"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/RewardEntryOut"
+            },
+            "type": "array",
+            "title": "History"
+          },
+          "notice": {
+            "type": "string",
+            "title": "Notice"
+          }
+        },
+        "type": "object",
+        "required": [
+          "balance",
+          "total_earned",
+          "history",
+          "notice"
+        ],
+        "title": "WalletOut"
       }
     },
     "securitySchemes": {

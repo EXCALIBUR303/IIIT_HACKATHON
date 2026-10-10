@@ -438,6 +438,7 @@ export interface AttemptResult {
   misconceptions: { key: string; label: string }[]
   questions: QuestionResult[]
   new_achievements: string[]
+  rewards: RewardEntry[]
   submitted_at: string
 }
 
@@ -525,4 +526,33 @@ export interface TutorAnswer {
 
 export interface ApiErrorBody {
   error: { code: string; message: string; field?: string; details?: { field: string; message: string }[] }
+}
+
+// --- Educational reward wallet (fictional learning money) -----------------------
+
+export interface RewardEntry {
+  id: number
+  entry_type: 'reward' | 'transfer_out'
+  amount: number
+  reason: string
+  rule_key: string
+  source_type: string
+  source_ref: string | null
+  concept: string | null
+  created_at: string
+}
+
+export interface Wallet {
+  balance: number
+  total_earned: number
+  history: RewardEntry[]
+  notice: string
+}
+
+/** Reward summary stored with a finished simulation result. */
+export interface ResultReward {
+  amount: number
+  reason: string
+  rule_key: string
+  concept: string | null
 }

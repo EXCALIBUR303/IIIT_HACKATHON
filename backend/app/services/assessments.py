@@ -21,8 +21,9 @@ from app.models import (
     SimulationSession,
     User,
 )
+from app.rewards import rules as reward_rules
 
-from . import achievements
+from . import achievements, rewards
 from .progress import assessment_bests
 
 ONE_SHOT = ("initial", "post")
@@ -172,6 +173,15 @@ def submit(
     if assessment.slug == "post":
         badges.append("full_circle")
     new_badges = achievements.award(db, student, badges)
+    issued = rewards.issue(
+        db,
+        student,
+        reward_rules.assessment_awards(
+            assessment.slug, assessment.kind, scored["score_pct"], scored["flagged_guessing"]
+        ),
+        source_type="assessment",
+        source_ref=str(attempt.id),
+    )
 
     return {
         "attempt_id": attempt.id,
@@ -205,6 +215,7 @@ def submit(
             for s in scored["scored"]
         ],
         "new_achievements": new_badges,
+        "rewards": issued,
         "submitted_at": attempt.submitted_at,
     }
 
@@ -260,5 +271,6 @@ def result_of(db: Session, attempt: AssessmentAttempt) -> dict[str, Any]:
             for s in scored["scored"]
         ],
         "new_achievements": [],
+        "rewards": rewards.for_source(db, attempt.student_id, str(attempt.id)),
         "submitted_at": attempt.submitted_at,
     }

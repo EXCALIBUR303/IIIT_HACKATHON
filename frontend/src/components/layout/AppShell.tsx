@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, ClipboardCheck, Home, LogOut, Menu, Settings, Sparkles, Users, Wrench, X } from 'lucide-react'
+import { BarChart3, BookOpen, ClipboardCheck, Coins, Home, LogOut, Menu, Settings, Sparkles, Users, Wrench, X } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Logo } from '@/components/brand/Logo'
@@ -21,6 +21,7 @@ const STUDENT_NAV: NavItem[] = [
   { to: '/app/explore', label: 'nav.practice', icon: Wrench },
   { to: '/app/assessments', label: 'nav.assessments', icon: ClipboardCheck },
   { to: '/app/progress', label: 'nav.progress', icon: BarChart3 },
+  { to: '/app/wallet', label: 'nav.wallet', icon: Coins },
   { to: '/app/settings', label: 'nav.settings', icon: Settings },
 ]
 

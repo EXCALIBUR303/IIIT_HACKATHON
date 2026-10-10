@@ -386,3 +386,36 @@ class StudentAchievement(Base):
     awarded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     achievement: Mapped[Achievement] = relationship()
+
+
+class RewardLedgerEntry(Base):
+    """Append-only educational reward ledger (fictional learning money, whole rupees).
+
+    The balance is ``SUM(amount)``; there is no mutable balance column. The unique
+    (student, idempotency key) pair makes every issuance exactly-once.
+    """
+
+    __tablename__ = "reward_ledger"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    entry_type: Mapped[str] = mapped_column(String(20))
+    amount: Mapped[int] = mapped_column(Integer)
+    rule_key: Mapped[str] = mapped_column(String(40))
+    source_type: Mapped[str] = mapped_column(String(20))
+    source_ref: Mapped[str | None] = mapped_column(String(80))
+    concept: Mapped[str | None] = mapped_column(String(40))
+    reason: Mapped[str] = mapped_column(Text)
+    idempotency_key: Mapped[str] = mapped_column(String(120))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("student_id", "idempotency_key", name="uq_reward_idempotency"),
+        CheckConstraint(
+            "(entry_type = 'reward' AND amount > 0) "
+            "OR (entry_type = 'transfer_out' AND amount < 0)",
+            name="amount_sign",
+        ),
+    )

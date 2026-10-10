@@ -5,12 +5,14 @@ import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-[background-color,color,box-shadow,transform] duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-white shadow-sm hover:bg-primary-hover',
-        accent: 'bg-accent-ink text-white shadow-sm hover:bg-emerald-800',
+        // Primary actions are emerald; indigo is the brand accent (see the design tokens).
+        primary: 'bg-accent-ink text-white shadow-[0_1px_2px_rgb(4_120_87/0.3),inset_0_1px_0_rgb(255_255_255/0.12)] hover:bg-[#065f46]',
+        accent: 'bg-accent-ink text-white shadow-sm hover:bg-[#065f46]',
+        brand: 'bg-primary text-white shadow-sm hover:bg-primary-hover',
         secondary: 'bg-primary-soft text-primary-ink hover:bg-primary-100',
         outline: 'border border-line-strong bg-surface text-ink hover:bg-canvas',
         ghost: 'text-ink-soft hover:bg-primary-soft hover:text-primary-ink',

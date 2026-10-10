@@ -1,4 +1,5 @@
 import { Bot, MessageCircleQuestion, Send } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Alert } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -76,14 +77,22 @@ export function TutorButton() {
 
   return (
     <>
-      <button
+      {/* Enters once after the page, then only reacts to the pointer. No looping attention-grabber. */}
+      <motion.button
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-[var(--shadow-raised)] hover:bg-primary-hover"
+        initial={{ opacity: 0, y: 12, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 0.6, type: 'spring', stiffness: 320, damping: 26 }}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        className="group fixed bottom-5 right-5 z-30 inline-flex items-center gap-2 rounded-full bg-navy py-2.5 pl-2.5 pr-2.5 text-sm font-semibold text-white shadow-[var(--shadow-hero)] ring-1 ring-white/10 transition-colors hover:bg-navy-2 sm:pr-4"
       >
-        <MessageCircleQuestion className="size-5" aria-hidden />
+        <span className="grid size-8 place-items-center rounded-full bg-primary transition-transform duration-200 group-hover:scale-105" aria-hidden>
+          <MessageCircleQuestion className="size-[18px]" />
+        </span>
         <span className="hidden sm:inline">{t('tutor.title')}</span>
         <span className="sr-only sm:hidden">{t('tutor.title')}</span>
-      </button>
+      </motion.button>
       <Sheet open={open} onOpenChange={setOpen} title={t('tutor.title')} description="Explains money ideas and your own simulation results. It never gives investment advice.">
         <div className="flex h-full flex-col">
           <div className="flex-1 space-y-4" aria-live="polite">

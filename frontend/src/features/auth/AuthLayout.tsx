@@ -49,7 +49,7 @@ function TipCarousel() {
       aria-label="Money tip"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="rounded-2xl border border-primary-100 bg-primary-soft/60 p-4"
+      className="rounded-2xl border border-line bg-canvas p-4"
     >
       <div className="flex items-center justify-between">
         <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.1em] text-primary">
@@ -78,7 +78,7 @@ function TipCarousel() {
             animate={{ opacity: 1, x: 0 }}
             exit={reduce ? undefined : { opacity: 0, x: -12 }}
             transition={{ duration: 0.25 }}
-            className="text-sm leading-relaxed text-primary-ink"
+            className="text-sm leading-relaxed text-ink-soft"
           >
             {TIPS[i]}
           </motion.p>
@@ -98,7 +98,7 @@ export function AuthLayout({ title, subtitle, children, footer }: {
   const reduce = useReducedMotion()
   return (
     <div className="grid min-h-dvh bg-surface lg:grid-cols-[1.1fr_1fr]">
-      <aside className="relative hidden overflow-hidden border-r border-primary-100 bg-[linear-gradient(160deg,#eef2ff_0%,#f8fafc_45%,#ecfdf5_100%)] p-10 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col">
+      <aside className="relative hidden overflow-hidden border-r border-line bg-canvas p-10 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col">
         {/* faint graph paper */}
         <div
           className="pointer-events-none absolute inset-0 opacity-60 [background-image:linear-gradient(to_right,rgb(67_56_202/0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgb(67_56_202/0.06)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_70%)]"
@@ -109,10 +109,7 @@ export function AuthLayout({ title, subtitle, children, footer }: {
             <Logo />
           </Link>
           <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-white/80 px-3 py-1 text-xs font-semibold text-accent-ink shadow-sm">
-            <span className="relative flex size-2">
-              <span className="absolute inset-0 animate-ping rounded-full bg-accent opacity-70" />
-              <span className="relative size-2 rounded-full bg-accent" />
-            </span>
+            <span className="size-2 rounded-full bg-accent" aria-hidden />
             Practice market · fictional
           </span>
         </motion.div>
@@ -127,7 +124,7 @@ export function AuthLayout({ title, subtitle, children, footer }: {
               <motion.span
                 key={w}
                 {...fade(0.32 + i * 0.07)}
-                className="mr-[0.25em] inline-block bg-gradient-to-r from-primary to-accent-ink bg-clip-text text-transparent"
+                className="mr-[0.25em] inline-block text-primary"
               >
                 {w}
               </motion.span>
@@ -143,25 +140,18 @@ export function AuthLayout({ title, subtitle, children, footer }: {
         </motion.p>
       </aside>
 
-      <main className="relative flex flex-col justify-center overflow-hidden bg-[radial-gradient(circle_at_1px_1px,rgb(15_23_42/0.07)_1px,transparent_0)] [background-size:22px_22px] px-4 py-10 sm:px-10">
+      <main className="relative flex flex-col justify-center overflow-hidden bg-surface px-4 py-10 sm:px-10">
         <motion.div {...fade(0.15)} className="relative mx-auto w-full max-w-md">
           <Link to="/" className="inline-block lg:hidden">
             <Logo />
           </Link>
           <p className="mb-6 mt-3 text-sm font-semibold text-primary lg:hidden">Learn the market without risking money.</p>
 
-          {/* Card with a slowly rotating indigo→emerald edge */}
-          <div className="relative overflow-hidden rounded-[28px] p-[1.5px] shadow-[0_24px_60px_-24px_rgb(67_56_202/0.35)]">
-            <motion.div
-              className="absolute -inset-[60%] bg-[conic-gradient(from_0deg,#4338ca,#10b981,#e0e7ff,#4338ca)]"
-              animate={reduce ? undefined : { rotate: 360 }}
-              transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-              aria-hidden
-            />
-            <div className="relative rounded-[27px] bg-white/95 p-6 backdrop-blur sm:p-8">
+          <div className="rounded-[24px] border border-line bg-surface shadow-[0_24px_60px_-28px_rgb(11_22_51/0.35)]">
+            <div className="p-6 sm:p-8">
               <motion.span
                 {...fade(0.3)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary-soft to-accent-soft px-3 py-1 text-xs font-bold text-primary-ink"
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-bold text-primary-ink"
               >
                 <Sparkles className="size-3.5 text-primary" aria-hidden />
                 {greeting()}
@@ -172,19 +162,13 @@ export function AuthLayout({ title, subtitle, children, footer }: {
                 <motion.path
                   d="M2 11 C 30 11, 40 4, 62 7 S 100 12, 120 5 L 158 2"
                   fill="none"
-                  stroke="url(#rr-underline)"
+                  stroke="var(--color-accent)"
                   strokeWidth="3"
                   strokeLinecap="round"
                   initial={reduce ? false : { pathLength: 0 }}
                   animate={{ pathLength: 1 }}
                   transition={{ delay: 0.5, duration: 0.9, ease: 'easeOut' }}
                 />
-                <defs>
-                  <linearGradient id="rr-underline" x1="0" x2="1">
-                    <stop offset="0" stopColor="#4338ca" />
-                    <stop offset="1" stopColor="#10b981" />
-                  </linearGradient>
-                </defs>
               </svg>
               {subtitle && <p className="mt-2 text-ink-soft">{subtitle}</p>}
               <div className="mt-7">{children}</div>

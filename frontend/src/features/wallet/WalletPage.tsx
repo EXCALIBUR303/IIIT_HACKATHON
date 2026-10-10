@@ -130,7 +130,7 @@ export default function WalletPage() {
               </EmptyState>
             ) : (
               <div data-reveal="" className="overflow-hidden rounded-[22px] border border-line bg-surface shadow-[var(--shadow-card)]">
-                <div className="overflow-x-auto">
+                <div className="relative overflow-x-auto">
                   <table className="w-full min-w-[560px] text-sm">
                     <thead>
                       <tr className="border-b-2 border-ink/80 bg-canvas text-left font-mono text-[11px] uppercase tracking-wider text-muted">

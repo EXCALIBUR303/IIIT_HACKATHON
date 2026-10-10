@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 import { loginAsNewStudent } from './helpers'
 
-const PAGES = ['/', '/journey-demo', '/login', '/app', '/app/learn', '/app/wallet', '/app/portfolio', '/app/banking', '/app/progress', '/app/play/money-lab-500']
+const PAGES = ['/', '/journey-demo', '/login', '/app', '/app/learn', '/app/wallet', '/app/portfolio', '/app/banking', '/app/progress', '/app/explore', '/app/settings', '/app/assessments', '/app/play/money-lab-500']
 
 for (const path of PAGES) {
   test(`axe: no serious or critical violations on ${path}`, async ({ page, request }) => {

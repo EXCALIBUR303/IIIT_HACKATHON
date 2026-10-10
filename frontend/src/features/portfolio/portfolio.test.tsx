@@ -34,11 +34,18 @@ const portfolio = {
 
 describe('PortfolioPage', () => {
   it('explains why it is locked and links back to learning', async () => {
-    mockFetch(() => ({ body: { ...base, access: access(false, 'Finish one investing mission first.'), portfolio: null, instruments: [] } }))
+    mockFetch((url) =>
+      url === '/modules'
+        ? { body: [{ slug: 'understand-investing', pillar: 'investing' }] }
+        : { body: { ...base, access: access(false, 'Finish one investing mission first.'), portfolio: null, instruments: [] } },
+    )
     renderWithProviders(<PortfolioPage />)
     expect(await screen.findByText('Not unlocked yet')).toBeInTheDocument()
-    expect(screen.getByText(/finish one investing mission first/i)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /go to your missions/i })).toBeInTheDocument()
+    expect(screen.getByText(/finish one investing mission first\./i)).toBeInTheDocument()
+    // The call to action goes straight to the investing track, and nothing in the preview is a control.
+    expect(await screen.findByRole('link', { name: /go to the investing mission/i })).toHaveAttribute('href', '/app/learn/understand-investing')
+    expect(screen.getByText('What you will unlock')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /buy|sell|start portfolio quest/i })).not.toBeInTheDocument()
   })
 
   it('invites an unlocked student to start with practice cash', async () => {

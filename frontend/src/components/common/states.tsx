@@ -1,11 +1,11 @@
 import { RefreshCw, SearchX } from 'lucide-react'
-import { animate, stagger, svg } from 'animejs'
-import { useRef, type ReactNode } from 'react'
+import { motion } from 'motion/react'
+import type { ReactNode } from 'react'
 import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useAnime } from '@/lib/anime'
 import { useI18n } from '@/lib/i18n'
+import { fadeUp, staggerChildren } from '@/lib/motion'
 
 export function LoadingState({ rows = 3, label }: { rows?: number; label?: string }) {
   const { t } = useI18n()
@@ -38,60 +38,75 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
   )
 }
 
-export function EmptyState({ title, children, action }: { title: string; children?: ReactNode; action?: ReactNode }) {
+export function EmptyState({ title, children, action, icon: Icon = SearchX }: { title: string; children?: ReactNode; action?: ReactNode; icon?: typeof SearchX }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-dashed border-line-strong bg-surface px-6 py-10 text-center">
-      <SearchX className="mb-3 size-8 text-muted" aria-hidden />
-      <p className="font-semibold">{title}</p>
+    <div className="flex flex-col items-center rounded-[var(--radius-panel)] border border-dashed border-line-strong bg-surface px-6 py-10 text-center">
+      <span className="mb-3 grid size-11 place-items-center rounded-xl bg-canvas text-muted ring-1 ring-line" aria-hidden>
+        <Icon className="size-5" />
+      </span>
+      <p className="font-bold">{title}</p>
       {children && <div className="mt-1 max-w-md text-sm text-muted">{children}</div>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   )
 }
 
+/** Page title block. One quiet entrance; the page content does the talking. */
 export function PageHeader({ eyebrow, title, description, actions }: {
   eyebrow?: string
   title: string
   description?: ReactNode
   actions?: ReactNode
 }) {
-  const ref = useRef<HTMLElement>(null)
-  useAnime(
-    ref,
-    () => {
-      animate('.ph-eyebrow', { opacity: { from: 0 }, x: { from: -12 }, duration: 500, ease: 'outExpo' })
-      animate('.ph-word', { opacity: { from: 0 }, y: { from: '0.55em' }, rotate: { from: 4 }, delay: stagger(45, { start: 80 }), duration: 650, ease: 'outExpo' })
-      animate('.ph-desc', { opacity: { from: 0 }, y: { from: 10 }, delay: 300, duration: 600, ease: 'outQuad' })
-      animate(svg.createDrawable('.ph-rule'), { draw: ['0 0', '0 1'], delay: 250, duration: 1100, ease: 'inOutQuart' })
-      animate('.ph-actions', { opacity: { from: 0 }, scale: { from: 0.95 }, delay: 350, duration: 500, ease: 'outBack(1.6)' })
-    },
-    [title],
-  )
   return (
-    <header ref={ref} className="mb-7 sm:mb-9">
+    <motion.header variants={staggerChildren(0.05)} initial="hidden" animate="show" className="mb-7 border-b border-line pb-6 sm:mb-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
           {eyebrow && (
-            <p className="ph-eyebrow mb-2 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.16em] text-primary">
-              <span className="h-px w-6 bg-primary" aria-hidden />
+            <motion.p variants={fadeUp} className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-primary">
               {eyebrow}
-            </p>
+            </motion.p>
           )}
-          <h1 className="text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-[2.5rem]" aria-label={title}>
-            {title.split(' ').map((w, i) => (
-              <span key={i} className="ph-word mr-[0.24em] inline-block" aria-hidden>
-                {w}
-              </span>
-            ))}
-          </h1>
-          {description && <div className="ph-desc mt-3 max-w-xl text-[0.95rem] leading-relaxed text-ink-soft">{description}</div>}
+          <motion.h1 variants={fadeUp} className="text-[1.75rem] font-extrabold leading-[1.15] tracking-tight sm:text-[2.15rem]">
+            {title}
+          </motion.h1>
+          {description && (
+            <motion.div variants={fadeUp} className="mt-2.5 max-w-xl text-[0.95rem] leading-relaxed text-ink-soft">
+              {description}
+            </motion.div>
+          )}
         </div>
-        {actions && <div className="ph-actions flex shrink-0 gap-2">{actions}</div>}
+        {actions && (
+          <motion.div variants={fadeUp} className="flex shrink-0 flex-wrap gap-2">
+            {actions}
+          </motion.div>
+        )}
       </div>
-      <svg viewBox="0 0 1000 8" preserveAspectRatio="none" className="mt-6 h-2 w-full" aria-hidden>
-        <path className="ph-rule" d="M0 4 H1000" stroke="var(--color-line-strong)" strokeWidth="1" strokeDasharray="2 5" vectorEffect="non-scaling-stroke" />
-        <circle cx="0" cy="4" r="3.5" fill="var(--color-primary)" />
-      </svg>
-    </header>
+    </motion.header>
+  )
+}
+
+/** A titled section inside a page, with consistent spacing and an optional action link. */
+export function Section({ id, title, description, action, children, className }: {
+  id: string
+  title: string
+  description?: ReactNode
+  action?: ReactNode
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <section aria-labelledby={id} className={className}>
+      <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 id={id} className="text-base font-extrabold sm:text-lg">
+            {title}
+          </h2>
+          {description && <p className="mt-0.5 text-sm text-muted">{description}</p>}
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
   )
 }

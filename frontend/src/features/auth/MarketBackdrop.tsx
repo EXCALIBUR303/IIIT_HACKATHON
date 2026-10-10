@@ -81,12 +81,8 @@ function TickerChip({ symbol, start, className, delay }: (typeof TICKERS)[number
   return (
     <motion.span
       initial={reduce ? false : { opacity: 0, y: 12, scale: 0.94 }}
-      animate={reduce ? undefined : { opacity: 1, y: [0, -5, 0], scale: 1 }}
-      transition={{
-        opacity: { delay: 0.9 + delay * 0.25, duration: 0.4 },
-        scale: { delay: 0.9 + delay * 0.25, duration: 0.4 },
-        y: { delay: 1.3 + delay * 0.25, duration: 4 + delay, repeat: Infinity, ease: 'easeInOut' },
-      }}
+      animate={reduce ? undefined : { opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: 0.9 + delay * 0.25, duration: 0.4 }}
       className={cn(
         'pointer-events-none absolute z-10 inline-flex items-center gap-2 rounded-xl border bg-white/90 px-3 py-2 text-xs font-bold shadow-[var(--shadow-raised)] backdrop-blur-sm transition-colors duration-500',
         flash === 'up' ? 'border-accent/60 bg-accent-soft' : flash === 'down' ? 'border-danger/50 bg-danger-soft' : 'border-line',

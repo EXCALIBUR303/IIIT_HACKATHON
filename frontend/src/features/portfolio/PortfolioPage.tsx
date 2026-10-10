@@ -1,7 +1,6 @@
 import { animate, svg } from 'animejs'
 import { ArrowRight, CalendarClock, LineChart as LineChartIcon, Lock, RotateCcw, Send } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { DomainChip } from '@/components/common/rewards'
 import { ErrorState, LoadingState, PageHeader } from '@/components/common/states'
@@ -17,6 +16,7 @@ import { inr, inrPaise, relativeDate, signedPaise } from '@/lib/format'
 import { useAsync } from '@/lib/useAsync'
 import { cn } from '@/lib/utils'
 import { useAnime, useFlick } from '@/lib/anime'
+import { LockedJourney } from './LockedJourney'
 
 const newRequestId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID().replace(/-/g, '') : `${Date.now()}${Math.random().toString(16).slice(2)}`.padEnd(16, '0')
@@ -98,26 +98,7 @@ function PortfolioBody({ view, event, busy, error, run, clearError }: {
   clearError: () => void
 }) {
   const p = view.portfolio
-  if (!view.access.open) {
-    return (
-      <Card className="p-6 sm:p-8">
-        <div className="flex items-start gap-4">
-          <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-line text-muted" aria-hidden>
-            <Lock className="size-5" />
-          </span>
-          <div>
-            <h2 className="text-lg font-extrabold">Not unlocked yet</h2>
-            <p className="mt-1 text-ink-soft">{view.access.reason}</p>
-            <Button asChild className="mt-4">
-              <Link to="/app/learn">
-                Go to your missions <ArrowRight />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </Card>
-    )
-  }
+  if (!view.access.open) return <LockedJourney view={view} />
   if (!p) {
     return (
       <Card className="p-6 sm:p-8">
@@ -348,7 +329,7 @@ function Holdings({ view, run }: { view: PortfolioView; run: (a: () => Promise<P
       {rows.length === 0 ? (
         <Card className="p-5 text-sm text-ink-soft">You hold only cash right now. Buy something from the fictional market above to see how it behaves as years pass.</Card>
       ) : (
-        <Card className="overflow-x-auto">
+        <Card className="relative overflow-x-auto">
           <table className="w-full min-w-[34rem] text-left text-sm">
             <caption className="sr-only">Current holdings</caption>
             <thead className="border-b border-line text-xs uppercase tracking-wider text-muted">

@@ -279,7 +279,7 @@ function Overview({ data }: { data: CohortOverview }) {
               <CardTitle>Students</CardTitle>
               <CardDescription>Nicknames only. RupeeRise collects no contact details or real financial data.</CardDescription>
             </CardHeader>
-            <CardContent className="overflow-x-auto">
+            <CardContent className="relative overflow-x-auto">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-line text-xs uppercase tracking-wider text-muted">

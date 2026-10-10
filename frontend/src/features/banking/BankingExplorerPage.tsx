@@ -70,7 +70,7 @@ function MetroMap({ stops, active, onPick, completed, total }: { stops: Explorer
           {completed} of {total} stops understood
         </p>
       </div>
-      <div className="-mx-2 overflow-x-auto px-2 pb-1">
+      <div className="relative -mx-2 overflow-x-auto px-2 pb-1">
         <ol className="relative flex min-w-[560px] justify-between" aria-label="Journey stops">
           <span className="absolute left-[18px] right-[18px] top-[17px] h-1.5 rounded-full bg-line" aria-hidden>
             <span className="mt-fill block h-full origin-left rounded-full bg-gradient-to-r from-primary to-accent" style={{ width: `${fill}%` }} />

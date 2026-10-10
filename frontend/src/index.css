@@ -9,13 +9,19 @@
 @theme {
   --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
-  --color-canvas: #f8fafc;
+  /* Surfaces: a pale blue-grey canvas so white cards read as raised. */
+  --color-canvas: #f4f6fb;
+  --color-canvas-deep: #eaeef6;
   --color-surface: #ffffff;
-  --color-ink: #0f172a;
-  --color-ink-soft: #334155;
-  --color-muted: #5b6b82;
-  --color-line: #e2e8f0;
-  --color-line-strong: #cbd5e1;
+  /* Deep navy type. muted stays >= 4.5:1 on canvas and white. */
+  --color-ink: #0b1633;
+  --color-ink-soft: #2a3854;
+  --color-muted: #56657f;
+  --color-line: #e3e8f1;
+  --color-line-strong: #c9d2e1;
+  /* The dark "desk" used by hero panels. */
+  --color-navy: #0f1838;
+  --color-navy-2: #18244d;
 
   --color-primary: #4338ca;
   --color-primary-hover: #3730a3;
@@ -51,9 +57,22 @@
   --color-reward-soft: #fff6dd;
   --color-reward-ink: #8a5a00;
 
+  /* Practice / portfolio (cyan-teal), distinct from learning (indigo) and rewards (amber). */
+  --color-practice: #0e7490;
+  --color-practice-ink: #155e75;
+  --color-practice-soft: #ecfeff;
+
   --radius-card: 1rem;
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px -4px rgb(15 23 42 / 0.06);
-  --shadow-raised: 0 2px 4px rgb(15 23 42 / 0.05), 0 12px 32px -8px rgb(67 56 202 / 0.18);
+  --radius-panel: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(11 22 51 / 0.04), 0 2px 8px -2px rgb(11 22 51 / 0.05);
+  --shadow-raised: 0 2px 4px rgb(11 22 51 / 0.05), 0 14px 32px -12px rgb(11 22 51 / 0.18);
+  --shadow-hero: 0 30px 60px -30px rgb(15 24 56 / 0.65);
+
+  /* Motion tokens (mirrored in src/lib/motion.ts for JS animation). */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms;
+  --dur-base: 240ms;
+  --dur-slow: 480ms;
 }
 
 @layer base {
@@ -129,6 +148,15 @@ input[type='range'].rr-range::-webkit-slider-thumb {
   background: #fff;
   border: 3px solid var(--range-color, var(--color-primary));
   box-shadow: 0 1px 3px rgb(15 23 42 / 0.2);
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+input[type='range'].rr-range:hover::-webkit-slider-thumb,
+input[type='range'].rr-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--range-color, var(--color-primary)) 18%, transparent);
+}
+input[type='range'].rr-range:focus-visible {
+  outline: none;
 }
 input[type='range'].rr-range::-moz-range-thumb {
   width: 1rem;
@@ -144,3 +172,37 @@ input[type='range'].rr-range::-moz-range-thumb {
   to { opacity: 1; transform: none; }
 }
 .rr-tab-in[data-state='active'] { animation: rr-tab-in 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Interactive surfaces: a small lift, a firmer border and a soft shadow. Transform and
+   shadow only, so it stays cheap; reduced-motion users keep the colour change only. */
+@utility lift {
+  transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-raised);
+    border-color: var(--color-line-strong);
+  }
+  &:focus-visible {
+    box-shadow: var(--shadow-raised);
+  }
+}
+html.pref-reduced-motion .lift:hover {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lift:hover {
+    transform: none;
+  }
+}
+
+/* Faint grid used behind hero panels and the login chart. */
+@utility bg-grid {
+  background-image: linear-gradient(to right, rgb(11 22 51 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(11 22 51 / 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+@utility bg-grid-dark {
+  background-image: linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}

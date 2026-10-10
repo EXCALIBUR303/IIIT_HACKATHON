@@ -1,26 +1,170 @@
-import { animate, stagger, svg } from 'animejs'
-import { ArrowRight, Check, Gamepad2, ListChecks } from 'lucide-react'
-import { useRef } from 'react'
+import { ArrowRight, Check, ChevronDown, Gamepad2, ListChecks, Lock, Target } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { DifficultyBadge } from '@/components/common/badges'
 import { PILLARS, PillarIcon } from '@/components/common/pillars'
 import { ErrorState, LoadingState, PageHeader } from '@/components/common/states'
-import { tiltHandlers, useAnime } from '@/lib/anime'
+import { ProgressRing } from '@/components/motion/ProgressRing'
 import { api } from '@/lib/api/endpoints'
+import type { Module, Progress } from '@/lib/api/types'
 import { useI18n } from '@/lib/i18n'
+import { EASE_OUT, fadeUp, staggerChildren } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 import { useAsync } from '@/lib/useAsync'
 
-function Ring({ value, color }: { value: number; color: string }) {
-  const r = 22
-  const c = 2 * Math.PI * r
+type ModuleProgress = Progress['modules'][number]
+
+function statusOf(mp?: ModuleProgress) {
+  if (mp?.completed) return { label: 'Complete', cta: 'Review', tone: 'text-accent-ink bg-accent-soft' }
+  if (mp && mp.percent > 0) return { label: 'In progress', cta: 'Continue', tone: 'text-primary-ink bg-primary-soft' }
+  return { label: 'Not started', cta: 'Start', tone: 'text-muted bg-canvas' }
+}
+
+/** What finishing a module takes, as a checklist the student can read at a glance. */
+function Requirements({ m, mp }: { m: Module; mp?: ModuleProgress }) {
+  const passed = (mp?.quiz_best ?? 0) >= 60
+  const rows = [
+    { done: !!mp?.simulation_done, text: 'Finish one mission' },
+    { done: passed, text: m.quiz_slug ? `Pass the quiz with 60% or more${mp?.quiz_best != null ? ` (best ${mp.quiz_best}%)` : ''}` : 'No quiz in this module' },
+  ]
   return (
-    <div className="relative size-14 shrink-0">
-      <svg viewBox="0 0 56 56" className="size-full -rotate-90" aria-hidden>
-        <circle cx="28" cy="28" r={r} fill="none" stroke="var(--color-line)" strokeWidth="5" />
-        <circle className="mod-ring" cx="28" cy="28" r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round" strokeDasharray={`${(value / 100) * c} ${c}`} />
-      </svg>
-      <span className="absolute inset-0 grid place-items-center font-mono text-xs font-bold">{value}%</span>
+    <ul className="space-y-2">
+      {rows.map((r) => (
+        <li key={r.text} className="flex items-start gap-2 text-sm">
+          <span className={cn('mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border', r.done ? 'border-accent bg-accent text-white' : 'border-line-strong bg-surface')}>
+            {r.done && <Check className="size-3" strokeWidth={3} aria-hidden />}
+          </span>
+          <span className={cn(r.done ? 'text-muted' : 'text-ink-soft')}>{r.text}</span>
+          <span className="sr-only">{r.done ? '(done)' : '(to do)'}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function TrackDetail({ m, mp, color }: { m: Module; mp?: ModuleProgress; color: string }) {
+  const quizOpen = !!mp?.simulation_done
+  return (
+    <div className="grid gap-6 border-t border-line p-5 sm:p-6 md:grid-cols-3">
+      <div>
+        <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted">
+          <Target className="size-3.5" aria-hidden /> You will be able to
+        </p>
+        <ul className="space-y-2">
+          {m.objectives.map((o) => (
+            <li key={o} className="flex gap-2 text-sm text-ink-soft">
+              <span className="mt-[7px] size-1.5 shrink-0 rounded-full" style={{ background: color }} aria-hidden />
+              {o}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted">
+          <Gamepad2 className="size-3.5" aria-hidden /> Missions
+        </p>
+        <ul className="space-y-1.5">
+          {m.scenarios.map((s) => (
+            <li key={s.slug}>
+              <Link to={`/app/play/${s.slug}`} className="group flex items-center justify-between gap-2 rounded-lg border border-line px-3 py-2 text-sm transition-colors hover:border-line-strong hover:bg-canvas">
+                <span className="min-w-0 truncate font-semibold">{s.title}</span>
+                <DifficultyBadge level={s.difficulty} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted">
+          <ListChecks className="size-3.5" aria-hidden /> To complete
+        </p>
+        <Requirements m={m} mp={mp} />
+        {m.quiz_slug &&
+          (quizOpen ? (
+            <Link to={`/app/assessments/${m.quiz_slug}`} className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              {mp?.quiz_best != null ? 'Retake the quiz' : 'Take the quiz'} <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          ) : (
+            <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-muted">
+              <Lock className="size-3.5" aria-hidden /> The quiz opens after a mission.
+            </p>
+          ))}
+      </div>
     </div>
+  )
+}
+
+function Track({ m, mp, open, onToggle, index, total }: { m: Module; mp?: ModuleProgress; open: boolean; onToggle: () => void; index: number; total: number }) {
+  const { t } = useI18n()
+  const meta = PILLARS[m.pillar]
+  const pct = Math.round(mp?.percent ?? 0)
+  const status = statusOf(mp)
+  const panelId = `track-${m.slug}`
+  return (
+    <motion.li variants={fadeUp} className="relative pl-12 sm:pl-16">
+      {/* Node on the path */}
+      <span
+        className={cn(
+          'absolute left-0 top-6 z-10 grid size-9 place-items-center rounded-full border-2 bg-surface font-mono text-sm font-extrabold sm:left-2',
+          mp?.completed ? 'border-accent bg-accent text-white' : 'border-line-strong text-ink-soft',
+        )}
+        style={!mp?.completed && pct > 0 ? { borderColor: meta.color, color: meta.color } : undefined}
+        aria-hidden
+      >
+        {mp?.completed ? <Check className="size-4" strokeWidth={3} /> : index + 1}
+      </span>
+      {index < total - 1 && <span className="absolute bottom-[-1.5rem] left-[17px] top-[3.75rem] w-0.5 bg-line sm:left-[25px]" aria-hidden />}
+
+      <article className={cn('lift overflow-hidden rounded-[var(--radius-panel)] border bg-surface shadow-[var(--shadow-card)]', open ? 'border-line-strong' : 'border-line')}>
+        <div className="relative flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:p-6">
+          <span className="absolute inset-y-0 left-0 w-1" style={{ background: meta.color }} aria-hidden />
+          <div className="flex min-w-0 flex-1 items-start gap-4">
+            <PillarIcon pillar={m.pillar} size={46} />
+            <div className="min-w-0">
+              <p className="flex flex-wrap items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted">
+                Module {m.order}
+                <span className={cn('rounded-full px-2 py-0.5 text-[11px] normal-case tracking-normal', status.tone)}>{status.label}</span>
+              </p>
+              <h2 className="mt-1 text-xl font-extrabold leading-tight">{t(meta.titleKey)}</h2>
+              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-ink-soft">{m.summary}</p>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-4 sm:gap-5">
+            <ProgressRing value={pct} size={58} stroke={5} color={meta.color} label={`${t(meta.titleKey)} progress`} delay={0.2 + index * 0.08} />
+            <div className="flex flex-col gap-2">
+              <Link to={`/app/learn/${m.slug}`} className="group inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-accent-ink px-4 text-sm font-semibold text-white transition-[background-color,transform] duration-150 hover:bg-[#065f46] active:scale-[0.98]">
+                {status.cta} <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden />
+              </Link>
+              <button
+                type="button"
+                onClick={onToggle}
+                aria-expanded={open}
+                aria-controls={panelId}
+                className="inline-flex items-center justify-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-muted transition-colors hover:bg-canvas hover:text-ink"
+              >
+                What’s inside <ChevronDown className={cn('size-3.5 transition-transform duration-200', open && 'rotate-180')} aria-hidden />
+              </button>
+            </div>
+          </div>
+        </div>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              id={panelId}
+              key="detail"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.32, ease: EASE_OUT }}
+              className="overflow-hidden"
+            >
+              <TrackDetail m={m} mp={mp} color={meta.color} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </article>
+    </motion.li>
   )
 }
 
@@ -28,35 +172,31 @@ export default function LearnPage() {
   const { t } = useI18n()
   const modules = useAsync(() => api.content.modules(), [])
   const progress = useAsync(() => api.progress.me(), [])
-  const ref = useRef<HTMLDivElement>(null)
+  const [openSlug, setOpenSlug] = useState<string | null | undefined>(undefined)
 
-  useAnime(
-    ref,
-    () => {
-      if (!modules.data) return
-      animate(svg.createDrawable('.mod-ring'), { draw: ['0 0', '0 1'], delay: stagger(120, { start: 300 }), duration: 1200, ease: 'outExpo' })
-      animate('.mod-chip', { opacity: { from: 0 }, scale: { from: 0.8 }, delay: stagger(25, { start: 400 }), duration: 400, ease: 'outBack(2)' })
-      animate('.mod-num', { opacity: { from: 0 }, x: { from: 30 }, delay: stagger(120, { start: 150 }), duration: 900, ease: 'outExpo' })
-    },
-    [!!modules.data, !!progress.data],
-  )
-
+  const list = modules.data ?? []
   const done = progress.data?.modules.filter((m) => m.completed).length ?? 0
+  // Open the first unfinished track by default, so the page starts on "what next".
+  const firstOpen = list.find((m) => !progress.data?.modules.find((x) => x.slug === m.slug)?.completed)?.slug ?? null
+  const current = openSlug === undefined ? firstOpen : openSlug
 
   return (
-    <div ref={ref}>
+    <div>
       <PageHeader
         eyebrow={t('nav.learn')}
-        title="Four pillars of money skills"
-        description="Each module has story-based simulations at three difficulty levels and a short quiz. Complete one simulation and pass the quiz (60%) to finish a module."
+        title="Four tracks of money skills"
+        description="Each track has story missions at three levels and a short quiz. Finish one mission and pass the quiz (60%) to complete it."
         actions={
           progress.data && (
-            <div className="rounded-xl border border-line bg-surface px-4 py-2 text-center shadow-[var(--shadow-card)]">
-              <p className="font-mono text-2xl font-extrabold">
-                {done}
-                <span className="text-base text-muted">/4</span>
-              </p>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Modules done</p>
+            <div className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-2.5 shadow-[var(--shadow-card)]">
+              <ProgressRing value={(done / 4) * 100} size={40} stroke={4} color="var(--color-accent)" label="Tracks complete">
+                <span className="font-mono text-[11px] font-bold">{done}/4</span>
+              </ProgressRing>
+              <span className="text-sm font-semibold leading-tight">
+                tracks
+                <br />
+                complete
+              </span>
             </div>
           )
         }
@@ -65,72 +205,19 @@ export default function LearnPage() {
       {modules.loading ? (
         <LoadingState rows={4} />
       ) : (
-        <ol className="grid gap-5 md:grid-cols-2">
-          {modules.data?.map((m) => {
-            const meta = PILLARS[m.pillar]
-            const mp = progress.data?.modules.find((x) => x.slug === m.slug)
-            const pct = Math.round(mp?.percent ?? 0)
-            return (
-              <li key={m.slug} data-reveal="">
-                <Link
-                  to={`/app/learn/${m.slug}`}
-                  {...tiltHandlers(5)}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-line bg-surface p-6 shadow-[var(--shadow-card)] transition-[transform,box-shadow] duration-200 ease-out hover:shadow-[var(--shadow-raised)]"
-                >
-                  {/* pillar colour wash that grows on hover */}
-                  <span
-                    className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full opacity-60 transition-transform duration-500 group-hover:scale-[1.6]"
-                    style={{ background: meta.soft }}
-                    aria-hidden
-                  />
-                  <span
-                    className="mod-num pointer-events-none absolute right-5 top-3 font-mono text-6xl font-black leading-none"
-                    style={{ color: meta.color, opacity: 0.14 }}
-                    aria-hidden
-                  >
-                    0{m.order}
-                  </span>
-                  <div className="relative flex items-center gap-3">
-                    <PillarIcon pillar={m.pillar} size={48} />
-                    <div>
-                      <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-muted">Module {m.order}</p>
-                      <h2 className="text-xl font-extrabold leading-tight group-hover:text-primary">{t(meta.titleKey)}</h2>
-                    </div>
-                  </div>
-                  <p className="relative mt-4 text-sm leading-relaxed text-ink-soft">{m.summary}</p>
-                  <ul className="relative mt-4 flex flex-wrap gap-1.5" aria-label="You will learn">
-                    {m.objectives.slice(0, 3).map((o) => (
-                      <li key={o} className="mod-chip rounded-full bg-canvas px-2.5 py-1 text-xs text-ink-soft ring-1 ring-line">
-                        {o}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="relative mt-auto flex items-center gap-4 border-t border-line pt-5 [margin-top:auto]">
-                    <Ring value={pct} color={meta.color} />
-                    <div className="flex-1 space-y-1 text-xs">
-                      <p className="flex items-center gap-1.5 text-ink-soft">
-                        <Gamepad2 className="size-3.5" aria-hidden /> {m.scenarios.length} simulations
-                        {mp?.simulation_done && <Check className="size-3.5 text-accent-ink" aria-label="one done" />}
-                      </p>
-                      <p className="flex items-center gap-1.5 text-ink-soft">
-                        <ListChecks className="size-3.5" aria-hidden /> 1 quiz
-                        {mp?.quiz_best != null && <span className="font-semibold text-accent-ink">best {mp.quiz_best}%</span>}
-                      </p>
-                    </div>
-                    <span
-                      className={cn(
-                        'inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold transition-all group-hover:gap-2.5',
-                        mp?.completed ? 'bg-accent-soft text-accent-ink' : 'bg-primary text-white',
-                      )}
-                    >
-                      {mp?.completed ? 'Review' : pct > 0 ? 'Continue' : 'Start'} <ArrowRight className="size-4" aria-hidden />
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            )
-          })}
-        </ol>
+        <motion.ol variants={staggerChildren(0.07)} initial="hidden" animate="show" className="space-y-6">
+          {list.map((m, i) => (
+            <Track
+              key={m.slug}
+              m={m}
+              mp={progress.data?.modules.find((x) => x.slug === m.slug)}
+              index={i}
+              total={list.length}
+              open={current === m.slug}
+              onToggle={() => setOpenSlug(current === m.slug ? null : m.slug)}
+            />
+          ))}
+        </motion.ol>
       )}
     </div>
   )

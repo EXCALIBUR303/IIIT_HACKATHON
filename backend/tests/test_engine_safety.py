@@ -70,3 +70,34 @@ def test_invalid_answers_rejected(payload):
 
 def test_summary():
     assert safety.summarize([]) == {"score": 0, "correct_verdicts": 0, "total": 0}
+
+
+def test_every_safety_scenario_validates_and_covers_the_required_scam_types():
+    from app.content import loader
+    from app.engine import safety
+
+    seen_flags: set[str] = set()
+    ids: set[str] = set()
+    for sc in loader.scenarios():
+        if sc["kind"] != "safety":
+            continue
+        messages = safety.scenario_from_config(sc["config"])  # raises on bad content
+        for m in messages:
+            assert m.id not in ids, f"duplicate message id {m.id}"
+            ids.add(m.id)
+            seen_flags.update(m.red_flags)
+    # fake investment claims, advance fees, OTP/PIN requests, links, impersonation
+    assert {
+        "too_good",
+        "upfront_fee",
+        "asks_otp_pin",
+        "suspicious_link",
+        "impersonation",
+    } <= seen_flags
+    bodies = " ".join(
+        m["body"].lower()
+        for sc in loader.scenarios()
+        if sc["kind"] == "safety"
+        for m in sc["config"]["messages"]
+    )
+    assert "guaranteed" in bodies and "processing fee" in bodies and "scholarship" in bodies

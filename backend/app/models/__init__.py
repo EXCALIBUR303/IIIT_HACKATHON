@@ -527,3 +527,21 @@ class Reflection(Base):
             name="reflection_confidence",
         ),
     )
+
+
+class ExplorerProgress(Base):
+    """Banking Explorer: attempts and completion per stop (answers are multiple choice only)."""
+
+    __tablename__ = "explorer_progress"
+
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    stop_key: Mapped[str] = mapped_column(String(40), primary_key=True)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    correct: Mapped[bool] = mapped_column(Boolean, default=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+    __table_args__ = (CheckConstraint("attempts >= 0", name="attempts_non_negative"),)

@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from . import (
     assessments,
     auth,
+    banking,
     content,
     educator,
     learning,
@@ -17,6 +18,7 @@ from . import (
 api_router = APIRouter(prefix="/api/v1")
 for module in (
     auth,
+    banking,
     students,
     content,
     simulations,

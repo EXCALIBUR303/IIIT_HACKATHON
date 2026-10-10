@@ -157,6 +157,93 @@
         ]
       }
     },
+    "/api/v1/banking-explorer": {
+      "get": {
+        "tags": [
+          "banking-explorer"
+        ],
+        "summary": "Get Journey",
+        "operationId": "get_journey_api_v1_banking_explorer_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Journey Api V1 Banking Explorer Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/banking-explorer/stops/{stop_key}/answer": {
+      "post": {
+        "tags": [
+          "banking-explorer"
+        ],
+        "summary": "Answer Stop",
+        "operationId": "answer_stop_api_v1_banking_explorer_stops__stop_key__answer_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "stop_key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Stop Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Answer Stop Api V1 Banking Explorer Stops  Stop Key  Answer Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/students/me/profile": {
       "get": {
         "tags": [
@@ -398,7 +485,8 @@
                     "budget",
                     "savings",
                     "investing",
-                    "safety"
+                    "safety",
+                    "money_lab"
                   ],
                   "type": "string"
                 },
@@ -1997,6 +2085,20 @@
         ],
         "title": "AchievementOut"
       },
+      "AnswerIn": {
+        "properties": {
+          "selected": {
+            "type": "string",
+            "maxLength": 5,
+            "title": "Selected"
+          }
+        },
+        "type": "object",
+        "required": [
+          "selected"
+        ],
+        "title": "AnswerIn"
+      },
       "AssessmentSummary": {
         "properties": {
           "slug": {
@@ -3499,7 +3601,8 @@
               "budget",
               "savings",
               "investing",
-              "safety"
+              "safety",
+              "money_lab"
             ],
             "title": "Kind"
           },
@@ -3585,7 +3688,8 @@
               "budget",
               "savings",
               "investing",
-              "safety"
+              "safety",
+              "money_lab"
             ],
             "title": "Kind"
           },
@@ -3684,7 +3788,8 @@
               "budget",
               "savings",
               "investing",
-              "safety"
+              "safety",
+              "money_lab"
             ],
             "title": "Kind"
           },
@@ -3807,7 +3912,8 @@
               "budget",
               "savings",
               "investing",
-              "safety"
+              "safety",
+              "money_lab"
             ],
             "title": "Kind"
           },

@@ -24,6 +24,8 @@ AMOUNTS: dict[str, int] = {
     "quiz_strong": 25,
     "check_done": 20,
     "reflect_correct": 10,
+    "explorer_stop": 10,
+    "explorer_complete": 25,
 }
 
 PASS_SCORE = 60
@@ -150,4 +152,24 @@ def reflection_award(question_key: str, concept: str) -> Award:
         f"reflect:{question_key}:correct",
         "Explained why your result happened.",
         concept,
+    )
+
+
+def explorer_stop_award(stop_key: str, concept: str) -> Award:
+    return Award(
+        "explorer_stop",
+        AMOUNTS["explorer_stop"],
+        f"explorer:{stop_key}:correct",
+        "Understood a Banking Explorer stop.",
+        concept,
+    )
+
+
+def explorer_complete_award() -> Award:
+    return Award(
+        "explorer_complete",
+        AMOUNTS["explorer_complete"],
+        "mission:banking_explorer:complete",
+        "Completed the whole Banking Explorer journey.",
+        "banking_basics",
     )

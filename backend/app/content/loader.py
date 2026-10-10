@@ -53,3 +53,7 @@ PILLARS = ("budgeting", "saving", "investing", "safety")
 
 def reflections() -> list[dict[str, Any]]:
     return load("reflections")
+
+
+def banking_explorer() -> dict[str, Any]:
+    return load("banking_explorer")

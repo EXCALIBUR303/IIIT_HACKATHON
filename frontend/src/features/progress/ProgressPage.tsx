@@ -1,4 +1,6 @@
+import { animate, stagger } from 'animejs'
 import { ArrowRight, Info, Sparkles, Target } from 'lucide-react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { AchievementTile } from '@/components/common/badges'
@@ -6,13 +8,14 @@ import { PILLAR_ORDER, PILLARS, PillarIcon } from '@/components/common/pillars'
 import { ErrorState, LoadingState, PageHeader } from '@/components/common/states'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ProgressBar } from '@/components/ui/progress'
 import { LEVEL_STYLE, recommendationLink } from '@/features/dashboard/DashboardPage'
 import { api } from '@/lib/api/endpoints'
 import { relativeDate } from '@/lib/format'
 import { useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { useAsync } from '@/lib/useAsync'
+import { useAnime } from '@/lib/anime'
+import type { Progress } from '@/lib/api/types'
 import { StatTile } from '../simulations/shared'
 import { LearningScoreCard } from './LearningScoreCard'
 
@@ -144,47 +147,7 @@ export default function ProgressPage() {
         </Card>
       </div>
 
-      <section aria-labelledby="concepts-h" className="space-y-3">
-        <h2 id="concepts-h" className="text-lg font-bold">
-          Concept mastery by pillar
-        </h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {PILLAR_ORDER.map((pillar) => {
-            const m = p.modules.find((x) => x.pillar === pillar)
-            return (
-              <Card key={pillar} className="p-5">
-                <div className="flex items-center gap-3">
-                  <PillarIcon pillar={pillar} />
-                  <div className="flex-1">
-                    <p className="font-bold">{t(PILLARS[pillar].titleKey)}</p>
-                    <p className="text-xs text-muted">
-                      Module {m?.completed ? 'completed' : `${m?.percent ?? 0}% complete`}
-                      {m?.quiz_best != null && ` · quiz best ${m.quiz_best}%`}
-                    </p>
-                  </div>
-                </div>
-                <ul className="mt-4 space-y-3">
-                  {p.concepts
-                    .filter((c) => c.pillar === pillar)
-                    .map((c) => (
-                      <li key={c.concept}>
-                        <div className="flex justify-between text-sm">
-                          <span>{c.title}</span>
-                          <span className={cn('text-xs font-semibold', LEVEL_STYLE[c.level].color)}>
-                            {LEVEL_STYLE[c.level].label}
-                            {c.mastery != null && ` · ${Math.round(c.mastery * 100)}%`}
-                          </span>
-                        </div>
-                        <ProgressBar value={(c.mastery ?? 0) * 100} label={`${c.title} mastery`} className="mt-1 h-1.5" color={LEVEL_STYLE[c.level].bar} />
-                        <p className="mt-0.5 text-[0.7rem] text-muted">{c.evidence_count} piece(s) of evidence</p>
-                      </li>
-                    ))}
-                </ul>
-              </Card>
-            )
-          })}
-        </div>
-      </section>
+      <MasteryMap p={p} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
         <Card>
@@ -224,5 +187,107 @@ export default function ProgressPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+/** Every concept as a tile, coloured by how well it is understood. Point at or tap one for the detail. */
+function MasteryMap({ p }: { p: Progress }) {
+  const { t } = useI18n()
+  const ref = useRef<HTMLElement>(null)
+  const [sel, setSel] = useState(() => p.concepts.find((c) => c.level !== 'not_started') ?? p.concepts[0])
+
+  useAnime(
+    ref,
+    () => {
+      animate('.hm-cell', { scale: { from: 0.4 }, opacity: { from: 0 }, delay: stagger(30, { start: 200 }), duration: 550, ease: 'outBack(1.8)' })
+    },
+    [],
+  )
+
+  const fill = (m: number | null, level: keyof typeof LEVEL_STYLE) =>
+    level === 'not_started' ? 'var(--color-canvas)' : `color-mix(in srgb, ${LEVEL_STYLE[level].bar} ${Math.round(20 + (m ?? 0) * 45)}%, white)`
+
+  return (
+    <section ref={ref} aria-labelledby="concepts-h" data-reveal="" className="rounded-[22px] border border-line bg-surface p-5 shadow-[var(--shadow-card)] sm:p-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <h2 id="concepts-h" className="text-lg font-extrabold">
+            Concept mastery by pillar
+          </h2>
+          <p className="mt-1 text-sm text-muted">Darker means stronger. Point at a tile, or tab to it, to see the evidence behind it.</p>
+        </div>
+        <ul className="flex flex-wrap gap-3 text-xs text-muted" aria-label="Legend">
+          {(['not_started', 'needs_practice', 'developing', 'mastered'] as const).map((l) => (
+            <li key={l} className="inline-flex items-center gap-1.5">
+              <span className="size-3 rounded-[4px] ring-1 ring-line" style={{ background: fill(0.8, l) }} /> {LEVEL_STYLE[l].label}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-5 grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {PILLAR_ORDER.map((pillar) => {
+            const m = p.modules.find((x) => x.pillar === pillar)
+            return (
+              <div key={pillar}>
+                <div className="mb-2 flex items-center gap-2">
+                  <PillarIcon pillar={pillar} size={28} />
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-bold">{t(PILLARS[pillar].titleKey)}</p>
+                    <p className="font-mono text-[10px] text-muted">{m?.completed ? 'complete' : `${Math.round(m?.percent ?? 0)}%`}</p>
+                  </div>
+                </div>
+                <ul className="grid grid-cols-2 gap-1.5">
+                  {p.concepts
+                    .filter((c) => c.pillar === pillar)
+                    .map((c) => {
+                      const on = sel?.concept === c.concept
+                      return (
+                        <li key={c.concept}>
+                          <button
+                            type="button"
+                            onMouseEnter={() => setSel(c)}
+                            onFocus={() => setSel(c)}
+                            onClick={() => setSel(c)}
+                            aria-pressed={on}
+                            aria-label={`${c.title}: ${LEVEL_STYLE[c.level].label}${c.mastery != null ? `, ${Math.round(c.mastery * 100)}%` : ''}`}
+                            className={cn(
+                              'hm-cell grid aspect-square w-full place-items-center rounded-lg border font-mono text-[11px] font-bold transition-all duration-200 hover:scale-105',
+                              on ? 'scale-105 border-ink shadow-md' : 'border-line',
+                              c.level === 'not_started' ? 'text-muted' : 'text-ink',
+                            )}
+                            style={{ background: fill(c.mastery, c.level) }}
+                          >
+                            {c.mastery != null ? Math.round(c.mastery * 100) : '–'}
+                          </button>
+                        </li>
+                      )
+                    })}
+                </ul>
+              </div>
+            )
+          })}
+        </div>
+
+        {sel && (
+          <div className="rounded-2xl border border-line bg-canvas p-5" aria-live="polite">
+            <p className="font-mono text-[11px] font-bold uppercase tracking-widest text-muted">Selected concept</p>
+            <p className="mt-1 text-xl font-extrabold leading-tight">{sel.title}</p>
+            <p className={cn('mt-1 text-sm font-bold', LEVEL_STYLE[sel.level].color)}>{LEVEL_STYLE[sel.level].label}</p>
+            <div className="mt-4 flex items-end gap-2">
+              <span className="font-mono text-5xl font-black tabular leading-none">{sel.mastery != null ? Math.round(sel.mastery * 100) : '–'}</span>
+              <span className="pb-1 text-sm text-muted">/ 100 understanding</span>
+            </div>
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-line">
+              <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${(sel.mastery ?? 0) * 100}%`, background: LEVEL_STYLE[sel.level].bar }} />
+            </div>
+            <p className="mt-3 text-sm text-ink-soft">
+              Based on {sel.evidence_count} piece{sel.evidence_count === 1 ? '' : 's'} of evidence from your answers and decisions.
+            </p>
+          </div>
+        )}
+      </div>
+    </section>
   )
 }

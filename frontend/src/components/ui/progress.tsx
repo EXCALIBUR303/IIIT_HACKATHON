@@ -1,4 +1,29 @@
+import { animate } from 'animejs'
+import { useEffect, useRef } from 'react'
+import { prefersReducedMotion as reducedMotion } from '@/lib/anime'
 import { cn } from '@/lib/utils'
+
+
+/** Grow a bar from zero the first time it scrolls into view. */
+function useFillOnView() {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || reducedMotion() || typeof IntersectionObserver === 'undefined') return
+    let anim: ReturnType<typeof animate> | undefined
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return
+      io.disconnect()
+      anim = animate(el, { scaleX: { from: 0 }, duration: 1000, ease: 'outExpo', delay: 120 })
+    })
+    io.observe(el)
+    return () => {
+      io.disconnect()
+      anim?.revert()
+    }
+  }, [])
+  return ref
+}
 
 interface ProgressBarProps {
   value: number // 0..100
@@ -10,6 +35,7 @@ interface ProgressBarProps {
 
 export function ProgressBar({ value, label, className, barClassName, color }: ProgressBarProps) {
   const v = Math.max(0, Math.min(100, Math.round(value)))
+  const fill = useFillOnView()
   return (
     <div
       role="progressbar"
@@ -20,7 +46,8 @@ export function ProgressBar({ value, label, className, barClassName, color }: Pr
       className={cn('h-2 w-full overflow-hidden rounded-full bg-line', className)}
     >
       <div
-        className={cn('h-full rounded-full bg-primary transition-[width] duration-500', barClassName)}
+        ref={fill}
+        className={cn('h-full origin-left rounded-full bg-primary transition-[width] duration-500', barClassName)}
         style={{ width: `${v}%`, background: color }}
       />
     </div>

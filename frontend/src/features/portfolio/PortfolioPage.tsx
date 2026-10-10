@@ -1,3 +1,4 @@
+import { animate, svg } from 'animejs'
 import { ArrowRight, CalendarClock, LineChart as LineChartIcon, Lock, RotateCcw, Send } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -15,6 +16,7 @@ import type { PortfolioEvent, PortfolioInstrument, PortfolioView, TradeQuote } f
 import { inr, inrPaise, relativeDate, signedPaise } from '@/lib/format'
 import { useAsync } from '@/lib/useAsync'
 import { cn } from '@/lib/utils'
+import { useAnime, useFlick } from '@/lib/anime'
 
 const newRequestId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID().replace(/-/g, '') : `${Date.now()}${Math.random().toString(16).slice(2)}`.padEnd(16, '0')
@@ -36,10 +38,11 @@ const KIND_LABEL: Record<string, string> = {
 }
 
 function Readout({ label, value, tone, note }: { label: string; value: string; tone?: 'gain' | 'loss'; note?: string }) {
+  const ref = useFlick<HTMLParagraphElement>(value)
   return (
     <div className="rounded-xl border border-line bg-surface p-4">
       <p className="text-[0.68rem] font-bold uppercase tracking-wider text-muted">{label}</p>
-      <p className={cn('mt-1 text-2xl font-extrabold tabular', tone === 'gain' && 'text-accent-ink', tone === 'loss' && 'text-danger-ink')}>{value}</p>
+      <p ref={ref} className={cn('mt-1 text-2xl font-extrabold tabular', tone === 'gain' && 'text-accent-ink', tone === 'loss' && 'text-danger-ink')}>{value}</p>
       {note && <p className="mt-0.5 text-xs text-muted">{note}</p>}
     </div>
   )
@@ -175,7 +178,18 @@ function YearPanel({ view, event, busy, error, run }: {
           <h2 className="flex items-center gap-2 text-xl font-extrabold">
             <CalendarClock className="size-5 text-investing" aria-hidden /> Year {p.round} of {p.max_round}
           </h2>
-          <p className="mt-1 text-sm text-ink-soft">
+          <ol className="mt-3 flex gap-1" aria-label={`Year ${p.round} of ${p.max_round}`}>
+            {Array.from({ length: p.max_round }, (_, k) => (
+              <li
+                key={k}
+                className={cn(
+                  'h-2 w-6 rounded-full transition-colors duration-500',
+                  k < p.round ? 'bg-investing' : k === p.round ? 'animate-pulse bg-investing/40' : 'bg-line',
+                )}
+              />
+            ))}
+          </ol>
+          <p className="mt-2 text-sm text-ink-soft">
             {p.complete ? 'This run is complete. Reset to try a different strategy.' : 'Trade now at today’s prices, then let a year pass to see what the fictional market does.'}
           </p>
         </div>
@@ -202,7 +216,7 @@ function YearPanel({ view, event, busy, error, run }: {
         }}
       />
       {event && (
-        <div className="mt-5 rounded-xl border border-investing/30 bg-investing-soft p-4" role="status">
+        <div key={event.headline} data-reveal="" className="mt-5 rounded-xl border border-investing/30 border-l-4 border-l-investing bg-investing-soft p-4" role="status">
           <p className="font-bold text-ink">{event.headline}</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-soft">
             {event.reflection.map((line) => (
@@ -248,6 +262,33 @@ function ValueChart({ view }: { view: PortfolioView }) {
   )
 }
 
+/** Price history so far, drawn as a small line that traces itself in. */
+function Sparkline({ points, up }: { points: number[]; up: boolean }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useAnime(
+    ref,
+    () => {
+      animate(svg.createDrawable('.spark'), { draw: ['0 0', '0 1'], duration: 1100, ease: 'inOutQuad', delay: 150 })
+    },
+    [points.length],
+  )
+  if (points.length < 2) return <div className="h-10" aria-hidden />
+  const lo = Math.min(...points)
+  const hi = Math.max(...points)
+  const d = points
+    .map((v, i) => `${i ? 'L' : 'M'}${((i / (points.length - 1)) * 100).toFixed(1)},${(36 - ((v - lo) / (hi - lo || 1)) * 32).toFixed(1)}`)
+    .join(' ')
+  const color = up ? 'var(--color-accent)' : 'var(--color-danger)'
+  return (
+    <div ref={ref} className="h-10" aria-hidden>
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="h-full w-full overflow-visible">
+        <path d={`${d} L100,40 L0,40 Z`} fill={color} opacity="0.08" />
+        <path className="spark" d={d} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      </svg>
+    </div>
+  )
+}
+
 function Market({ view, run }: { view: PortfolioView; run: (a: () => Promise<PortfolioView>) => Promise<PortfolioView | null> }) {
   const [target, setTarget] = useState<{ instrument: PortfolioInstrument; side: 'buy' | 'sell' } | null>(null)
   return (
@@ -260,7 +301,7 @@ function Market({ view, run }: { view: PortfolioView; run: (a: () => Promise<Por
           const hist = i.price_history_paise ?? [i.price_paise]
           const change = hist.length > 1 ? hist[hist.length - 1] - hist[0] : 0
           return (
-            <Card key={i.key} className={cn('flex flex-col p-4', i.locked && 'opacity-80')}>
+            <Card key={i.key} className={cn('flex flex-col p-4 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-raised)]', i.locked && 'border-dashed')}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-bold">{i.label}</h3>
@@ -272,6 +313,9 @@ function Market({ view, run }: { view: PortfolioView; run: (a: () => Promise<Por
                     {change === 0 ? 'since start: no change' : `since start ${signedPaise(change)}`}
                   </p>
                 </div>
+              </div>
+              <div className="mt-3">
+                <Sparkline points={hist} up={change >= 0} />
               </div>
               <p className="mt-2 flex-1 text-sm text-ink-soft">{i.description}</p>
               {i.locked ? (

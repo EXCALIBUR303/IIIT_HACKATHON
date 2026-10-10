@@ -9,6 +9,7 @@ import { Card } from '@/components/ui/card'
 import { ProgressRing } from '@/components/ui/progress'
 import { openTutor } from '@/features/tutor/TutorPanel'
 import { inr } from '@/lib/format'
+import { useFlick } from '@/lib/anime'
 import { cn } from '@/lib/utils'
 
 export function MoneyControl({ id, label, value, max, onChange, hint, color, min = 0, step = 10, marker, prefix = '₹', suffix }: {
@@ -162,10 +163,12 @@ export function ScoreBreakdown({ items }: { items: { label: string; value: numbe
 }
 
 export function StatTile({ label, value, tone = 'neutral', sub }: { label: string; value: ReactNode; tone?: 'neutral' | 'good' | 'bad' | 'warn'; sub?: ReactNode }) {
+  // Flick the number when it changes, so the effect of moving a slider is easy to see.
+  const valueRef = useFlick<HTMLParagraphElement>(typeof value === 'string' || typeof value === 'number' ? String(value) : null)
   return (
     <div
       className={cn(
-        'rounded-xl p-3.5',
+        'rounded-xl p-3.5 transition-colors',
         tone === 'good' && 'bg-accent-soft',
         tone === 'bad' && 'bg-danger-soft',
         tone === 'warn' && 'bg-warning-soft',
@@ -173,7 +176,7 @@ export function StatTile({ label, value, tone = 'neutral', sub }: { label: strin
       )}
     >
       <p className="text-xs text-muted">{label}</p>
-      <p className={cn('tabular mt-0.5 text-lg font-bold', tone === 'good' && 'text-accent-ink', tone === 'bad' && 'text-danger-ink', tone === 'warn' && 'text-warning-ink')}>
+      <p ref={valueRef} className={cn('tabular mt-0.5 text-lg font-bold', tone === 'good' && 'text-accent-ink', tone === 'bad' && 'text-danger-ink', tone === 'warn' && 'text-warning-ink')}>
         {value}
       </p>
       {sub && <p className="mt-0.5 text-xs text-muted">{sub}</p>}

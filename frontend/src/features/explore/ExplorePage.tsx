@@ -1,3 +1,4 @@
+import { Sprout, Waves } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { Disclaimer } from '@/components/common/feedback'
@@ -138,6 +139,11 @@ function InvestmentExplorer() {
   )
 }
 
+const TOOLS = [
+  { value: 'compounding', label: 'Compounding', note: 'Watch small savings snowball over years', icon: Sprout },
+  { value: 'investing', label: 'Risk & time', note: 'See 1,000 possible futures for one mix', icon: Waves },
+]
+
 export default function ExplorePage() {
   return (
     <div>
@@ -147,14 +153,27 @@ export default function ExplorePage() {
         description="Change the numbers and watch what happens. Nothing here is saved or scored, so experiment as much as you like."
       />
       <Tabs defaultValue="compounding">
-        <TabsList className="mb-6">
-          <TabsTrigger value="compounding">Compounding</TabsTrigger>
-          <TabsTrigger value="investing">Risk & time</TabsTrigger>
+        <TabsList className="mb-6 grid w-full grid-cols-1 gap-2 bg-transparent p-0 sm:grid-cols-2">
+          {TOOLS.map((tool) => (
+            <TabsTrigger
+              key={tool.value}
+              value={tool.value}
+              className="group flex items-center gap-3 rounded-2xl border border-line bg-surface p-4 text-left shadow-[var(--shadow-card)] transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-raised)] data-[state=active]:border-primary data-[state=active]:bg-[#14123a] data-[state=active]:text-white data-[state=active]:shadow-[0_18px_40px_-20px_rgb(49_46_129/0.9)]"
+            >
+              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary transition-transform group-hover:-rotate-6 group-data-[state=active]:bg-white/10 group-data-[state=active]:text-emerald-300">
+                <tool.icon className="size-5" aria-hidden />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-base font-extrabold">{tool.label}</span>
+                <span className="block text-xs font-medium text-muted group-data-[state=active]:text-white/70">{tool.note}</span>
+              </span>
+            </TabsTrigger>
+          ))}
         </TabsList>
-        <TabsContent value="compounding">
+        <TabsContent value="compounding" className="rr-tab-in">
           <CompoundingExplorer />
         </TabsContent>
-        <TabsContent value="investing">
+        <TabsContent value="investing" className="rr-tab-in">
           <InvestmentExplorer />
         </TabsContent>
       </Tabs>

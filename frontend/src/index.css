@@ -137,3 +137,10 @@ input[type='range'].rr-range::-moz-range-thumb {
   background: #fff;
   border: 3px solid var(--range-color, var(--color-primary));
 }
+
+/* Tab panels slide in when shown (disabled by the reduced-motion rules above). */
+@keyframes rr-tab-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.rr-tab-in[data-state='active'] { animation: rr-tab-in 0.45s cubic-bezier(0.22, 1, 0.36, 1); }

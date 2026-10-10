@@ -69,7 +69,7 @@ function Overview({ data }: { data: CohortOverview }) {
       <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-muted">Students join with this class code</p>
-          <p className="mt-1 font-mono text-2xl font-extrabold tracking-[0.2em] text-primary">{data.cohort.join_code}</p>
+          <p className="mt-1 font-mono text-2xl font-extrabold tracking-[0.2em] text-primary" data-testid="join-code">{data.cohort.join_code}</p>
         </div>
         <Button
           variant="outline"

@@ -6,6 +6,9 @@ const PAGES = ['/', '/journey-demo', '/login', '/app', '/app/learn', '/app/walle
 
 for (const path of PAGES) {
   test(`axe: no serious or critical violations on ${path}`, async ({ page, request }) => {
+    // Scan the settled page: entrance animations fade text in, and axe would otherwise
+    // measure contrast mid-fade. Reduced motion is also a mode real users choose.
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     if (path.startsWith('/app')) await loginAsNewStudent(page, request)
     await page.goto(path)
     await page.waitForLoadState('networkidle')

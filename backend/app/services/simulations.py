@@ -23,6 +23,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.core.db import advisory_lock
 from app.core.errors import ApiError, conflict
 from app.engine import budget, investing, safety, savings
 from app.engine.money import SimulationError
@@ -113,6 +114,8 @@ def initial_state(scenario: Scenario) -> tuple[str, dict[str, Any]]:
 def start(db: Session, student: User, scenario: Scenario) -> SimulationSession:
     """Start a new attempt. Retries if a concurrent request took the same attempt number."""
     phase, state = initial_state(scenario)
+    # Concurrent starts (double clicks) queue here instead of racing for attempt numbers.
+    advisory_lock(db, "session", student.id, scenario.id)
     for _ in range(3):
         # Starting fresh abandons any unfinished attempt at the same scenario.
         for old in db.scalars(

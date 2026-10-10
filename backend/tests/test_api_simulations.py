@@ -218,14 +218,14 @@ def test_concurrent_starts_do_not_error(client, student):
             SESSIONS, headers=student, json={"scenario_slug": "budget-meera-pocket-money"}
         )
 
-    with ThreadPoolExecutor(max_workers=4) as pool:
-        codes = [r.status_code for r in pool.map(start, range(4))]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        codes = [r.status_code for r in pool.map(start, range(8))]
     assert all(c == 201 for c in codes), codes
 
     def attempt(_):
         return client.post("/api/v1/assessments/quiz-stay-safe/attempts", headers=student)
 
-    with ThreadPoolExecutor(max_workers=4) as pool:
-        results = list(pool.map(attempt, range(4)))
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(attempt, range(8)))
     assert all(r.status_code == 201 for r in results), [r.status_code for r in results]
     assert len({r.json()["attempt_id"] for r in results}) == 1  # all resume the same attempt

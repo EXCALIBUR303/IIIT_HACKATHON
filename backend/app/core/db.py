@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import zlib
 from collections.abc import Iterator
 
-from sqlalchemy import MetaData, create_engine
+from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from .config import get_settings
@@ -34,3 +35,14 @@ def get_db() -> Iterator[Session]:
         yield db
     finally:
         db.close()
+
+
+def advisory_lock(db: Session, *parts: object) -> None:
+    """Serialise a critical section across concurrent requests (PostgreSQL only).
+
+    Held until the surrounding transaction commits or rolls back.
+    """
+    if db.get_bind().dialect.name != "postgresql":
+        return
+    key = zlib.crc32(":".join(map(str, parts)).encode())
+    db.execute(text("SELECT pg_advisory_xact_lock(:key)"), {"key": key})

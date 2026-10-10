@@ -9,6 +9,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.core.db import advisory_lock
 from app.core.errors import ApiError, conflict
 from app.learning import adaptive, mastery
 from app.learning.scoring import score_attempt
@@ -101,6 +102,8 @@ def start(db: Session, student: User, assessment: Assessment) -> AssessmentAttem
     available, reason = availability(db, student, assessment)
     if not available:
         raise conflict("assessment_locked", reason or "Not available")
+    # Concurrent starts queue here; the second request then resumes the first one's attempt.
+    advisory_lock(db, "attempt", student.id, assessment.id)
     for _ in range(3):
         open_attempt = _open_attempt(db, student, assessment)
         if open_attempt:

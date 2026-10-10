@@ -744,3 +744,43 @@ export interface ReflectionResult {
   misconception: string | null
   rewards: RewardEntry[]
 }
+
+// --- Banking Explorer (education only) -------------------------------------------------
+
+export interface ExplorerSource {
+  id: string
+  title: string
+  publisher: string
+  url: string
+  checked: string
+}
+
+export interface ExplorerStop {
+  key: string
+  title: string
+  story: string
+  facts: string[]
+  question: string
+  options: { key: string; text: string }[]
+  sources: ExplorerSource[]
+  attempts: number
+  completed: boolean
+}
+
+export interface ExplorerJourney {
+  title: string
+  intro: string
+  last_verified: string
+  disclaimer: string
+  stops: ExplorerStop[]
+  completed: number
+  total: number
+}
+
+export interface ExplorerAnswer {
+  correct: boolean
+  explanation: string
+  correct_option: { key: string; text: string }
+  journey_complete: boolean
+  rewards: RewardEntry[]
+}

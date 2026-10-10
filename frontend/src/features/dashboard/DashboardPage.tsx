@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ProgressBar } from '@/components/ui/progress'
 import { useProfile } from '@/features/onboarding/StudentGate'
+import { ThreePanels } from './panels'
 import { api } from '@/lib/api/endpoints'
 import type { MasteryLevel, Progress, Recommendation } from '@/lib/api/types'
 import { useI18n } from '@/lib/i18n'
@@ -125,6 +126,9 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <header className="flex flex-col gap-1">
+        <p className="text-xs font-bold uppercase tracking-[0.12em] text-primary">
+          {profile.stage.label} · {profile.stage.grades}
+        </p>
         <h1 className="text-2xl font-extrabold sm:text-3xl">{t('dashboard.greeting', { name: profile.user.display_name })}</h1>
         <p className="text-ink-soft">
           {p.activity.simulations_completed === 0
@@ -134,6 +138,8 @@ export default function DashboardPage() {
       </header>
 
       <NextStepCard rec={p.recommendation} />
+
+      <ThreePanels />
 
       <Card>
         <CardHeader>

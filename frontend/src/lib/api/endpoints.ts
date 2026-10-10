@@ -23,6 +23,8 @@ import type {
   TokenResponse,
   TutorAnswer,
   User,
+  ExplorerAnswer,
+  ExplorerJourney,
   LearningStatus,
   PortfolioView,
   ReflectionPrompt,
@@ -53,6 +55,10 @@ export const api = {
     prompt: (session_id: string) => http.get<ReflectionPrompt>(`/reflections/prompt?session_id=${q(session_id)}`),
     answer: (body: { session_id: string; question_key: string; selected: string; confidence?: 'low' | 'medium' | 'high' }) =>
       http.post<ReflectionResult>('/reflections', body),
+  },
+  banking: {
+    get: () => http.get<ExplorerJourney>('/banking-explorer'),
+    answer: (stop: string, selected: string) => http.post<ExplorerAnswer>(`/banking-explorer/stops/${q(stop)}/answer`, { selected }),
   },
   wallet: {
     get: (limit = 50) => http.get<Wallet>(`/wallet?limit=${limit}`),

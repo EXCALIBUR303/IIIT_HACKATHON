@@ -8,6 +8,7 @@ export const en = {
   'nav.progress': 'My progress',
   'nav.wallet': 'Learning wallet',
   'nav.portfolio': 'Portfolio Quest',
+  'nav.banking': 'Banking Explorer',
   'nav.settings': 'Settings',
   'nav.educator': 'Cohort dashboard',
   'nav.signOut': 'Sign out',

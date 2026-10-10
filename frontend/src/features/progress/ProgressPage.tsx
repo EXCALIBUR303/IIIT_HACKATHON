@@ -14,6 +14,7 @@ import { useI18n } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { useAsync } from '@/lib/useAsync'
 import { StatTile } from '../simulations/shared'
+import { LearningScoreCard } from './LearningScoreCard'
 
 export default function ProgressPage() {
   const { t } = useI18n()
@@ -43,6 +44,8 @@ export default function ProgressPage() {
           </Button>
         }
       />
+
+      <LearningScoreCard />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatTile label="Modules completed" value={`${p.activity.modules_completed} / 4`} />

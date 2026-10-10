@@ -78,6 +78,23 @@ Status legend: **Verified** = implemented and covered by automated tests or veri
 | M-17 | Fictional assets only, disclaimers, tutor system prompt forbids product recommendations | No real product names; disclaimer on every investing result | Content review; tutor fallback test | Verified |
 | M-18 | Outcome ranges, Monte Carlo bands, "illustrative" labels, score based on reasoning not returns | Investing score independent of market path | `test_score_rewards_reasoning_not_luck` | Verified |
 
+### v2 additions (redesign directive)
+
+| ID | Module(s) | Verification | Status |
+|---|---|---|---|
+| V2-01 Stages | `learning/stages.py`, scenario `stages`, 403 on ineligible | `test_stages.py`, API test | Verified |
+| V2-02 Reward ledger | `services/rewards.py`, `rewards/rules.py`, migration 0003 | `test_rewards.py` | Verified (fictional, local) |
+| V2-03 Portfolio Quest | `engine/portfolio.py`, `services/portfolio.py`, migration 0004 | `test_engine_portfolio.py`, `test_api_portfolio.py`, E2E | Verified (fictional, local) |
+| V2-04 Learning score and levels | `learning/score.py`, `levels.py` | `test_learning_status.py` | Verified |
+| V2-05 Reflections | `services/reflections.py`, migration 0005 | `test_api_learning.py` | Verified |
+| V2-06 Money Lab | `engine/money_lab.py` | `test_engine_money_lab.py`, E2E | Verified |
+| V2-07 Banking Explorer | `services/banking_explorer.py`, migration 0006 | `test_banking_explorer.py` | Partial: some sources unverified directly |
+| V2-08 Scam Defender extension | `safety-money-scams` scenario | `test_engine_safety.py` | Verified |
+| V2-09 Educator privacy | aggregate-only stage mix, reflection gaps, follow-ups | `test_api_auth.py`, `test_api_learning.py` | Verified |
+| V2-10 Tutor guardrails | `tutor/__init__.py` | `test_api_learning.py` guardrail tests | Partial: keyword-based; live model untested |
+| V2-11 Accessibility | `e2e/a11y.spec.ts` | axe, 10 pages | Partial: no screen-reader testing |
+| V2-12 Hindi/Telugu | nav labels only | manual | Partial |
+
 ## 4. Success measures from the brief → how we evidence them
 
 | Measure | Evidence in RupeeRise |

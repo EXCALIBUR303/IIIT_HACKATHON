@@ -4,6 +4,10 @@
 
 Working full-stack foundation: deterministic engine for all four pillars, 13 scenarios, 6 assessments, mastery + adaptive rules, educator analytics, optional grounded tutor, full frontend, 123 backend tests, 21 frontend tests, 8 Playwright journeys, CI workflow, docs and handoff briefs.
 
+## Milestone 1b: v2 redesign (complete locally, pending push approval)
+
+Age-adaptive stages, append-only fictional reward ledger, Portfolio Quest with wallet transfer, transparent learning score and five levels, reflections, ₹500 Money Lab, Banking Explorer, tutor guardrails, three-panel dashboard, educator stage/reflection insights, axe checks. 252 backend tests, 29 frontend tests, 22 Playwright journeys. See [redesign/audit-and-plan.md](redesign/audit-and-plan.md).
+
 ## Milestone 2: Parallel development (teammates, branches in parallel)
 
 | Track | Goal | Owner |

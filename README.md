@@ -2,7 +2,7 @@
 
 **Learn Money. Make Smarter Moves.**
 
-RupeeRise is an interactive financial-literacy platform for Class 11–12 students, built for under-served communities around Hyderabad. Students live through realistic, persona-led money situations with **fictional rupees**: they make decisions, a deterministic engine calculates the consequences, they get a clear explanation, and they try again. Understanding is assessed concept by concept, the next activity adapts to it, and NGO educators see where their class needs support.
+RupeeRise is an interactive financial-literacy platform for students in Classes 7–12 and age 18, built for under-served communities around Hyderabad. Students live through realistic, persona-led money situations with **fictional rupees**: they make decisions, a deterministic engine calculates the consequences, they get a clear explanation, and they try again. Understanding is assessed concept by concept, the next activity adapts to it, and NGO educators see where their class needs support.
 
 > Built for **IIIT Hyderabad Megathon 2026 · Vanguard** problem statement *"Empowering the Next Generation Through Financial Literacy."* Education only. RupeeRise never recommends real financial products, and simulations are assumptions, not promises.
 
@@ -18,6 +18,19 @@ RupeeRise is an interactive financial-literacy platform for Class 11–12 studen
 Plus: four relatable personas (Meera, Lakshmi, Arjun, Imran), a starting check and final check, module quizzes with explanations for every option, misconception detection, transparent adaptive recommendations, badges kept separate from understanding scores, an optional grounded AI tutor with deterministic fallback, English/हिन्दी/తెలుగు interface, and accessibility settings.
 
 **Educators / NGOs** create a class, share a 6-character join code and get participation, module completion, concept-level mastery, starting-vs-final comparison, topics needing support and the most common misconceptions. Students are shown by nickname only.
+
+## New in v2
+
+| Feature | What it is |
+|---|---|
+| Age-adaptive stages | Explorer (7–8), Builder (9–10), Future Planner (11–12), Investor Sandbox (18); eligibility enforced by the server |
+| Fictional reward wallet | Append-only ledger; rewards follow understanding and safe choices, never guessing |
+| Portfolio Quest | Persisted fictional portfolio with seeded price paths, idempotent trades and a capped one-way wallet transfer |
+| Learning score and levels | Transparent 0–100 score and five levels, gated on understanding, never money |
+| ₹500 Money Lab, Banking Explorer, reflections | Planning under a surprise; sourced banking facts with a last-verified date; multiple-choice reflection |
+| Public demo | `/journey-demo` (local demo data only) |
+
+Status of each item is in [docs/redesign/audit-and-plan.md](docs/redesign/audit-and-plan.md) and [docs/limitations.md](docs/limitations.md).
 
 ## Architecture at a glance
 
@@ -79,9 +92,9 @@ All backend settings use the `RUPEERISE_` prefix; see [`backend/.env.example`](b
 
 ```bash
 createdb rupeerise_test && createdb rupeerise_e2e   # once
-cd backend && uv run pytest                          # 123 tests: engine, learning, API on real Postgres
-cd frontend && npm test                              # 21 unit/component tests
-cd frontend && npx playwright install chromium && npm run test:e2e   # 8 end-to-end journeys
+cd backend && uv run pytest                          # 252 tests: engine, ledger, portfolio, learning, API on real Postgres
+cd frontend && npm test                              # 29 unit/component tests
+cd frontend && npx playwright install chromium && npm run test:e2e   # 22 end-to-end journeys incl. axe accessibility scan
 ```
 
 More in [docs/testing.md](docs/testing.md).

@@ -5,6 +5,7 @@ from . import (
     auth,
     content,
     educator,
+    portfolio,
     progress,
     simulations,
     students,
@@ -21,6 +22,7 @@ for module in (
     assessments,
     progress,
     educator,
+    portfolio,
     tutor,
     wallet,
 ):

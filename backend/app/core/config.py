@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     tutor_model: str = "claude-opus-5-5"
     tutor_effort: str = "low"
     tutor_timeout_seconds: float = 12.0
+    # Portfolio Quest: fictional practice cash a new run starts with (whole rupees).
+    portfolio_starting_cash_rupees: int = 10_000
 
     @property
     def is_production(self) -> bool:

@@ -20,6 +20,7 @@ from typing import Any
 
 from sqlalchemy import (
     JSON,
+    BigInteger,
     Boolean,
     CheckConstraint,
     DateTime,
@@ -418,4 +419,82 @@ class RewardLedgerEntry(Base):
             "OR (entry_type = 'transfer_out' AND amount < 0)",
             name="amount_sign",
         ),
+    )
+
+
+class Portfolio(Base):
+    """A student's fictional practice portfolio (one active run; money in integer paise)."""
+
+    __tablename__ = "portfolios"
+
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    cash_paise: Mapped[int] = mapped_column(BigInteger)
+    starting_cash_paise: Mapped[int] = mapped_column(BigInteger)
+    contributed_paise: Mapped[int] = mapped_column(BigInteger)
+    run_number: Mapped[int] = mapped_column(Integer, default=1)
+    seed: Mapped[int] = mapped_column(BigInteger)
+    round: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+    holdings: Mapped[list[PortfolioHolding]] = relationship(
+        back_populates="portfolio", cascade="all, delete-orphan"
+    )
+
+    __table_args__ = (
+        CheckConstraint("cash_paise >= 0", name="cash_non_negative"),
+        CheckConstraint("round BETWEEN 0 AND 10", name="round_range"),
+        CheckConstraint("run_number >= 1", name="run_positive"),
+    )
+
+
+class PortfolioHolding(Base):
+    __tablename__ = "portfolio_holdings"
+
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("portfolios.student_id", ondelete="CASCADE"), primary_key=True
+    )
+    instrument_key: Mapped[str] = mapped_column(String(30), primary_key=True)
+    quantity: Mapped[int] = mapped_column(Integer)
+    cost_paise: Mapped[int] = mapped_column(BigInteger)
+
+    portfolio: Mapped[Portfolio] = relationship(back_populates="holdings")
+
+    __table_args__ = (
+        CheckConstraint("quantity > 0", name="quantity_positive"),
+        CheckConstraint("cost_paise >= 0", name="cost_non_negative"),
+    )
+
+
+class PortfolioTransaction(Base):
+    """Append-only log of everything that changed a portfolio, keyed for idempotency."""
+
+    __tablename__ = "portfolio_transactions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    run_number: Mapped[int] = mapped_column(Integer)
+    round: Mapped[int] = mapped_column(Integer)
+    kind: Mapped[str] = mapped_column(String(20))
+    instrument_key: Mapped[str | None] = mapped_column(String(30))
+    quantity: Mapped[int | None] = mapped_column(Integer)
+    price_paise: Mapped[int | None] = mapped_column(BigInteger)
+    amount_paise: Mapped[int] = mapped_column(BigInteger)  # signed change in cash
+    cash_after_paise: Mapped[int] = mapped_column(BigInteger)
+    request_id: Mapped[str] = mapped_column(String(64))
+    note: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("student_id", "request_id", name="uq_portfolio_request"),
+        CheckConstraint(
+            "kind IN ('open', 'buy', 'sell', 'transfer_in', 'advance', 'reset')", name="kind"
+        ),
+        CheckConstraint("cash_after_paise >= 0", name="cash_after_non_negative"),
     )

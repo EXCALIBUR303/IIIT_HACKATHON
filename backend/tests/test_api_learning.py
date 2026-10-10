@@ -226,3 +226,41 @@ def test_tutor_fallback_is_grounded(client, student):
         "/api/v1/tutor/ask", headers=other, json={"question": "explain", "session_id": done["id"]}
     )
     assert r.status_code == 404
+
+
+def test_educator_overview_has_stage_mix_reflection_gaps_and_follow_ups(client):
+    from tests.conftest import (
+        answer_all,
+        complete_budget,
+        onboard,
+        register_educator,
+        register_student,
+    )
+
+    edu = register_educator(client)
+    code = client.post("/api/v1/educator/cohorts", headers=edu, json={"name": "Batch A"}).json()[
+        "join_code"
+    ]
+    h, _ = register_student(client, join_code=code)
+    onboard(client, h)
+    answer_all(client, h, "quiz-plan-and-budget", correct=False)
+    sid = complete_budget(client, h)["id"]
+    q = client.get("/api/v1/reflections/prompt", headers=h, params={"session_id": sid}).json()
+    client.post(
+        "/api/v1/reflections",
+        headers=h,
+        json={"session_id": sid, "question_key": q["question_key"], "selected": "b"},
+    )
+    cohort_id = client.get("/api/v1/educator/cohorts", headers=edu).json()[0]["id"]
+    ov = client.get(f"/api/v1/educator/cohorts/{cohort_id}/overview", headers=edu).json()
+    assert ov["stages"] == [
+        {
+            "key": "future_planner",
+            "label": "Future Planner",
+            "grades": "Classes 11–12",
+            "students": 1,
+        }
+    ]
+    assert ov["reflection_gaps"] and ov["follow_ups"]
+    assert not {"wallet", "wallet_balance", "portfolio", "rewards"} & set(ov)  # no money data
+    assert all("balance" not in row and "gain_paise" not in row for row in ov["students"])

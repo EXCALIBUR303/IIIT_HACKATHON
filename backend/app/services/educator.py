@@ -17,6 +17,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.content import loader
+from app.learning import stages
 from app.learning.adaptive import MISCONCEPTIONS, QUIZ_PASS
 from app.models import (
     Assessment,
@@ -27,6 +28,7 @@ from app.models import (
     LearningModule,
     Question,
     QuestionResponse,
+    Reflection,
     Scenario,
     SimulationSession,
     User,
@@ -92,6 +94,9 @@ def overview(db: Session, cohort: Cohort) -> dict[str, Any]:
             "support_topics": [],
             "misconceptions": [],
             "students": [],
+            "stages": [],
+            "reflection_gaps": [],
+            "follow_ups": [],
         }
 
     students = {u.id: u for u in db.scalars(select(User).where(User.id.in_(ids)))}
@@ -252,4 +257,59 @@ def overview(db: Session, cohort: Cohort) -> dict[str, Any]:
         "support_topics": support,
         "misconceptions": misconceptions,
         "students": student_rows,
+        **_stage_and_reflection(db, ids, profiles, support, misconceptions),
     }
+
+
+FOLLOW_UP_TEXT = {
+    "budgeting": "Run a 10-minute activity: list needs and wants for a week of pocket money.",
+    "saving": "Ask pairs to compare saving a fixed amount early versus what is left at month end.",
+    "investing": "Discuss why one bad outcome hurts less when money is spread out.",
+    "safety": "Role-play one scam message and have students name the red flag before the action.",
+}
+
+
+def _stage_and_reflection(db, ids, profiles, support, misconceptions) -> dict[str, Any]:
+    """Aggregate-only extras: stage mix, reflection gaps and suggested instructional follow-up."""
+    counts: dict[str, int] = defaultdict(int)
+    for p in profiles.values():
+        counts[stages.stage_for(p.grade if p else None)] += 1
+    stage_rows = [
+        {
+            "key": k,
+            "label": stages.info(k).label,
+            "grades": stages.info(k).grades,
+            "students": counts[k],
+        }
+        for k in stages.ORDER
+        if counts[k]
+    ]
+    gap_rows = db.execute(
+        select(Reflection.concept, Reflection.misconception, func.count())
+        .where(Reflection.student_id.in_(ids), Reflection.is_correct.is_(False))
+        .group_by(Reflection.concept, Reflection.misconception)
+        .order_by(func.count().desc())
+        .limit(6)
+    )
+    gaps = [
+        {
+            "concept": c,
+            "label": MISCONCEPTIONS.get(m, (m or "unclear reasoning").replace("_", " ")),
+            "count": n,
+        }
+        for c, m, n in gap_rows
+    ]
+    concepts = loader.concept_map()
+    follow: list[dict[str, str]] = []
+    for topic in support[:3]:
+        text = FOLLOW_UP_TEXT.get(topic["pillar"], "Revisit this concept with a short example.")
+        follow.append({"topic": topic["title"], "suggestion": text})
+    if misconceptions and len(follow) < 4:
+        top = misconceptions[0]
+        follow.append(
+            {
+                "topic": concepts.get(top["concept"], {}).get("title", top["concept"]),
+                "suggestion": f"Address the common mix-up: {top['label']}.",
+            }
+        )
+    return {"stages": stage_rows, "reflection_gaps": gaps, "follow_ups": follow}

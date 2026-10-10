@@ -551,6 +551,9 @@ export interface CohortOverview {
   assessment: { initial_avg: number | null; initial_count?: number; post_avg: number | null; post_count?: number; paired: number; avg_change: number | null; note?: string }
   support_topics: CohortOverview['concepts']
   misconceptions: { key: string; label: string; concept: string; count: number }[]
+  stages: { key: string; label: string; grades: string; students: number }[]
+  reflection_gaps: { concept: string; label: string; count: number }[]
+  follow_ups: { topic: string; suggestion: string }[]
   students: {
     id: string
     display_name: string

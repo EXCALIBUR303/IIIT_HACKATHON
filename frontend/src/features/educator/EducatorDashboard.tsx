@@ -214,6 +214,66 @@ function Overview({ data }: { data: CohortOverview }) {
             </Card>
           </div>
 
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Suggested follow-up</CardTitle>
+                <CardDescription>Rule-based ideas from the gaps above</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {data.follow_ups.length === 0 ? (
+                  <p className="text-sm text-muted">Nothing to suggest yet.</p>
+                ) : (
+                  <ul className="space-y-3 text-sm">
+                    {data.follow_ups.map((f) => (
+                      <li key={f.topic + f.suggestion}>
+                        <p className="font-semibold">{f.topic}</p>
+                        <p className="text-ink-soft">{f.suggestion}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Where explanations go wrong</CardTitle>
+                <CardDescription>From post-mission reflection questions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {data.reflection_gaps.length === 0 ? (
+                  <p className="text-sm text-muted">None recorded yet.</p>
+                ) : (
+                  <ul className="space-y-2 text-sm">
+                    {data.reflection_gaps.map((g) => (
+                      <li key={g.concept + g.label} className="flex items-center justify-between gap-3">
+                        <span className="first-letter:uppercase">{g.label}</span>
+                        <Badge tone="warning">{g.count}×</Badge>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Learning stages</CardTitle>
+                <CardDescription>Students per stage (derived from class)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2 text-sm">
+                  {data.stages.map((st) => (
+                    <li key={st.key} className="flex items-center justify-between">
+                      <span>{st.label} <span className="text-muted">({st.grades})</span></span>
+                      <span className="tabular font-semibold">{st.students}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs text-muted">Educators see learning data only. Reward balances and practice portfolios are never shown.</p>
+              </CardContent>
+            </Card>
+          </div>
+
           <Card>
             <CardHeader>
               <CardTitle>Students</CardTitle>

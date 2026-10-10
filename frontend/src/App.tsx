@@ -5,6 +5,7 @@ import { FullPageLoader, RequireRole } from '@/components/layout/guards'
 import { StudentGate } from '@/features/onboarding/StudentGate'
 
 const LandingPage = lazy(() => import('@/features/landing/LandingPage'))
+const JourneyDemoPage = lazy(() => import('@/features/journey/JourneyDemoPage'))
 const LoginPage = lazy(() => import('@/features/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/features/auth/RegisterPage'))
 const OnboardingPage = lazy(() => import('@/features/onboarding/OnboardingPage'))
@@ -29,6 +30,7 @@ export function AppRoutes() {
     <Suspense fallback={<FullPageLoader />}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/journey-demo" element={<JourneyDemoPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route

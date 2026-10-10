@@ -95,9 +95,7 @@ def modules(db: DB, user: CurrentUser) -> list[dict]:
 
 
 @router.get("/scenarios", response_model=list[ScenarioSummary])
-def list_scenarios(
-    db: DB, user: CurrentUser, kind: ScenarioKind | None = None
-) -> list[dict]:
+def list_scenarios(db: DB, user: CurrentUser, kind: ScenarioKind | None = None) -> list[dict]:
     q = select(Scenario).order_by(Scenario.kind, Scenario.difficulty, Scenario.slug)
     if kind:
         q = q.where(Scenario.kind == kind)

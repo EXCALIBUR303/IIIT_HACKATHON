@@ -49,3 +49,7 @@ def achievements() -> list[dict[str, Any]]:
 
 
 PILLARS = ("budgeting", "saving", "investing", "safety")
+
+
+def reflections() -> list[dict[str, Any]]:
+    return load("reflections")

@@ -498,3 +498,32 @@ class PortfolioTransaction(Base):
         ),
         CheckConstraint("cash_after_paise >= 0", name="cash_after_non_negative"),
     )
+
+
+class Reflection(Base):
+    """A multiple-choice explanation after a mission. No free text is ever stored."""
+
+    __tablename__ = "reflections"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    session_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("simulation_sessions.id", ondelete="CASCADE")
+    )
+    question_key: Mapped[str] = mapped_column(String(60))
+    selected_option: Mapped[str] = mapped_column(String(5))
+    is_correct: Mapped[bool] = mapped_column(Boolean)
+    concept: Mapped[str] = mapped_column(String(40))
+    confidence: Mapped[str | None] = mapped_column(String(10))
+    misconception: Mapped[str | None] = mapped_column(String(60))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    __table_args__ = (
+        UniqueConstraint("student_id", "question_key", name="uq_reflection_question"),
+        CheckConstraint(
+            "confidence IS NULL OR confidence IN ('low', 'medium', 'high')",
+            name="reflection_confidence",
+        ),
+    )

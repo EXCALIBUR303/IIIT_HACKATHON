@@ -23,6 +23,7 @@ AMOUNTS: dict[str, int] = {
     "quiz_pass": 25,
     "quiz_strong": 25,
     "check_done": 20,
+    "reflect_correct": 10,
 }
 
 PASS_SCORE = 60
@@ -38,7 +39,7 @@ class Award:
     concept: str | None = None
 
 
-def _disqualifier(kind: str, result: dict[str, Any]) -> str | None:
+def disqualifier(kind: str, result: dict[str, Any]) -> str | None:
     """A short reason a reward is withheld, or None when the choices were safe."""
     if kind == "budget":
         if (result.get("outcome") or {}).get("borrowed", 0) > 0:
@@ -60,9 +61,9 @@ def _disqualifier(kind: str, result: dict[str, Any]) -> str | None:
 
 _SIM_CONCEPT = {
     "budget": "needs_vs_wants",
-    "savings": "compound_interest",
+    "savings": "saving_habit",
     "investing": "diversification",
-    "safety": "scam_awareness",
+    "safety": "phishing_links",
 }
 
 
@@ -71,7 +72,7 @@ def simulation_awards(
 ) -> list[Award]:
     if score is None:
         return []
-    if _disqualifier(kind, result):
+    if disqualifier(kind, result):
         return []
     concept = _SIM_CONCEPT.get(kind)
     awards: list[Award] = []
@@ -132,3 +133,13 @@ def assessment_awards(slug: str, kind: str, score_pct: int, flagged_guessing: bo
             )
         )
     return awards
+
+
+def reflection_award(question_key: str, concept: str) -> Award:
+    return Award(
+        "reflect_correct",
+        AMOUNTS["reflect_correct"],
+        f"reflect:{question_key}:correct",
+        "Explained why your result happened.",
+        concept,
+    )

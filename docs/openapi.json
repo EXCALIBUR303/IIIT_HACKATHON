@@ -1331,6 +1331,133 @@
         }
       }
     },
+    "/api/v1/learning/status": {
+      "get": {
+        "tags": [
+          "learning"
+        ],
+        "summary": "Get Status",
+        "description": "Transparent 0-100 learning score and level unlocks (never uses money or rewards).",
+        "operationId": "get_status_api_v1_learning_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Status Api V1 Learning Status Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/reflections/prompt": {
+      "get": {
+        "tags": [
+          "learning"
+        ],
+        "summary": "Reflection Prompt",
+        "operationId": "reflection_prompt_api_v1_reflections_prompt_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Reflection Prompt Api V1 Reflections Prompt Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reflections": {
+      "post": {
+        "tags": [
+          "learning"
+        ],
+        "summary": "Answer Reflection",
+        "operationId": "answer_reflection_api_v1_reflections_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReflectionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Answer Reflection Api V1 Reflections Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/portfolio": {
       "get": {
         "tags": [
@@ -3160,6 +3287,48 @@
           "reason"
         ],
         "title": "Recommendation"
+      },
+      "ReflectionIn": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Session Id"
+          },
+          "question_key": {
+            "type": "string",
+            "maxLength": 60,
+            "title": "Question Key"
+          },
+          "selected": {
+            "type": "string",
+            "maxLength": 5,
+            "title": "Selected"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "question_key",
+          "selected"
+        ],
+        "title": "ReflectionIn"
       },
       "ResponseIn": {
         "properties": {

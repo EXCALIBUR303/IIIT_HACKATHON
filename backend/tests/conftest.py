@@ -30,7 +30,7 @@ from app.main import app  # noqa: E402
 from app.seed import seed_content  # noqa: E402
 
 USER_TABLES = (
-    "portfolio_transactions, portfolio_holdings, portfolios, reward_ledger, "
+    "reflections, portfolio_transactions, portfolio_holdings, portfolios, reward_ledger, "
     "student_achievements, concept_mastery, question_responses, "
     "assessment_attempts, "
     "simulation_decisions, simulation_sessions, cohort_memberships, cohorts, "

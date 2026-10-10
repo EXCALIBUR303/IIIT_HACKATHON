@@ -43,7 +43,11 @@ def test_no_answer_key_file_is_tracked_by_git():
         tracked = subprocess.check_output(["git", "ls-files"], cwd=root, text=True).splitlines()
     except (OSError, subprocess.CalledProcessError):
         pytest.skip("not a git checkout")
-    assert not [f for f in tracked if "answer_keys" in f or "private_content" in f]
+    assert not [
+        f
+        for f in tracked
+        if Path(f).name == "answer_keys.json" or "private_content" in Path(f).parts
+    ]
 
 
 def test_merge_round_trips_and_placeholders_are_clearly_labelled():

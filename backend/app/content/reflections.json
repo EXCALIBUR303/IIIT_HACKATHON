@@ -1,0 +1,302 @@
+[
+  {
+    "key": "refl-budget-buffer",
+    "kind": "budget",
+    "concept": "emergency_fund",
+    "prompt": "A surprise expense appeared after you made your plan. Which idea best explains why some plans handled it better?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Plans with some savings kept as a buffer could pay without borrowing."
+      },
+      {
+        "key": "b",
+        "text": "The plans that spent everything were just unlucky."
+      },
+      {
+        "key": "c",
+        "text": "Borrowing is always the cheapest way to handle a surprise."
+      }
+    ]
+  },
+  {
+    "key": "refl-budget-needs",
+    "kind": "budget",
+    "concept": "needs_vs_wants",
+    "prompt": "Why does a good budget cover needs before wants?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Needs like transport and food cannot be skipped without real consequences."
+      },
+      {
+        "key": "b",
+        "text": "Wants are always bad and should never be bought."
+      },
+      {
+        "key": "c",
+        "text": "The order does not matter if the total is the same."
+      }
+    ]
+  },
+  {
+    "key": "refl-budget-goal",
+    "kind": "budget",
+    "concept": "goal_setting",
+    "prompt": "You wanted to save for a goal. What most increased your chance of reaching it?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Setting aside a fixed amount early in the month, before spending on wants."
+      },
+      {
+        "key": "b",
+        "text": "Hoping there would be money left at the end of the month."
+      },
+      {
+        "key": "c",
+        "text": "Spending freely and saving only if the goal is cheap."
+      }
+    ]
+  },
+  {
+    "key": "refl-savings-emergency",
+    "kind": "savings",
+    "concept": "emergency_fund",
+    "prompt": "Why keep an emergency fund separate from your goal savings?",
+    "options": [
+      {
+        "key": "a",
+        "text": "So an emergency does not force you to raid, or give up on, your goal."
+      },
+      {
+        "key": "b",
+        "text": "Because emergencies never happen if you plan well."
+      },
+      {
+        "key": "c",
+        "text": "Because one big pot always earns more interest."
+      }
+    ]
+  },
+  {
+    "key": "refl-savings-compound",
+    "kind": "savings",
+    "concept": "simple_vs_compound",
+    "prompt": "Why does compound interest grow faster than simple interest over time?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Interest is earned on earlier interest as well as on the original amount."
+      },
+      {
+        "key": "b",
+        "text": "Because the bank pays a higher rate for compound interest."
+      },
+      {
+        "key": "c",
+        "text": "Because you must add more money each month."
+      }
+    ]
+  },
+  {
+    "key": "refl-savings-account",
+    "kind": "savings",
+    "concept": "saving_habit",
+    "prompt": "Which habit made the biggest difference to your savings result?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Saving a regular amount every month and not touching it."
+      },
+      {
+        "key": "b",
+        "text": "Saving a very large amount once, then stopping."
+      },
+      {
+        "key": "c",
+        "text": "Keeping the money in cash at home so it is easy to spend."
+      }
+    ]
+  },
+  {
+    "key": "refl-investing-diversify",
+    "kind": "investing",
+    "concept": "diversification",
+    "prompt": "Why does spreading money across different baskets reduce risk?",
+    "options": [
+      {
+        "key": "a",
+        "text": "When one thing falls, others may hold up, so one bad outcome cannot sink everything."
+      },
+      {
+        "key": "b",
+        "text": "Because every basket always grows at the same rate."
+      },
+      {
+        "key": "c",
+        "text": "Because single companies are guaranteed to do better."
+      }
+    ]
+  },
+  {
+    "key": "refl-investing-horizon",
+    "kind": "investing",
+    "concept": "time_horizon",
+    "prompt": "If you need money in one year, what is the sensible way to think about risk?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Choose steadier options, because a fall may not have time to recover."
+      },
+      {
+        "key": "b",
+        "text": "Choose the riskiest option to grow quickly."
+      },
+      {
+        "key": "c",
+        "text": "Time makes no difference to risk."
+      }
+    ]
+  },
+  {
+    "key": "refl-investing-fall",
+    "kind": "investing",
+    "concept": "risk_return",
+    "prompt": "The market fell during your simulation. What is the most useful lesson?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Falls are normal; what matters is whether you needed the money soon and how calmly you react."
+      },
+      {
+        "key": "b",
+        "text": "A fall proves investing is a scam."
+      },
+      {
+        "key": "c",
+        "text": "You should always sell at the first sign of a fall."
+      }
+    ]
+  },
+  {
+    "key": "refl-safety-otp",
+    "kind": "safety",
+    "concept": "otp_pin_safety",
+    "prompt": "Why should you never share an OTP or PIN, even with someone claiming to be from your bank?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Genuine banks never ask for them; anyone who does is trying to move your money."
+      },
+      {
+        "key": "b",
+        "text": "Because sharing is only risky if the caller sounds rude."
+      },
+      {
+        "key": "c",
+        "text": "Because OTPs are only needed to receive money."
+      }
+    ]
+  },
+  {
+    "key": "refl-safety-pressure",
+    "kind": "safety",
+    "concept": "phishing_links",
+    "prompt": "What is the strongest warning sign in a message that says 'Act in 10 minutes or lose your money'?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Urgency. Scammers rush you so you will not stop to check."
+      },
+      {
+        "key": "b",
+        "text": "The message uses capital letters."
+      },
+      {
+        "key": "c",
+        "text": "It came on a weekend."
+      }
+    ]
+  },
+  {
+    "key": "refl-safety-toogood",
+    "kind": "safety",
+    "concept": "too_good_offers",
+    "prompt": "A message promises to triple your money in a month. What should you conclude?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Guaranteed high returns do not exist; this is a classic scam pattern."
+      },
+      {
+        "key": "b",
+        "text": "It is probably fine if a friend forwarded it."
+      },
+      {
+        "key": "c",
+        "text": "Try it with a small amount first to see."
+      }
+    ]
+  },
+  {
+    "key": "refl-lab-inflation",
+    "kind": "money_lab",
+    "concept": "inflation",
+    "prompt": "By month six the earphones cost more than they did at the start. What does that show?",
+    "options": [
+      {
+        "key": "a",
+        "text": "Prices rise over time, so money that earns nothing buys a little less later."
+      },
+      {
+        "key": "b",
+        "text": "The shop made a mistake."
+      },
+      {
+        "key": "c",
+        "text": "Saving is pointless because prices always win."
+      }
+    ]
+  },
+  {
+    "key": "refl-lab-liquidity",
+    "kind": "money_lab",
+    "concept": "emergency_fund",
+    "prompt": "Why did money that was 'kept ready' make the surprise easier?",
+    "options": [
+      {
+        "key": "a",
+        "text": "It was available instantly with no loss, which is what liquidity means."
+      },
+      {
+        "key": "b",
+        "text": "Cash always earns the most interest."
+      },
+      {
+        "key": "c",
+        "text": "Surprises only matter if you have no goal."
+      }
+    ]
+  },
+  {
+    "key": "refl-lab-risk",
+    "kind": "money_lab",
+    "concept": "risk_return",
+    "prompt": "Why is putting most of the ₹500 in the growth basket risky for a goal six months away?",
+    "options": [
+      {
+        "key": "a",
+        "text": "A poor period can shrink it, and there may not be time to recover before you need the money."
+      },
+      {
+        "key": "b",
+        "text": "Because the growth basket always loses money."
+      },
+      {
+        "key": "c",
+        "text": "Because deposits never lose value to inflation."
+      }
+    ]
+  }
+]

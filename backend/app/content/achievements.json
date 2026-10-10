@@ -1,0 +1,14 @@
+[
+  {"slug": "first_steps", "title": "First Steps", "description": "Completed onboarding and set up your learning profile.", "icon": "footprints"},
+  {"slug": "starting_line", "title": "Starting Line", "description": "Finished the starting point check.", "icon": "flag"},
+  {"slug": "budget_builder", "title": "Budget Builder", "description": "Completed your first budget simulation.", "icon": "wallet"},
+  {"slug": "emergency_ready", "title": "Emergency Ready", "description": "Handled a surprise expense without borrowing.", "icon": "shield-check"},
+  {"slug": "goal_getter", "title": "Goal Getter", "description": "Reached a savings goal in a savings challenge.", "icon": "target"},
+  {"slug": "steady_hand", "title": "Steady Hand", "description": "Stayed calm through a market fall in an investing scenario.", "icon": "anchor"},
+  {"slug": "basket_spreader", "title": "Basket Spreader", "description": "Built a well-diversified fictional portfolio.", "icon": "layers"},
+  {"slug": "scam_spotter", "title": "Scam Spotter", "description": "Judged every message correctly in a safety challenge.", "icon": "scan-eye"},
+  {"slug": "pillar_explorer", "title": "Pillar Explorer", "description": "Completed an activity in all four learning pillars.", "icon": "compass"},
+  {"slug": "comeback", "title": "Comeback", "description": "Retried a simulation and improved your score.", "icon": "rotate-ccw"},
+  {"slug": "full_circle", "title": "Full Circle", "description": "Completed the final check to measure your growth.", "icon": "award"},
+  {"slug": "lab_finisher", "title": "Lab Finisher", "description": "Completed the ₹500 Money Lab.", "icon": "compass"}
+]

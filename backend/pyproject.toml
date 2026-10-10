@@ -1,0 +1,45 @@
+[project]
+name = "rupeerise-backend"
+version = "0.1.0"
+description = "RupeeRise financial literacy platform - API, simulation engine and learning system"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "uvicorn[standard]>=0.30",
+    "sqlalchemy>=2.0.30,<2.2",
+    "alembic>=1.13",
+    "pydantic>=2.8,<3",
+    "pydantic-settings>=2.4",
+    "psycopg[binary]>=3.2",
+    "pyjwt>=2.9",
+    "bcrypt>=4.2",
+    "httpx>=0.27",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.6",
+]
+
+# Optional AI tutor. Install with: uv sync --group ai
+ai = [
+    "anthropic>=1.0,<2",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["requires_private_content: needs the real answer-key bundle (skipped on placeholder keys)"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008"]

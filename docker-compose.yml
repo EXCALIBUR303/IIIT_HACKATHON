@@ -1,0 +1,59 @@
+# LOCAL DEMO STACK ONLY: PostgreSQL + API + web over plain HTTP on localhost.
+#
+# Not a production deployment. It has no TLS, a single database container with no backups,
+# and development defaults for cookies. For a real deployment follow docs/deployment.md
+# (managed Postgres, TLS in front of the web container, RUPEERISE_ENV=production, the private
+# answer-key bundle, and operator-created organisations).
+#
+#   cp .env.example .env   # then edit values
+#   docker compose up --build
+#   open http://localhost:8080
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-rupeerise}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-rupeerise}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rupeerise}"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment:
+      RUPEERISE_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-rupeerise}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-rupeerise}
+      RUPEERISE_ENV: ${RUPEERISE_ENV:-development}
+      RUPEERISE_SECRET_KEY: ${RUPEERISE_SECRET_KEY:?set RUPEERISE_SECRET_KEY in .env}
+      RUPEERISE_CORS_ORIGINS: ${RUPEERISE_CORS_ORIGINS:-["http://localhost:8080"]}
+      # Plain-HTTP localhost cannot carry Secure cookies. Production must leave this unset
+      # (cookies are Secure by default there, and the API refuses to start otherwise).
+      RUPEERISE_COOKIE_SECURE: ${RUPEERISE_COOKIE_SECURE:-false}
+      RUPEERISE_ENABLE_API_DOCS: ${RUPEERISE_ENABLE_API_DOCS:-false}
+      # Answer keys are not in the repository. Mount the bundle read-only; without it the
+      # development stack falls back to clearly labelled placeholder keys.
+      RUPEERISE_PRIVATE_CONTENT_DIR: ${RUPEERISE_PRIVATE_CONTENT_DIR:-/run/private-content}
+      # The API is reachable only from the web container's network (no published port), and
+      # that proxy overwrites X-Forwarded-For, so its value can be trusted for rate limits.
+      FORWARDED_ALLOW_IPS: "*"
+      RUPEERISE_ANTHROPIC_API_KEY: ${RUPEERISE_ANTHROPIC_API_KEY:-}
+    volumes:
+      - ${PRIVATE_CONTENT_HOST_DIR:-./backend/private_content}:/run/private-content:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    # No published port: browsers reach the API only through the web proxy, which adds the
+    # security headers and request throttles.
+
+  web:
+    build: ./frontend
+    depends_on:
+      - api
+    ports:
+      - "${WEB_BIND:-127.0.0.1}:8080:80"
+
+volumes:
+  pgdata:

@@ -1,0 +1,113 @@
+# API Contracts (v1)
+
+- Base path: `/api/v1` · JSON only · interactive docs at `/api/docs` · machine-readable schema in [`openapi.json`](openapi.json) (regenerate with `uv run python scripts/export_openapi.py` from `backend/`).
+- Python source of truth: `backend/app/schemas/__init__.py`. TypeScript mirror: `frontend/src/lib/api/types.ts`.
+- **Contract changes need a PR that updates schemas, TS types and this file together**, reviewed by Member 1 (architecture) and the affected owner.
+
+## Conventions
+
+**Authentication:** browsers get three cookies from `/auth/login` or `/auth/register/*` and never see a token: `rr_access` (HttpOnly, 15 min), `rr_refresh` (HttpOnly, `SameSite=Strict`, path `/api/v1/auth`, rotated on every use) and `rr_csrf` (readable). Send `credentials: include`, and echo `rr_csrf` as `X-CSRF-Token` on every POST/PUT/PATCH/DELETE; the `Origin` must also be in `RUPEERISE_CORS_ORIGINS`. On a 401 call `POST /auth/refresh` once and retry. Scripts and tests can opt in to bearer mode with the request header `X-Auth-Mode: bearer`, which returns `access_token` in the body, sets no cookies and needs no CSRF header. Reusing an old refresh token revokes the whole session. Full details: [security.md](security.md).
+
+**Errors** always use one envelope:
+
+```json
+{ "error": { "code": "over_budget", "message": "You allocated ₹2,149 but only have ₹2,000…", "field": "allocations" } }
+```
+
+| Status | Typical codes |
+|---|---|
+| 401 | `unauthorized`, `invalid_credentials` |
+| 403 | `forbidden`, `invalid_invite` (every invitation failure looks the same), `csrf_failed`, `stage_required` (no class chosen yet), `wrong_password`, `locked` |
+| 429 | `rate_limited` (with `Retry-After`), `quiz_cooldown` |
+| 404 | `not_found`, `invalid_join_code` (unknown **or** another organisation's code) |
+| 409 | `username_taken`, `invalid_transition`, `session_closed`, `already_answered`, `assessment_locked`, `already_submitted`, `already_member`, `grade_locked`, `round_action_limit`, `conflict` |
+| 422 | `validation_error` (with `details[]`), `over_budget`, `over_capacity`, `allocation_total`, `infeasible_response`, `incomplete`, `invalid_persona`, `persona_required`, `grade_required`, `same_password` |
+| 500 | `internal_error` (details logged server-side only) |
+
+**Money** is returned as JSON numbers in rupees (computed with `Decimal` server-side, rounded to paise). All money is fictional.
+
+## Endpoints
+
+| Method & path | Auth | Purpose |
+|---|---|---|
+| `GET /api/health` | – | Liveness + DB check |
+| `POST /auth/register/student` | – | `{username, password(8–64), display_name, join_code?}` → `AuthOut` + cookies (201). Limited per IP |
+| `POST /auth/register/educator` | – | `{username, password, display_name, invite_token}` → `AuthOut` + cookies (201). The organisation comes **only** from the invitation. Limited per IP and per token |
+| `POST /auth/login` | – | `{username, password}` → `AuthOut` + cookies. Limited per IP and per IP+username |
+| `POST /auth/refresh` | refresh cookie | Rotate the refresh token, issue a new access cookie |
+| `POST /auth/logout` | cookie | Ends the session on the server; clears cookies (204) |
+| `POST /auth/password` | any | `{current_password, new_password}`; revokes every session, opens a new one here |
+| `GET /auth/me` | any | `UserOut` |
+| `GET/POST /educator/invites` · `DELETE /educator/invites/{id}` | educator | List / create (expiring, limited-use) / revoke invitations **for the educator's own organisation**. A token is shown once and only its hash is stored |
+| `POST /students/me/organization/leave` | student | `{current_password}`; leaves the organisation and all its classes (audited) so a different code can be used |
+| `GET /students/me/profile` | student | `ProfileOut` (grade 7–13, derived `stage`, language, level, persona, onboarding flag, preferences, cohorts) |
+| `PUT /students/me/profile` | student | Partial `ProfileUpdate`; completing onboarding requires a class (grade) and a persona. After onboarding the class can change once per 30 days (`grade_locked`). The class is self-declared, not verified |
+| `POST /students/me/cohorts` | student | `{join_code}` join a class **in your own organisation**. A student belongs to one organisation. Limited per IP and student |
+| `DELETE /students/me` | student | Body `{current_password}`. Deletes the account and all learning data (204) |
+| `GET /personas` | – | Fictional personas |
+| `GET /concepts` | – | 14-concept glossary (also the tutor's fallback knowledge) |
+| `GET /modules` | any | Modules with scenarios and quiz slug |
+| `GET /scenarios?kind=` · `GET /scenarios/{slug}` | any | Scenario summaries / detail, filtered to the student's stage (safety answers never included). Starting an ineligible scenario returns 403 |
+| `GET /catalog/investing` · `GET /catalog/safety` | any | Fictional assets & paths · red flags & actions |
+| `POST /simulations/sessions` | student | `{scenario_slug}` → new attempt (`SessionOut`, 201). Abandons an open attempt |
+| `GET /simulations/sessions?scenario_slug=` | student | Attempt history |
+| `GET /simulations/sessions/{id}` | owner | Session state/result |
+| `POST /simulations/sessions/{id}/decisions` | owner | `{type, payload}` → updated `SessionOut` |
+| `POST /calculators/savings` | any | Simple vs compound projection (not saved) |
+| `POST /calculators/head-start` | any | Start-now vs start-later comparison |
+| `POST /calculators/investment` | any | Paths, Monte Carlo bands, loss-by-horizon, risk & diversification |
+| `GET /assessments` · `GET /assessments/{slug}` | student | Summaries with attempts, best score, availability/lock reason |
+| `POST /assessments/{slug}/attempts` | student | Start or resume an attempt → questions **without** answers, in a per-attempt random order (201). Module quizzes need a finished mission in the same module (409 `assessment_locked`) and have a short cooldown after repeated failures (429 `quiz_cooldown`) |
+| `POST /assessments/attempts/{id}/submit` | owner | `{responses:[{question_slug, option_key, confidence?, response_ms?}]}` → `AttemptResultOut`. `response_ms` is only a hint: timing is measured on the server |
+| `GET /assessments/attempts/{id}` | owner | Review a submitted attempt |
+| `GET /progress/me` | student | Modules, concept mastery, strengths, practice areas, pre/post, recent, recommendation |
+| `GET /progress/me/recommendation` | student | Next activity + reason |
+| `GET /achievements/me` | student | Catalogue with earned flags |
+| `GET /portfolio` | student | Portfolio Quest view: `access` (gates + reasons), `portfolio` (cash, invested, total, gain, holdings, per-year history; integer **paise**), `instruments` (fictional; price history only up to the current year), `transactions`, `wallet_balance` |
+| `POST /portfolio/open` · `/quote` · `/trades` · `/advance` · `/reset` · `/transfer` | student | Mutations need `request_id` (8–64 chars; a repeat is applied once) and `confirm: true`. Trades: `{instrument_key, side: buy|sell, quantity}`. Transfer: `{amount}` whole rupees from the learning wallet (one-way, capped per run). The server computes every price and total. Errors: `locked` 403, `insufficient_funds` / `insufficient_holdings` / `insufficient_wallet` / `transfer_cap` / `confirmation_required` 422, `run_complete` / `request_id_reused` 409 |
+| `GET /portfolio/transactions?limit=&before=` | student | Append-only transaction history across runs, newest first, keyset-paginated: pass the smallest `id` you have as `before`. `limit` ≤ 500. The `GET /portfolio` view carries only the latest 30 plus one persisted value per year. At most 40 buys/sells/transfers fit in one fictional year (409 `round_action_limit`) |
+| `GET /wallet?limit=` | student | Educational reward wallet: `balance`, `total_earned`, `history[]` (amount, reason, source, concept, time). Read-only; amounts come only from the server-side ledger. Simulation results and assessment results also carry the `rewards` just issued |
+| `GET /learning/status` | student | Transparent 0–100 learning score (assessments 40, decisions 30, reflection 20, safe behaviour 10), level 1–5 with a requirement checklist. Uses no money or reward inputs |
+| `GET /reflections/prompt?session_id=` · `POST /reflections` | student | Multiple-choice reflection after a finished session; one answer per question, no free text. Body: `{session_id, question_key, selected, confidence?}` |
+| `GET /banking-explorer` · `POST /banking-explorer/stops/{stop_key}/answer` | student | Banking Explorer: 7 stops, each with official sources, a per-source `checked` note and `last_verified`; progress is stored per student |
+| `GET /educator/cohorts` · `POST /educator/cohorts` | educator | List / create (`{name}` → join code) |
+| `GET /educator/cohorts/{id}/overview` | educator (same org) | Participation, module completion, concept mastery, pre/post, support topics, misconceptions, student rows (nicknames) |
+| `POST /tutor/ask` | student | Limited per student per hour and per day (429). Refusals (advice, predictions, secrets, jailbreaks) are deterministic and never reach the model. `{question, concept?, session_id?}` → `{answer, source: ai|fallback, concept, grounded_on[], disclaimer}` |
+
+## Simulation decision contract
+
+Each kind is a small state machine; a decision is accepted only in its phase.
+
+| Kind | Phase → decision `type` | `payload` | Next phase |
+|---|---|---|---|
+| budget | `allocate` → `allocate` | `{allocations: {category_key: rupees}}` (sum ≤ income, ≥ 0) | `respond_event` |
+| | `respond_event` → `respond_event` | `{response: cut_wants\|mix\|use_savings\|borrow\|skip}` (must be feasible) | `done` |
+| savings | `plan` → `plan` | `{goal_saving, emergency_saving, account}` (sum ≤ capacity, > 0) | `respond_event` |
+| | `respond_event` → `respond_event` | `{source: emergency_fund\|goal_savings\|borrow}` | `done` |
+| investing | `allocate` → `allocate` | `{allocation: {asset_key: percent}, horizon_years}` (total 100, allowed assets/horizons) | `respond_event`, or `done` if no fall fits the horizon |
+| | `respond_event` → `respond_event` | `{action: hold\|sell_all\|rebalance}` | `done` |
+| safety | `classify` → `classify` (once per message) | `{message_id, verdict: scam\|genuine, flags: [...], action}` | `done` after the last message |
+
+### `state` / `result` shapes
+
+Fully typed in `frontend/src/lib/api/types.ts` (`BudgetState`, `BudgetResult`, `SavingsState`, `SavingsResult`, `InvestingState`, `InvestingResult`, `SafetyState`, `SafetyResult`). Every result contains `score` (0–100), human-readable `feedback[]` items (`{tone: positive|caution|negative, concept, message}`) and `concept_evidence` (concept → bool) used for mastery.
+
+## Example: budget session
+
+```http
+POST /api/v1/simulations/sessions
+{"scenario_slug": "budget-meera-pocket-money"}
+→ 201 {"id": "…", "phase": "allocate", "state": {"income": 2000.0, "goal": {...}, "categories": [...]}}
+
+POST /api/v1/simulations/sessions/{id}/decisions
+{"type": "allocate", "payload": {"allocations": {"bus_pass": 600, "lunch": 400, "stationery": 200,
+  "recharge": 149, "outings": 150, "gaming": 50, "savings": 400}}}
+→ 200 {"phase": "respond_event", "state": {"allocation": {"score": 100, ...},
+       "event": {"title": "Lost geometry box", "amount": 250.0, ...},
+       "options": [{"key": "cut_wants", "feasible": false, ...}, {"key": "mix", "feasible": true, ...}]}}
+
+POST /api/v1/simulations/sessions/{id}/decisions
+{"type": "respond_event", "payload": {"response": "mix"}}
+→ 200 {"status": "completed", "score": 100, "result": {"outcome": {"paid_from": {...}, ...}},
+       "new_achievements": ["budget_builder", "emergency_ready"]}
+```

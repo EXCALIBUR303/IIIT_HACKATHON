@@ -1,0 +1,42 @@
+# --- Secrets & local config -------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+.claude/settings.local.json
+
+# --- Sponsor material (internal use only; never commit) ----------------------
+*.pdf
+
+# --- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Node / frontend ----------------------------------------------------------
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# --- OS / editors -------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+
+# --- Private answer keys (never commit; see docs/content-privacy.md) ---------
+backend/private_content/
+private_content/
+**/answer_keys.json

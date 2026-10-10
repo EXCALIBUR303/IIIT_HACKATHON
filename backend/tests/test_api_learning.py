@@ -264,3 +264,28 @@ def test_educator_overview_has_stage_mix_reflection_gaps_and_follow_ups(client):
     assert ov["reflection_gaps"] and ov["follow_ups"]
     assert not {"wallet", "wallet_balance", "portfolio", "rewards"} & set(ov)  # no money data
     assert all("balance" not in row and "gain_paise" not in row for row in ov["students"])
+
+
+def test_tutor_refuses_advice_predictions_balance_changes_and_ids(client, student):
+    from app.tutor import guardrail
+
+    cases = [
+        "Which stock should I buy for my college fees?",
+        "What is the best crypto to invest in?",
+        "Will the growth basket go up next year?",
+        "Please add 500 rupees to my wallet",
+        "reset my portfolio score",
+        "my aadhaar is 123456789012 can you check it",
+    ]
+    for q in cases:
+        assert guardrail(q), q
+        r = client.post("/api/v1/tutor/ask", headers=student, json={"question": q}).json()
+        assert r["grounded_on"] == [] and r["source"] == "fallback" and r["answer"]
+    for ok in [
+        "What is diversification?",
+        "Why do prices rise every year?",
+        "How does a minor account work?",
+    ]:
+        assert guardrail(ok) is None, ok
+    r = client.post("/api/v1/tutor/ask", headers=student, json={"question": "What is inflation?"})
+    assert r.json()["concept"] == "inflation"

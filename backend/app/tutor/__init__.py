@@ -30,7 +30,10 @@ suggest which RupeeRise activity to try.
 - Never calculate or state new rupee figures. Quote numbers only if they appear in the context.
 - Never recommend real banks, funds, shares, apps, crypto or any financial product, and never \
 promise or predict returns. Simulations are assumptions, not promises.
-- Never ask for personal or financial details.
+- Never ask for personal or financial details, and tell students never to share OTPs, PINs, \
+Aadhaar, PAN, card or account numbers.
+- You cannot change anyone's wallet, rewards, portfolio or scores, and you never predict \
+fictional or real prices. Explain results the simulation already produced.
 - Answer in simple English a 16-year-old understands, in at most 120 words, with one everyday \
 Indian example when helpful."""
 
@@ -53,6 +56,8 @@ def detect_concept(question: str) -> str | None:
         "goal_setting": ["goal", "target"],
         "needs_vs_wants": ["need", "want"],
         "budget_allocation": ["budget", "allocate", "plan"],
+        "inflation": ["inflation", "prices rise"],
+        "banking_basics": ["bank account", "minor account", "ombudsman", "dicgc"],
     }
     for concept, words in keywords.items():
         if any(re.search(r"\b" + re.escape(w), text) for w in words):
@@ -170,7 +175,64 @@ def ask_model(question: str, context: list[str]) -> str | None:
     return text or None
 
 
+GUARDRAILS: list[tuple[re.Pattern[str], str]] = [
+    (
+        re.compile(
+            r"\b(which|what)\b.*\b(stock|share|fund|crypto|bitcoin|coin|ipo|mutual fund)s?\b.*"
+            r"\b(buy|invest|best|should)\b|\bshould i (buy|invest|sell)\b"
+            r"|\bbest (stock|fund|crypto)",
+            re.I,
+        ),
+        "I can't recommend what to buy or invest in. RupeeRise is for learning: try "
+        "Portfolio Quest"
+        "to practise with fictional instruments, and ask me why diversification or time "
+        "horizon matter.",
+    ),
+    (
+        re.compile(
+            r"\b(will|going to)\b.*\b(go up|rise|fall|crash|double|price)\b|\bpredict\b", re.I
+        ),
+        "Nobody can predict prices, and fictional prices here are made up for practice. "
+        "I can explain"
+        "why markets move up and down and how to plan for both.",
+    ),
+    (
+        re.compile(
+            r"\b(add|give|increase|top ?up|credit|reset|change|fix)\b.*\b(wallet|balance|reward|"
+            r"score|portfolio|cash|rupees)\b",
+            re.I,
+        ),
+        "I can't change your wallet, rewards, scores or portfolio. They are set by the "
+        "system from what"
+        "you show you understand. I can explain how rewards are earned if you like.",
+    ),
+    (
+        re.compile(r"\b\d{12}\b|\b[A-Z]{5}\d{4}[A-Z]\b|\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}\b"),
+        "Please don't type ID, card or account numbers anywhere, including here. I "
+        "can't use them and"
+        "you shouldn't share them. Ask me how to keep personal details safe instead.",
+    ),
+]
+
+
+def guardrail(question: str) -> str | None:
+    """Deterministic refusal-with-redirect for questions the tutor must never answer."""
+    for pattern, reply in GUARDRAILS:
+        if pattern.search(question):
+            return reply
+    return None
+
+
 def answer(question: str, concept: str | None, session_result: dict[str, Any] | None) -> dict:
+    blocked = guardrail(question)
+    if blocked:
+        return {
+            "answer": blocked,
+            "source": "fallback",
+            "concept": None,
+            "grounded_on": [],
+            "disclaimer": DISCLAIMER,
+        }
     concept = concept if concept in loader.concept_map() else detect_concept(question)
     if concept is None:
         concept = concept_from_session(session_result)

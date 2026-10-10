@@ -1,0 +1,3375 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RupeeRise API",
+    "description": "Financial literacy learning platform: fictional simulations, assessments, adaptive learning and educator analytics. Educational use only; not financial advice.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/auth/register/student": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Student",
+        "description": "Create a student account. No email, phone or real-world ID is collected.",
+        "operationId": "register_student_api_v1_auth_register_student_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register/educator": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Educator",
+        "description": "Educators register with an invite code issued by the programme coordinator.",
+        "operationId": "register_educator_api_v1_auth_register_educator_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EducatorRegister"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/students/me/profile": {
+      "get": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Get Profile",
+        "operationId": "get_profile_api_v1_students_me_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Update Profile",
+        "operationId": "update_profile_api_v1_students_me_profile_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/students/me/cohorts": {
+      "post": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Join Cohort",
+        "operationId": "join_cohort_api_v1_students_me_cohorts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinCohort"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/students/me": {
+      "delete": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Delete Account",
+        "description": "Permanently delete the student's account and all learning data (privacy right).",
+        "operationId": "delete_account_api_v1_students_me_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/personas": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Personas",
+        "description": "Fictional personas students can learn alongside (public, used in onboarding).",
+        "operationId": "personas_api_v1_personas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PersonaOut"
+                  },
+                  "type": "array",
+                  "title": "Response Personas Api V1 Personas Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/concepts": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Concepts",
+        "operationId": "concepts_api_v1_concepts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ConceptOut"
+                  },
+                  "type": "array",
+                  "title": "Response Concepts Api V1 Concepts Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/modules": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Modules",
+        "operationId": "modules_api_v1_modules_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ModuleOut"
+                  },
+                  "type": "array",
+                  "title": "Response Modules Api V1 Modules Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/scenarios": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "List Scenarios",
+        "operationId": "list_scenarios_api_v1_scenarios_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "budget",
+                    "savings",
+                    "investing",
+                    "safety"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScenarioSummary"
+                  },
+                  "title": "Response List Scenarios Api V1 Scenarios Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scenarios/{slug}": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Get Scenario",
+        "operationId": "get_scenario_api_v1_scenarios__slug__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/investing": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Investing Catalog",
+        "description": "Fictional assets and illustrative market paths for the investment explorer.",
+        "operationId": "investing_catalog_api_v1_catalog_investing_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Investing Catalog Api V1 Catalog Investing Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/catalog/safety": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "Safety Catalog",
+        "operationId": "safety_catalog_api_v1_catalog_safety_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Safety Catalog Api V1 Catalog Safety Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/simulations/sessions": {
+      "post": {
+        "tags": [
+          "simulations"
+        ],
+        "summary": "Start Session",
+        "operationId": "start_session_api_v1_simulations_sessions_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "simulations"
+        ],
+        "summary": "List Sessions",
+        "operationId": "list_sessions_api_v1_simulations_sessions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scenario_slug",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Scenario Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionSummary"
+                  },
+                  "title": "Response List Sessions Api V1 Simulations Sessions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/simulations/sessions/{session_id}": {
+      "get": {
+        "tags": [
+          "simulations"
+        ],
+        "summary": "Get Session",
+        "operationId": "get_session_api_v1_simulations_sessions__session_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/simulations/sessions/{session_id}/decisions": {
+      "post": {
+        "tags": [
+          "simulations"
+        ],
+        "summary": "Decide",
+        "operationId": "decide_api_v1_simulations_sessions__session_id__decisions_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/calculators/savings": {
+      "post": {
+        "tags": [
+          "simulations"
+        ],
+        "summary": "Savings Calculator",
+        "operationId": "savings_calculator_api_v1_calculators_savings_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavingsProjectionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Savings Calculator Api V1 Calculators Savings Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/calculators/head-start": {
+      "post": {
+        "tags": [
+          "simulations"
+        ],
+        "summary": "Head Start Calculator",
+        "operationId": "head_start_calculator_api_v1_calculators_head_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HeadStartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Head Start Calculator Api V1 Calculators Head Start Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/calculators/investment": {
+      "post": {
+        "tags": [
+          "simulations"
+        ],
+        "summary": "Investment Calculator",
+        "operationId": "investment_calculator_api_v1_calculators_investment_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentProjectionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Investment Calculator Api V1 Calculators Investment Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/assessments": {
+      "get": {
+        "tags": [
+          "assessments"
+        ],
+        "summary": "List Assessments",
+        "operationId": "list_assessments_api_v1_assessments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AssessmentSummary"
+                  },
+                  "type": "array",
+                  "title": "Response List Assessments Api V1 Assessments Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/assessments/{slug}": {
+      "get": {
+        "tags": [
+          "assessments"
+        ],
+        "summary": "Get Assessment",
+        "operationId": "get_assessment_api_v1_assessments__slug__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/{slug}/attempts": {
+      "post": {
+        "tags": [
+          "assessments"
+        ],
+        "summary": "Start Attempt",
+        "operationId": "start_attempt_api_v1_assessments__slug__attempts_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptStartOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/attempts/{attempt_id}/submit": {
+      "post": {
+        "tags": [
+          "assessments"
+        ],
+        "summary": "Submit Attempt",
+        "operationId": "submit_attempt_api_v1_assessments_attempts__attempt_id__submit_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/attempts/{attempt_id}": {
+      "get": {
+        "tags": [
+          "assessments"
+        ],
+        "summary": "Get Attempt",
+        "operationId": "get_attempt_api_v1_assessments_attempts__attempt_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptResultOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/progress/me": {
+      "get": {
+        "tags": [
+          "progress"
+        ],
+        "summary": "My Progress",
+        "operationId": "my_progress_api_v1_progress_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/progress/me/recommendation": {
+      "get": {
+        "tags": [
+          "progress"
+        ],
+        "summary": "My Recommendation",
+        "description": "Next activity chosen by transparent adaptive rules (see learning/adaptive.py).",
+        "operationId": "my_recommendation_api_v1_progress_me_recommendation_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recommendation"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/achievements/me": {
+      "get": {
+        "tags": [
+          "progress"
+        ],
+        "summary": "My Achievements",
+        "operationId": "my_achievements_api_v1_achievements_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AchievementOut"
+                  },
+                  "type": "array",
+                  "title": "Response My Achievements Api V1 Achievements Me Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/educator/cohorts": {
+      "get": {
+        "tags": [
+          "educator"
+        ],
+        "summary": "List Cohorts",
+        "operationId": "list_cohorts_api_v1_educator_cohorts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CohortOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Cohorts Api V1 Educator Cohorts Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "educator"
+        ],
+        "summary": "Create Cohort",
+        "operationId": "create_cohort_api_v1_educator_cohorts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CohortCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CohortOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/educator/cohorts/{cohort_id}/overview": {
+      "get": {
+        "tags": [
+          "educator"
+        ],
+        "summary": "Cohort Overview",
+        "description": "Aggregated, privacy-conscious cohort analytics (nicknames only, no PII).",
+        "operationId": "cohort_overview_api_v1_educator_cohorts__cohort_id__overview_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cohort_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Cohort Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Cohort Overview Api V1 Educator Cohorts  Cohort Id  Overview Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tutor/ask": {
+      "post": {
+        "tags": [
+          "tutor"
+        ],
+        "summary": "Ask",
+        "operationId": "ask_api_v1_tutor_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TutorAsk"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TutorAnswer"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AchievementOut": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "icon": {
+            "type": "string",
+            "title": "Icon"
+          },
+          "earned": {
+            "type": "boolean",
+            "title": "Earned"
+          },
+          "awarded_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Awarded At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "title",
+          "description",
+          "icon",
+          "earned",
+          "awarded_at"
+        ],
+        "title": "AchievementOut"
+      },
+      "AssessmentSummary": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "initial",
+              "module",
+              "post"
+            ],
+            "title": "Kind"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "module_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Module Slug"
+          },
+          "question_count": {
+            "type": "integer",
+            "title": "Question Count"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "best_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Score"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "locked_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locked Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "kind",
+          "title",
+          "description",
+          "module_slug",
+          "question_count",
+          "attempts",
+          "best_score",
+          "available"
+        ],
+        "title": "AssessmentSummary"
+      },
+      "AttemptResultOut": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Attempt Id"
+          },
+          "assessment_slug": {
+            "type": "string",
+            "title": "Assessment Slug"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "score_pct": {
+            "type": "integer",
+            "title": "Score Pct"
+          },
+          "correct_count": {
+            "type": "integer",
+            "title": "Correct Count"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "flagged_guessing": {
+            "type": "boolean",
+            "title": "Flagged Guessing"
+          },
+          "concepts": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Concepts"
+          },
+          "misconceptions": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Misconceptions"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionResult"
+            },
+            "type": "array",
+            "title": "Questions"
+          },
+          "new_achievements": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "New Achievements",
+            "default": []
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Submitted At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "assessment_slug",
+          "attempt_number",
+          "score_pct",
+          "correct_count",
+          "total",
+          "flagged_guessing",
+          "concepts",
+          "misconceptions",
+          "questions",
+          "submitted_at"
+        ],
+        "title": "AttemptResultOut"
+      },
+      "AttemptStartOut": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Attempt Id"
+          },
+          "assessment": {
+            "$ref": "#/components/schemas/AssessmentSummary"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/QuestionOut"
+            },
+            "type": "array",
+            "title": "Questions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "assessment",
+          "questions"
+        ],
+        "title": "AttemptStartOut"
+      },
+      "CohortCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CohortCreate"
+      },
+      "CohortOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "join_code": {
+            "type": "string",
+            "title": "Join Code"
+          },
+          "student_count": {
+            "type": "integer",
+            "title": "Student Count"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "join_code",
+          "student_count",
+          "created_at"
+        ],
+        "title": "CohortOut"
+      },
+      "ConceptOut": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "pillar": {
+            "type": "string",
+            "enum": [
+              "budgeting",
+              "saving",
+              "investing",
+              "safety"
+            ],
+            "title": "Pillar"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "example": {
+            "type": "string",
+            "title": "Example"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "pillar",
+          "title",
+          "explanation",
+          "example"
+        ],
+        "title": "ConceptOut"
+      },
+      "ConceptProgress": {
+        "properties": {
+          "concept": {
+            "type": "string",
+            "title": "Concept"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "pillar": {
+            "type": "string",
+            "enum": [
+              "budgeting",
+              "saving",
+              "investing",
+              "safety"
+            ],
+            "title": "Pillar"
+          },
+          "mastery": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mastery"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "not_started",
+              "needs_practice",
+              "developing",
+              "mastered"
+            ],
+            "title": "Level"
+          },
+          "evidence_count": {
+            "type": "integer",
+            "title": "Evidence Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "concept",
+          "title",
+          "pillar",
+          "mastery",
+          "level",
+          "evidence_count"
+        ],
+        "title": "ConceptProgress"
+      },
+      "DecisionIn": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "maxLength": 30,
+            "title": "Type",
+            "description": "allocate | respond_event | plan | classify"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "payload"
+        ],
+        "title": "DecisionIn"
+      },
+      "EducatorRegister": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_.-]{3,40}$",
+            "title": "Username",
+            "description": "3-40 letters, digits, _ . -"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Display Name",
+            "description": "A first name or nickname"
+          },
+          "join_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 12
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Join Code"
+          },
+          "invite_code": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Invite Code"
+          },
+          "organization_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 2,
+            "title": "Organization Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password",
+          "display_name",
+          "invite_code",
+          "organization_name"
+        ],
+        "title": "EducatorRegister"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HeadStartIn": {
+        "properties": {
+          "monthly_deposit": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Monthly Deposit"
+          },
+          "annual_rate": {
+            "type": "number",
+            "maximum": 0.3,
+            "minimum": 0.0,
+            "title": "Annual Rate"
+          },
+          "total_years": {
+            "type": "integer",
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Total Years"
+          },
+          "delay_years": {
+            "type": "integer",
+            "maximum": 49.0,
+            "minimum": 0.0,
+            "title": "Delay Years"
+          }
+        },
+        "type": "object",
+        "required": [
+          "monthly_deposit",
+          "annual_rate",
+          "total_years",
+          "delay_years"
+        ],
+        "title": "HeadStartIn"
+      },
+      "InvestmentProjectionIn": {
+        "properties": {
+          "amount": {
+            "type": "number",
+            "maximum": 10000000.0,
+            "minimum": 100.0,
+            "title": "Amount"
+          },
+          "allocation": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Allocation"
+          },
+          "horizon_years": {
+            "type": "integer",
+            "enum": [
+              1,
+              3,
+              5,
+              10
+            ],
+            "title": "Horizon Years"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount",
+          "allocation",
+          "horizon_years"
+        ],
+        "title": "InvestmentProjectionIn"
+      },
+      "JoinCohort": {
+        "properties": {
+          "join_code": {
+            "type": "string",
+            "maxLength": 12,
+            "minLength": 4,
+            "title": "Join Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "join_code"
+        ],
+        "title": "JoinCohort"
+      },
+      "LoginRequest": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Username"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "ModuleOut": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "pillar": {
+            "type": "string",
+            "enum": [
+              "budgeting",
+              "saving",
+              "investing",
+              "safety"
+            ],
+            "title": "Pillar"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "order": {
+            "type": "integer",
+            "title": "Order"
+          },
+          "objectives": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Objectives"
+          },
+          "concepts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Concepts"
+          },
+          "quiz_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiz Slug"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioSummary"
+            },
+            "type": "array",
+            "title": "Scenarios"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "pillar",
+          "title",
+          "summary",
+          "order",
+          "objectives",
+          "concepts",
+          "quiz_slug",
+          "scenarios"
+        ],
+        "title": "ModuleOut"
+      },
+      "ModuleProgressOut": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "pillar": {
+            "type": "string",
+            "enum": [
+              "budgeting",
+              "saving",
+              "investing",
+              "safety"
+            ],
+            "title": "Pillar"
+          },
+          "percent": {
+            "type": "integer",
+            "title": "Percent"
+          },
+          "simulation_done": {
+            "type": "boolean",
+            "title": "Simulation Done"
+          },
+          "quiz_best": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quiz Best"
+          },
+          "completed": {
+            "type": "boolean",
+            "title": "Completed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "title",
+          "pillar",
+          "percent",
+          "simulation_done",
+          "quiz_best",
+          "completed"
+        ],
+        "title": "ModuleProgressOut"
+      },
+      "OptionOut": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "text"
+        ],
+        "title": "OptionOut"
+      },
+      "PersonaOut": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "age": {
+            "type": "integer",
+            "title": "Age"
+          },
+          "grade": {
+            "type": "string",
+            "title": "Grade"
+          },
+          "area": {
+            "type": "string",
+            "title": "Area"
+          },
+          "situation": {
+            "type": "string",
+            "title": "Situation"
+          },
+          "money_source": {
+            "type": "string",
+            "title": "Money Source"
+          },
+          "monthly_money": {
+            "type": "integer",
+            "title": "Monthly Money"
+          },
+          "goal": {
+            "type": "string",
+            "title": "Goal"
+          },
+          "maturity": {
+            "type": "string",
+            "enum": [
+              "beginner",
+              "intermediate",
+              "advanced"
+            ],
+            "title": "Maturity"
+          },
+          "color": {
+            "type": "string",
+            "title": "Color"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "name",
+          "age",
+          "grade",
+          "area",
+          "situation",
+          "money_source",
+          "monthly_money",
+          "goal",
+          "maturity",
+          "color"
+        ],
+        "title": "PersonaOut"
+      },
+      "Preferences": {
+        "properties": {
+          "large_text": {
+            "type": "boolean",
+            "title": "Large Text",
+            "default": false
+          },
+          "reduced_motion": {
+            "type": "boolean",
+            "title": "Reduced Motion",
+            "default": false
+          },
+          "high_contrast": {
+            "type": "boolean",
+            "title": "High Contrast",
+            "default": false
+          },
+          "show_hints": {
+            "type": "boolean",
+            "title": "Show Hints",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "Preferences"
+      },
+      "ProfileOut": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          },
+          "grade": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "hi",
+              "te"
+            ],
+            "title": "Language"
+          },
+          "learning_level": {
+            "type": "string",
+            "enum": [
+              "beginner",
+              "intermediate",
+              "advanced"
+            ],
+            "title": "Learning Level"
+          },
+          "persona_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persona Key"
+          },
+          "onboarding_completed": {
+            "type": "boolean",
+            "title": "Onboarding Completed"
+          },
+          "preferences": {
+            "$ref": "#/components/schemas/Preferences"
+          },
+          "cohorts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Cohorts",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "grade",
+          "language",
+          "learning_level",
+          "persona_key",
+          "onboarding_completed",
+          "preferences"
+        ],
+        "title": "ProfileOut"
+      },
+      "ProfileUpdate": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "grade": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "enum": [
+                  11,
+                  12,
+                  13
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "en",
+                  "hi",
+                  "te"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "learning_level": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "beginner",
+                  "intermediate",
+                  "advanced"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Learning Level"
+          },
+          "persona_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persona Key"
+          },
+          "onboarding_completed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Onboarding Completed"
+          },
+          "preferences": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Preferences"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "ProfileUpdate"
+      },
+      "ProgressOut": {
+        "properties": {
+          "modules": {
+            "items": {
+              "$ref": "#/components/schemas/ModuleProgressOut"
+            },
+            "type": "array",
+            "title": "Modules"
+          },
+          "concepts": {
+            "items": {
+              "$ref": "#/components/schemas/ConceptProgress"
+            },
+            "type": "array",
+            "title": "Concepts"
+          },
+          "strengths": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Strengths"
+          },
+          "practice_areas": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Practice Areas"
+          },
+          "pre_post": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pre Post"
+          },
+          "activity": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Activity"
+          },
+          "recent": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Recent"
+          },
+          "recommendation": {
+            "$ref": "#/components/schemas/Recommendation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "modules",
+          "concepts",
+          "strengths",
+          "practice_areas",
+          "pre_post",
+          "activity",
+          "recent",
+          "recommendation"
+        ],
+        "title": "ProgressOut"
+      },
+      "QuestionOut": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "concept": {
+            "type": "string",
+            "title": "Concept"
+          },
+          "difficulty": {
+            "type": "integer",
+            "title": "Difficulty"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/OptionOut"
+            },
+            "type": "array",
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "concept",
+          "difficulty",
+          "prompt",
+          "options"
+        ],
+        "title": "QuestionOut"
+      },
+      "QuestionResult": {
+        "properties": {
+          "question_slug": {
+            "type": "string",
+            "title": "Question Slug"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "concept": {
+            "type": "string",
+            "title": "Concept"
+          },
+          "selected": {
+            "type": "string",
+            "title": "Selected"
+          },
+          "correct_key": {
+            "type": "string",
+            "title": "Correct Key"
+          },
+          "is_correct": {
+            "type": "boolean",
+            "title": "Is Correct"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "correct_explanation": {
+            "type": "string",
+            "title": "Correct Explanation"
+          },
+          "misconception": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Misconception"
+          },
+          "misconception_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Misconception Label"
+          },
+          "rapid": {
+            "type": "boolean",
+            "title": "Rapid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_slug",
+          "prompt",
+          "concept",
+          "selected",
+          "correct_key",
+          "is_correct",
+          "explanation",
+          "correct_explanation",
+          "misconception",
+          "misconception_label",
+          "rapid"
+        ],
+        "title": "QuestionResult"
+      },
+      "Recommendation": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "onboarding",
+              "assessment",
+              "scenario",
+              "review"
+            ],
+            "title": "Kind"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "pillar": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "budgeting",
+                  "saving",
+                  "investing",
+                  "safety"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pillar"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "slug",
+          "title",
+          "reason"
+        ],
+        "title": "Recommendation"
+      },
+      "ResponseIn": {
+        "properties": {
+          "question_slug": {
+            "type": "string",
+            "maxLength": 60,
+            "title": "Question Slug"
+          },
+          "option_key": {
+            "type": "string",
+            "maxLength": 5,
+            "title": "Option Key"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "response_ms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 3600000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Response Ms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_slug",
+          "option_key"
+        ],
+        "title": "ResponseIn"
+      },
+      "SavingsProjectionIn": {
+        "properties": {
+          "monthly_deposit": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Monthly Deposit"
+          },
+          "months": {
+            "type": "integer",
+            "maximum": 600.0,
+            "minimum": 1.0,
+            "title": "Months"
+          },
+          "annual_rate": {
+            "type": "number",
+            "maximum": 0.3,
+            "minimum": 0.0,
+            "title": "Annual Rate"
+          },
+          "opening_balance": {
+            "type": "number",
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Opening Balance",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "monthly_deposit",
+          "months",
+          "annual_rate"
+        ],
+        "title": "SavingsProjectionIn"
+      },
+      "ScenarioDetail": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "budget",
+              "savings",
+              "investing",
+              "safety"
+            ],
+            "title": "Kind"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "intro": {
+            "type": "string",
+            "title": "Intro"
+          },
+          "objective": {
+            "type": "string",
+            "title": "Objective"
+          },
+          "difficulty": {
+            "type": "integer",
+            "title": "Difficulty"
+          },
+          "persona_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persona Key"
+          },
+          "module_slug": {
+            "type": "string",
+            "title": "Module Slug"
+          },
+          "pillar": {
+            "type": "string",
+            "enum": [
+              "budgeting",
+              "saving",
+              "investing",
+              "safety"
+            ],
+            "title": "Pillar"
+          },
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "kind",
+          "title",
+          "intro",
+          "objective",
+          "difficulty",
+          "persona_key",
+          "module_slug",
+          "pillar",
+          "config"
+        ],
+        "title": "ScenarioDetail"
+      },
+      "ScenarioSummary": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "budget",
+              "savings",
+              "investing",
+              "safety"
+            ],
+            "title": "Kind"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "intro": {
+            "type": "string",
+            "title": "Intro"
+          },
+          "objective": {
+            "type": "string",
+            "title": "Objective"
+          },
+          "difficulty": {
+            "type": "integer",
+            "title": "Difficulty"
+          },
+          "persona_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persona Key"
+          },
+          "module_slug": {
+            "type": "string",
+            "title": "Module Slug"
+          },
+          "pillar": {
+            "type": "string",
+            "enum": [
+              "budgeting",
+              "saving",
+              "investing",
+              "safety"
+            ],
+            "title": "Pillar"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "kind",
+          "title",
+          "intro",
+          "objective",
+          "difficulty",
+          "persona_key",
+          "module_slug",
+          "pillar"
+        ],
+        "title": "ScenarioSummary"
+      },
+      "SessionCreate": {
+        "properties": {
+          "scenario_slug": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Scenario Slug"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scenario_slug"
+        ],
+        "title": "SessionCreate"
+      },
+      "SessionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "scenario_slug": {
+            "type": "string",
+            "title": "Scenario Slug"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "budget",
+              "savings",
+              "investing",
+              "safety"
+            ],
+            "title": "Kind"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed",
+              "abandoned"
+            ],
+            "title": "Status"
+          },
+          "phase": {
+            "type": "string",
+            "title": "Phase"
+          },
+          "state": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "State"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "previous_best": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Best"
+          },
+          "new_achievements": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "New Achievements",
+            "default": []
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "scenario_slug",
+          "kind",
+          "attempt_number",
+          "status",
+          "phase",
+          "state",
+          "result",
+          "score",
+          "started_at",
+          "completed_at"
+        ],
+        "title": "SessionOut"
+      },
+      "SessionSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "scenario_slug": {
+            "type": "string",
+            "title": "Scenario Slug"
+          },
+          "scenario_title": {
+            "type": "string",
+            "title": "Scenario Title"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "budget",
+              "savings",
+              "investing",
+              "safety"
+            ],
+            "title": "Kind"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "scenario_slug",
+          "scenario_title",
+          "kind",
+          "attempt_number",
+          "status",
+          "score",
+          "started_at",
+          "completed_at"
+        ],
+        "title": "SessionSummary"
+      },
+      "StudentRegister": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_.-]{3,40}$",
+            "title": "Username",
+            "description": "3-40 letters, digits, _ . -"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Display Name",
+            "description": "A first name or nickname"
+          },
+          "join_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 12
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Join Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "password",
+          "display_name"
+        ],
+        "title": "StudentRegister"
+      },
+      "SubmitIn": {
+        "properties": {
+          "responses": {
+            "items": {
+              "$ref": "#/components/schemas/ResponseIn"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Responses"
+          }
+        },
+        "type": "object",
+        "required": [
+          "responses"
+        ],
+        "title": "SubmitIn"
+      },
+      "TokenOut": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "const": "bearer",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "expires_in",
+          "user"
+        ],
+        "title": "TokenOut"
+      },
+      "TutorAnswer": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "ai",
+              "fallback"
+            ],
+            "title": "Source"
+          },
+          "concept": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Concept"
+          },
+          "grounded_on": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Grounded On"
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer",
+          "source",
+          "concept",
+          "grounded_on",
+          "disclaimer"
+        ],
+        "title": "TutorAnswer"
+      },
+      "TutorAsk": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Question"
+          },
+          "concept": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Concept"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "title": "TutorAsk"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "student",
+              "educator",
+              "admin"
+            ],
+            "title": "Role"
+          },
+          "organization_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organization Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "username",
+          "display_name",
+          "role"
+        ],
+        "title": "UserOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

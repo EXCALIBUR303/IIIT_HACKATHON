@@ -1,0 +1,18 @@
+[
+  {"slug": "plan-and-budget", "pillar": "budgeting", "order": 1, "title": "Plan & Budget",
+   "summary": "Separate needs from wants, give every rupee a job and plan for short-term goals.",
+   "objectives": ["Classify expenses as needs or wants", "Build a budget that never exceeds income", "Turn a goal into a monthly saving target", "Adjust a budget when something unexpected happens"],
+   "concepts": ["needs_vs_wants", "budget_allocation", "goal_setting"]},
+  {"slug": "save-and-manage", "pillar": "saving", "order": 2, "title": "Save & Manage",
+   "summary": "Build saving habits, keep an emergency fund and see interest grow month by month.",
+   "objectives": ["Save first instead of saving what is left", "Explain why an emergency fund protects goals", "Compare simple and compound interest"],
+   "concepts": ["saving_habit", "emergency_fund", "simple_vs_compound"]},
+  {"slug": "understand-investing", "pillar": "investing", "order": 3, "title": "Understand Investing",
+   "summary": "Explore risk, time, compounding and diversification with fictional assets. Education only, never advice.",
+   "objectives": ["Explain the link between risk and potential return", "Match risk to a time horizon", "Show how diversification limits damage", "Describe why outcomes are uncertain"],
+   "concepts": ["risk_return", "compounding", "diversification", "time_horizon"]},
+  {"slug": "stay-safe", "pillar": "safety", "order": 4, "title": "Stay Financially Safe",
+   "summary": "Spot scams, protect OTPs, PINs and personal data, and choose safe actions.",
+   "objectives": ["Identify red flags in messages and offers", "Never share OTP or PIN", "Verify through official channels", "Protect personal documents"],
+   "concepts": ["otp_pin_safety", "phishing_links", "too_good_offers", "personal_data_privacy"]}
+]

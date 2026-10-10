@@ -1,0 +1,18 @@
+[
+  {"key": "meera", "name": "Meera", "age": 16, "grade": "Class 11", "area": "Kukatpally",
+   "situation": "Lives with her parents and gets ₹2,000 a month for bus fare, lunch and stationery.",
+   "money_source": "Pocket money", "monthly_money": 2000, "goal": "Save ₹1,200 for a scientific calculator",
+   "maturity": "beginner", "color": "indigo"},
+  {"key": "lakshmi", "name": "Lakshmi", "age": 17, "grade": "Class 12", "area": "Government hostel, Secunderabad",
+   "situation": "Manages a ₹5,000 monthly scholarship stipend that must cover food top-ups, transport, books and personal needs.",
+   "money_source": "Scholarship stipend", "monthly_money": 5000, "goal": "Save ₹2,500 for a spoken-English course",
+   "maturity": "intermediate", "color": "emerald"},
+  {"key": "arjun", "name": "Arjun", "age": 17, "grade": "Class 12", "area": "Old City",
+   "situation": "Helps at his family's tiffin stall on weekends and earns about ₹4,500 a month, part of which goes to the household.",
+   "money_source": "Weekend work", "monthly_money": 4500, "goal": "Save ₹3,000 for an entrance-exam mock test series",
+   "maturity": "intermediate", "color": "amber"},
+  {"key": "imran", "name": "Imran", "age": 18, "grade": "Finished Class 12", "area": "Mehdipatnam",
+   "situation": "Works part-time as a delivery rider earning about ₹9,000 a month, pays a phone instalment and supports his family.",
+   "money_source": "Part-time job", "monthly_money": 9000, "goal": "Build a ₹10,000 emergency fund",
+   "maturity": "advanced", "color": "sky"}
+]

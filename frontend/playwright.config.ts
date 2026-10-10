@@ -1,0 +1,45 @@
+import { defineConfig, devices } from '@playwright/test'
+
+/**
+ * End-to-end tests run the real stack: FastAPI on :8001 against a dedicated
+ * PostgreSQL database (default rupeerise_e2e) and the Vite dev server on :5174.
+ * Override the database with E2E_DATABASE_URL.
+ */
+const databaseUrl = process.env.E2E_DATABASE_URL ?? 'postgresql+psycopg://localhost:5432/rupeerise_e2e'
+
+export default defineConfig({
+  testDir: './e2e',
+  timeout: 60_000,
+  fullyParallel: false,
+  workers: 1,
+  retries: process.env.CI ? 1 : 0,
+  reporter: process.env.CI ? [['github'], ['list']] : 'list',
+  use: {
+    baseURL: 'http://localhost:5174',
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+  },
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  webServer: [
+    {
+      command: 'uv run alembic upgrade head && uv run python -m app.seed && uv run uvicorn app.main:app --port 8001',
+      cwd: '../backend',
+      url: 'http://localhost:8001/api/health',
+      env: {
+        RUPEERISE_DATABASE_URL: databaseUrl,
+        RUPEERISE_BCRYPT_ROUNDS: '4',
+        RUPEERISE_EDUCATOR_INVITE_CODE: 'e2e-invite',
+        RUPEERISE_ANTHROPIC_API_KEY: '',
+      },
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+    {
+      command: 'npm run dev -- --port 5174 --strictPort',
+      url: 'http://localhost:5174',
+      env: { VITE_DEV_API_PROXY: 'http://localhost:8001' },
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+  ],
+})

@@ -16,12 +16,20 @@ log = logging.getLogger("rupeerise")
 
 
 class ApiError(Exception):
-    def __init__(self, status: int, code: str, message: str, field: str | None = None):
+    def __init__(
+        self,
+        status: int,
+        code: str,
+        message: str,
+        field: str | None = None,
+        headers: dict[str, str] | None = None,
+    ):
         super().__init__(message)
         self.status = status
         self.code = code
         self.message = message
         self.field = field
+        self.headers = headers
 
 
 def not_found(what: str) -> ApiError:
@@ -48,7 +56,11 @@ def _body(code: str, message: str, field: str | None = None, details=None) -> di
 def register_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
     async def _api_error(_: Request, exc: ApiError):
-        return JSONResponse(status_code=exc.status, content=_body(exc.code, exc.message, exc.field))
+        return JSONResponse(
+            status_code=exc.status,
+            content=_body(exc.code, exc.message, exc.field),
+            headers=exc.headers,
+        )
 
     @app.exception_handler(SimulationError)
     async def _sim_error(_: Request, exc: SimulationError):

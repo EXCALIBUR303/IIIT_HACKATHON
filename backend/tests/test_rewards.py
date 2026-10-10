@@ -12,8 +12,9 @@ from tests.conftest import (
     GOOD_BUDGET,
     answer_all,
     complete_budget,
+    delete_account,
     register_educator,
-    register_student,
+    register_onboarded,
 )
 
 WALLET = "/api/v1/wallet"
@@ -119,7 +120,7 @@ def test_failed_quiz_pays_nothing_but_starting_check_pays_participation(client, 
 
 def test_wallet_is_private_and_read_only(client, student):
     complete_budget(client, student)
-    other, _ = register_student(client)
+    other, _ = register_onboarded(client)
     assert client.get(WALLET, headers=other).json()["balance"] == 0
     assert client.get(WALLET).status_code == 401
     assert client.get(WALLET, headers=register_educator(client)).status_code == 403
@@ -139,7 +140,7 @@ def test_rewards_do_not_change_mastery(client, student):
 def test_deleting_account_erases_the_ledger(client, student):
     complete_budget(client, student)
     me = client.get("/api/v1/auth/me", headers=student).json()
-    assert client.delete("/api/v1/students/me", headers=student).status_code == 204
+    assert delete_account(client, student).status_code == 204
     with SessionLocal() as db:
         assert db.scalar(select(func.count()).select_from(RewardLedgerEntry)) == 0
         assert db.get(User, me["id"]) is None

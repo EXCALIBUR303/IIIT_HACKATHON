@@ -36,7 +36,7 @@ export default function TakeAssessmentPage() {
   }, [index, attempt.data])
 
   if (attempt.error) {
-    const locked = attempt.error instanceof ApiError && attempt.error.status === 409
+    const locked = attempt.error instanceof ApiError && (attempt.error.status === 409 || attempt.error.status === 429)
     return locked ? (
       <Alert tone="warning" title="Not available right now" action={<Button asChild variant="outline" size="sm"><Link to="/app/assessments">Back to checks</Link></Button>}>
         {attempt.error.message}

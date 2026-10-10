@@ -2,9 +2,16 @@
 
 import dataclasses
 
+import pytest
+
 from app.learning import levels, score
 from app.services.reflections import total_available
-from tests.conftest import answer_all, complete_budget, register_educator, register_student
+from tests.conftest import (
+    answer_all,
+    complete_budget,
+    register_educator,
+    register_onboarded,
+)
 
 STATUS = "/api/v1/learning/status"
 REFLECTIONS = "/api/v1/reflections"
@@ -210,7 +217,7 @@ def test_cannot_reflect_before_finishing_or_on_someone_elses_mission(client, stu
     ).json()
     assert prompt(client, student, started["id"]).status_code == 409
     sid = finished_budget_session(client, student)
-    other, _ = register_student(client)
+    other, _ = register_onboarded(client)
     assert prompt(client, other, sid).status_code == 404
     key = prompt(client, student, sid).json()["question_key"]
     assert answer(client, other, sid, key, "a").status_code == 404
@@ -232,6 +239,7 @@ def test_correct_reflection_pays_once_and_adds_evidence(client, student):
     assert refl["score"] == round(100 * 1 / total_available())
 
 
+@pytest.mark.requires_private_content
 def test_wrong_reflection_names_the_misconception_and_pays_nothing(client, student):
     sid = finished_budget_session(client, student)
     p = prompt(client, student, sid).json()

@@ -33,6 +33,7 @@ package = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = ["requires_private_content: needs the real answer-key bundle (skipped on placeholder keys)"]
 pythonpath = ["."]
 
 [tool.ruff]

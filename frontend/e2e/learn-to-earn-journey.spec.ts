@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import { loginAsNewStudent, setNumber } from './helpers'
 
@@ -101,7 +102,12 @@ test('learn to earn: mission, reward, wallet, portfolio, market event and learni
   await expect(page.getByText(/never unlocks? a level|never unlock a level/i)).toBeVisible()
 })
 
+// Answer keys are not in the repository. Without the private bundle the API serves labelled
+// placeholder keys, so a test that depends on the real answers cannot run.
+const realKeys = process.env.RUPEERISE_PRIVATE_CONTENT_DIR !== 'none' && existsSync('../backend/private_content/answer_keys.json')
+
 test('banking explorer: sources are shown and a wrong answer can be retried', async ({ page, request }) => {
+  test.skip(!realKeys, 'needs the private answer-key bundle')
   await loginAsNewStudent(page, request)
   await page.goto('/app/banking')
   await expect(page.getByText(/Sources last checked/)).toBeVisible()

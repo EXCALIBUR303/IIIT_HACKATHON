@@ -31,7 +31,7 @@ describe('LoginPage', () => {
   it('signs in and navigates to the student home', async () => {
     mockFetch((url) =>
       url === '/auth/login'
-        ? { body: { access_token: 't', token_type: 'bearer', expires_in: 60, user: { id: '1', username: 'meera', display_name: 'Meera', role: 'student', organization_id: null } } }
+        ? { body: { expires_in: 60, user: { id: '1', username: 'meera', display_name: 'Meera', role: 'student', organization_id: null } } }
         : { status: 500 },
     )
     renderWithProviders(
@@ -45,7 +45,8 @@ describe('LoginPage', () => {
     await userEvent.type(screen.getByLabelText('Password'), 'password123')
     await userEvent.click(screen.getByRole('button', { name: 'Sign in' }))
     expect(await screen.findByText('Student home')).toBeInTheDocument()
-    expect(localStorage.getItem('rupeerise.token')).toBe('t')
+    // The session lives in HttpOnly cookies. Nothing credential-like is kept where scripts can read it.
+    expect(JSON.stringify({ ...localStorage })).not.toMatch(/token/i)
   })
 })
 
@@ -61,7 +62,7 @@ describe('RegisterPage', () => {
   it('shows educator-only fields on the educator tab', async () => {
     mockFetch(() => ({ status: 500 }))
     renderWithProviders(<RegisterPage />, { route: '/register?role=educator' })
-    expect(screen.getByLabelText('Educator invite code')).toBeInTheDocument()
+    expect(screen.getByLabelText('Invitation token')).toBeInTheDocument()
     expect(screen.queryByLabelText('Class code (optional)')).not.toBeInTheDocument()
   })
 })
@@ -85,5 +86,33 @@ describe('routing', () => {
     mockFetch(() => ({ status: 401 }))
     renderWithProviders(<AppRoutes />, { route: '/nope' })
     expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeInTheDocument()
+  })
+})
+
+describe('cookie session client', () => {
+  it('echoes the CSRF cookie on unsafe requests and never sends a bearer header', async () => {
+    document.cookie = 'rr_csrf=abc123; path=/'
+    const fetchMock = mockFetch(() => ({ status: 200, body: {} }))
+    const { http } = await import('@/lib/api/client')
+    await http.post('/students/me/cohorts', { join_code: 'ABC123' })
+    const [, init] = fetchMock.mock.calls[0]
+    const headers = (init as RequestInit).headers as Record<string, string>
+    expect(headers['X-CSRF-Token']).toBe('abc123')
+    expect(headers.Authorization).toBeUndefined()
+    expect((init as RequestInit).credentials).toBe('include')
+    document.cookie = 'rr_csrf=; max-age=0; path=/'
+  })
+
+  it('refreshes once on a 401 and retries the request', async () => {
+    document.cookie = 'rr_csrf=abc123; path=/'
+    let me = 0
+    const fetchMock = mockFetch((url) => {
+      if (url === '/auth/refresh') return { body: { expires_in: 900 } }
+      return me++ === 0 ? { status: 401, body: { error: { code: 'unauthorized', message: 'expired' } } } : { body: { id: '1' } }
+    })
+    const { http } = await import('@/lib/api/client')
+    await expect(http.get('/auth/me')).resolves.toEqual({ id: '1' })
+    expect(fetchMock.mock.calls.map((c) => String(c[0]).replace(/^.*\/api\/v1/, ''))).toEqual(['/auth/me', '/auth/refresh', '/auth/me'])
+    document.cookie = 'rr_csrf=; max-age=0; path=/'
   })
 })

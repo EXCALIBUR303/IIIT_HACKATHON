@@ -30,7 +30,11 @@ export default defineConfig({
       env: {
         RUPEERISE_DATABASE_URL: databaseUrl,
         RUPEERISE_BCRYPT_ROUNDS: '4',
-        RUPEERISE_EDUCATOR_INVITE_CODE: 'e2e-invite',
+        // The browser talks to the Vite origin; CSRF checks compare it to this list.
+        RUPEERISE_CORS_ORIGINS: JSON.stringify([`http://localhost:${webPort}`]),
+        // One machine registers dozens of throwaway accounts, so the per-IP limits are off here.
+        // The limits themselves are covered by the backend test suite.
+        RUPEERISE_RATE_LIMIT_ENABLED: 'false',
         RUPEERISE_ANTHROPIC_API_KEY: '',
       },
       reuseExistingServer: false,

@@ -9,6 +9,7 @@ from fastapi import APIRouter
 from sqlalchemy import select
 
 from app.api.deps import DB, CurrentUser, Student
+from app.api.v1.content import require_pillar
 from app.core.errors import forbidden, not_found
 from app.engine import investing, savings
 from app.learning import stages
@@ -57,7 +58,7 @@ def start_session(body: SessionCreate, user: Student, db: DB) -> SessionOut:
     scenario = db.scalar(select(Scenario).where(Scenario.slug == body.scenario_slug))
     if scenario is None:
         raise not_found("Scenario")
-    stage = stages.stage_for(user.profile.grade if user.profile else None)
+    stage = stages.stage_for(user.profile.grade)
     if not stages.is_eligible(stage, scenario.stages):
         raise forbidden("This scenario is not part of your learning stage yet.")
     session = simulations.start(db, user, scenario)
@@ -109,7 +110,8 @@ def decide(session_id: uuid.UUID, body: DecisionIn, user: Student, db: DB) -> Se
 
 
 @router.post("/calculators/savings")
-def savings_calculator(body: SavingsProjectionIn, _: CurrentUser) -> dict:
+def savings_calculator(body: SavingsProjectionIn, user: CurrentUser) -> dict:
+    require_pillar(user, "saving")
     return savings.compare_compounding(
         monthly_deposit=Decimal(str(body.monthly_deposit)),
         months=body.months,
@@ -119,7 +121,8 @@ def savings_calculator(body: SavingsProjectionIn, _: CurrentUser) -> dict:
 
 
 @router.post("/calculators/head-start")
-def head_start_calculator(body: HeadStartIn, _: CurrentUser) -> dict:
+def head_start_calculator(body: HeadStartIn, user: CurrentUser) -> dict:
+    require_pillar(user, "saving")
     return savings.head_start(
         monthly_deposit=Decimal(str(body.monthly_deposit)),
         annual_rate=Decimal(str(body.annual_rate)),
@@ -129,7 +132,8 @@ def head_start_calculator(body: HeadStartIn, _: CurrentUser) -> dict:
 
 
 @router.post("/calculators/investment")
-def investment_calculator(body: InvestmentProjectionIn, _: CurrentUser) -> dict:
+def investment_calculator(body: InvestmentProjectionIn, user: CurrentUser) -> dict:
+    require_pillar(user, "investing")
     return investing.project_portfolio(
         amount=Decimal(str(body.amount)),
         allocation=body.allocation,

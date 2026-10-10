@@ -4,6 +4,8 @@ from fastapi import APIRouter
 
 from app import tutor
 from app.api.deps import DB, Student
+from app.core import ratelimit
+from app.core.config import get_settings
 from app.core.errors import not_found
 from app.models import SimulationSession
 from app.schemas import TutorAnswer, TutorAsk
@@ -13,6 +15,10 @@ router = APIRouter(prefix="/tutor", tags=["tutor"])
 
 @router.post("/ask", response_model=TutorAnswer)
 def ask(body: TutorAsk, user: Student, db: DB) -> dict:
+    # Every question counts, refused or not, so the limit also bounds probing and model cost.
+    s = get_settings()
+    ratelimit.enforce("tutor:hour", user.id, s.rl_tutor_hour, ratelimit.HOUR)
+    ratelimit.enforce("tutor:day", user.id, s.rl_tutor_day, ratelimit.DAY)
     session_result = None
     if body.session_id:
         session = db.get(SimulationSession, body.session_id)

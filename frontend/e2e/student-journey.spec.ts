@@ -101,8 +101,22 @@ test('financial safety challenge: judge every message and review', async ({ page
   await expect(page.getByText(/You judged \d of 4 messages correctly/)).toBeVisible()
 })
 
-test('module quiz with explanations, then progress reflects it', async ({ page, request }) => {
+test('module quiz is locked until the mission is done, then runs with explanations', async ({ page, request }) => {
   await loginAsNewStudent(page, request)
+  await page.goto('/app/assessments/quiz-stay-safe')
+  await expect(page.getByText(/finish .* mission/i).first()).toBeVisible()
+
+  // Play the safety mission first.
+  await page.goto('/app/play/safety-inbox-basics')
+  await page.getByRole('button', { name: 'Start simulation' }).click()
+  for (let i = 0; i < 4; i++) {
+    await page.getByRole('radio', { name: 'Scam' }).click()
+    await page.getByRole('radio', { name: 'Report and block the sender' }).click()
+    await page.getByRole('button', { name: 'Check my answer' }).click()
+    if (i < 3) await page.getByRole('button', { name: 'Next message' }).click()
+  }
+  await expect(page.getByText(/You judged \d of 4 messages correctly/)).toBeVisible()
+
   await page.goto('/app/assessments/quiz-stay-safe')
   for (let i = 0; i < 5; i++) {
     await page.locator('[role=radiogroup] [role=radio]').first().click()

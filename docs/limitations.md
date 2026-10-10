@@ -13,15 +13,24 @@
 - **Adaptive rules are heuristic** (transparent thresholds), not a calibrated psychometric model.
 - **Sample data** created with `--demo` is synthetic and labelled; any numbers on the educator dashboard in demos come from these sample students.
 
+## Security
+
+- **Old answer keys remain in git history.** The keys were removed from the working tree and moved to a private bundle, but the earlier public commits still contain them until history is rewritten (needs the owner's decision). Treat existing questions as exposed and add variants. See [content-privacy.md](content-privacy.md).
+- **Client-delivered quizzes cannot be cheat-proof.** Shuffling, variants, server-side timing and cooldowns discourage casual abuse only. Scores are formative.
+- **Class (grade) is self-declared.** Stages personalise content; they do not verify age. A class change is limited to once per 30 days after onboarding.
+- **Rate limits depend on the client IP seen by the API.** They are correct only when a trusted proxy overwrites `X-Forwarded-For` and uvicorn trusts only that proxy. They are Postgres-based, which is fine at pilot scale; beyond that move `ratelimit.hit` to Redis.
+- **Tutor input filters are regexes** plus output checks. A rephrased request can pass the first layer; the system prompt and output validation are independent layers, not a guarantee. Text in Hindi/Telugu is answered from the glossary only. The live-model path is still untested against the real API.
+- **No account recovery.** There is no email, so a forgotten password cannot be reset by the user. An operator must handle it.
+- **No MFA** for educators.
+- **The nginx and Docker setup is untested here** (no Docker daemon or nginx binary was available); run it once before relying on the headers.
+- **TLS is the deployer's job.** The containers speak HTTP.
+
 ## Technical
 
-- **Auth tokens in `localStorage`** (simple cross-origin deploys). An XSS bug could expose a token; a production rollout should move to httpOnly cookies + CSRF protection and add refresh tokens.
-- **No rate limiting** on login/registration yet.
 - **No offline mode**; needs a connection for every decision (engine runs server-side by design).
 - **Docker/compose not yet built and verified** in this environment.
-- **No load test yet** for the 1,500-student target (architecture is sized for it, but unmeasured).
+- **No load test yet** for the 1,500-student target (architecture is sized for it, but unmeasured). Portfolio history and rate-limit counters are indexed and bounded, but unmeasured under load.
 - **oxlint warnings** remain (react-refresh export hints, set-state-in-effect in data loaders); no errors.
-- **Tutor guardrails are keyword-based** (regex), so a rephrased advice request can slip past them and reach the model's own prompt rules.
 - **Logo** is an SVG trace of the supplied image, not the original vector.
 - **No screen-reader testing.** Axe passes on ten pages, which is not the same as an accessibility review.
-- **AI tutor** has only been tested in fallback mode (no API key configured). The model call path is implemented with the official SDK but unverified against the live API.
+- **AI tutor** has only been tested in fallback mode and with a stubbed model (no API key configured). The model call path is implemented with the official SDK but unverified against the live API.

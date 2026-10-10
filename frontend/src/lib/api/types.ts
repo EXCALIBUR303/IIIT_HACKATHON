@@ -18,11 +18,11 @@ export interface User {
   organization_id: number | null
 }
 
-export interface TokenResponse {
-  access_token: string
-  token_type: 'bearer'
+/** Browsers never see a token: the session is in HttpOnly cookies. */
+export interface AuthResponse {
   expires_in: number
   user: User
+  csrf_token?: string
 }
 
 export interface Preferences {
@@ -437,6 +437,7 @@ export interface AssessmentSummary {
   best_score: number | null
   available: boolean
   locked_reason: string | null
+  cooldown_seconds?: number
 }
 
 export interface Question {

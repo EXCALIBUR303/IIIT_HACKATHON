@@ -1,346 +1,1112 @@
 [
   {
-    "slug": "initial", "kind": "initial", "module": null, "title": "Starting point check",
+    "slug": "initial",
+    "kind": "initial",
+    "module": null,
+    "title": "Starting point check",
     "description": "12 quick questions to see what you already know. There is no pass or fail; this helps RupeeRise pick your first activities.",
     "questions": [
-      {"slug": "init-nw-1", "concept": "needs_vs_wants", "difficulty": 1,
-       "prompt": "Sana has ₹500 left this week. Which expense is a NEED?",
-       "options": [
-         {"key": "a", "text": "Bus fare to reach her exam centre", "correct": true, "explanation": "Reaching an exam is essential; skipping it has serious consequences."},
-         {"key": "b", "text": "A new phone cover her friends recommended", "misconception": "wants_as_needs", "explanation": "Nice to have, but her phone works without it."},
-         {"key": "c", "text": "A movie ticket for the weekend", "misconception": "wants_as_needs", "explanation": "Entertainment is a want, even when it feels important."},
-         {"key": "d", "text": "All of these are equally important", "misconception": "no_prioritisation", "explanation": "Budgeting means ranking expenses. Needs come first."}]},
-      {"slug": "init-ba-1", "concept": "budget_allocation", "difficulty": 1,
-       "prompt": "Ravi gets ₹3,000 a month. His needs cost ₹2,200. What is the best plan for the remaining ₹800?",
-       "options": [
-         {"key": "a", "text": "Spend it all on wants since needs are covered", "misconception": "spend_all_income", "explanation": "Spending everything leaves nothing for goals or surprises."},
-         {"key": "b", "text": "Set aside some savings first, then use the rest for wants", "correct": true, "explanation": "Paying yourself first builds savings while still allowing some wants."},
-         {"key": "c", "text": "Keep it in his pocket and decide later", "misconception": "no_plan", "explanation": "Unplanned money usually gets spent without noticing."},
-         {"key": "d", "text": "Lend it to friends so it is safe", "misconception": "lending_is_saving", "explanation": "Lending is not saving; it may not come back when you need it."}]},
-      {"slug": "init-gs-1", "concept": "goal_setting", "difficulty": 2,
-       "prompt": "You want to buy a ₹1,800 bicycle helmet in 3 months. How much should you save each month?",
-       "options": [
-         {"key": "a", "text": "₹300", "misconception": "goal_math_error", "explanation": "₹300 × 3 = ₹900, only half the goal."},
-         {"key": "b", "text": "₹600", "correct": true, "explanation": "₹1,800 ÷ 3 months = ₹600 per month."},
-         {"key": "c", "text": "Whatever is left at month end", "misconception": "save_what_is_left", "explanation": "Without a target, you may reach month 3 with too little."},
-         {"key": "d", "text": "₹1,800 in the last month", "misconception": "last_minute_saving", "explanation": "Saving everything at the end is risky and stressful."}]},
-      {"slug": "init-sh-1", "concept": "saving_habit", "difficulty": 1,
-       "prompt": "Which habit helps you save most reliably?",
-       "options": [
-         {"key": "a", "text": "Saving whatever is left at the end of the month", "misconception": "save_what_is_left", "explanation": "Usually nothing is left. Spending expands to fill what you have."},
-         {"key": "b", "text": "Putting a fixed amount aside as soon as you receive money", "correct": true, "explanation": "Save first, spend the rest: the amount is protected before temptation."},
-         {"key": "c", "text": "Saving only when you get extra gift money", "misconception": "irregular_saving", "explanation": "Occasional saving is good, but a regular habit grows faster."},
-         {"key": "d", "text": "Saving is only for people with high incomes", "misconception": "saving_needs_high_income", "explanation": "Small regular amounts add up for everyone."}]},
-      {"slug": "init-ef-1", "concept": "emergency_fund", "difficulty": 2,
-       "prompt": "Why keep an emergency fund separate from your goal savings?",
-       "options": [
-         {"key": "a", "text": "So surprises don't wipe out your goal or force you to borrow", "correct": true, "explanation": "A separate cushion protects both your goal and you from debt."},
-         {"key": "b", "text": "It earns much higher interest", "misconception": "ef_for_returns", "explanation": "Emergency money is about safety and access, not high returns."},
-         {"key": "c", "text": "Emergencies rarely happen, so it isn't needed", "misconception": "no_buffer_needed", "explanation": "Repairs, illness and fees happen to almost everyone."},
-         {"key": "d", "text": "So you can spend it on sales and offers", "misconception": "ef_for_wants", "explanation": "A sale is not an emergency."}]},
-      {"slug": "init-sc-1", "concept": "simple_vs_compound", "difficulty": 2,
-       "prompt": "₹1,000 earns 10% interest a year. With COMPOUND interest, what happens in year 2?",
-       "options": [
-         {"key": "a", "text": "You earn ₹100 again, same as year 1", "misconception": "interest_on_interest_ignored", "explanation": "That's simple interest. Compound interest also pays on last year's ₹100."},
-         {"key": "b", "text": "You earn ₹110, because interest is paid on ₹1,100", "correct": true, "explanation": "Compound interest: 10% of ₹1,100 = ₹110."},
-         {"key": "c", "text": "You earn ₹200, double the first year", "misconception": "compounding_doubles", "explanation": "Compounding grows steadily, not by doubling each year."},
-         {"key": "d", "text": "You earn nothing until the deposit ends", "misconception": "interest_timing", "explanation": "Interest accrues each period."}]},
-      {"slug": "init-rr-1", "concept": "risk_return", "difficulty": 2,
-       "prompt": "A message promises '30% guaranteed returns every month, zero risk'. What is the most accurate thought?",
-       "options": [
-         {"key": "a", "text": "Great deal; guaranteed means safe", "misconception": "guaranteed_returns", "explanation": "Higher potential return always comes with higher risk. 'Guaranteed high returns' is a red flag."},
-         {"key": "b", "text": "High returns always come with risk; this is almost certainly a fraud", "correct": true, "explanation": "No genuine investment offers high, guaranteed, risk-free returns."},
-         {"key": "c", "text": "Invest a little to test it", "misconception": "test_the_scam", "explanation": "Scams often pay small early returns to pull in bigger amounts."},
-         {"key": "d", "text": "Returns and risk are unrelated", "misconception": "higher_return_no_risk", "explanation": "They are closely linked."}]},
-      {"slug": "init-dv-1", "concept": "diversification", "difficulty": 2,
-       "prompt": "Which option is the most diversified?",
-       "options": [
-         {"key": "a", "text": "All money in one well-known company", "misconception": "famous_is_safe", "explanation": "Even famous companies can fall sharply."},
-         {"key": "b", "text": "Money spread across a basket of many companies plus a deposit", "correct": true, "explanation": "Different holdings don't all fall together, which limits damage."},
-         {"key": "c", "text": "Three companies in the same industry", "misconception": "diversify_same_sector", "explanation": "One industry problem hits all three at once."},
-         {"key": "d", "text": "Moving all money to whichever company rose most last month", "misconception": "chasing_returns", "explanation": "That concentrates risk and chases the past."}]},
-      {"slug": "init-th-1", "concept": "time_horizon", "difficulty": 2,
-       "prompt": "Your college fees are due in 10 months. Where should that money be kept?",
-       "options": [
-         {"key": "a", "text": "Somewhere steady, like a deposit, because you need it soon", "correct": true, "explanation": "Short horizon = no time to recover from a fall."},
-         {"key": "b", "text": "In one fast-growing company to earn more", "misconception": "short_horizon_high_risk", "explanation": "A fall right before the due date could leave you short."},
-         {"key": "c", "text": "In a crypto coin a friend recommended", "misconception": "short_horizon_high_risk", "explanation": "Very volatile and unsuitable for money needed soon."},
-         {"key": "d", "text": "It doesn't matter where", "misconception": "horizon_irrelevant", "explanation": "When you need money changes how much risk you can take."}]},
-      {"slug": "init-otp-1", "concept": "otp_pin_safety", "difficulty": 1,
-       "prompt": "A caller says he is from your bank and needs the OTP you just received to 'stop a fraud'. What do you do?",
-       "options": [
-         {"key": "a", "text": "Share it quickly to protect your account", "misconception": "otp_safe_to_share_with_bank", "explanation": "Banks never ask for OTPs. The caller is the fraud."},
-         {"key": "b", "text": "Hang up and call the number on your card or official app", "correct": true, "explanation": "Verify through a channel you already trust."},
-         {"key": "c", "text": "Share only the first three digits", "misconception": "partial_sharing_safe", "explanation": "Any part of an OTP helps fraudsters."},
-         {"key": "d", "text": "Ask for his employee ID, then share it", "misconception": "trust_official_looking", "explanation": "Fake IDs are easy to make up. Never share."}]},
-      {"slug": "init-ph-1", "concept": "phishing_links", "difficulty": 2,
-       "prompt": "An SMS says: 'Your account is blocked. Update KYC at http://deccanbank-verify.xyz'. What is the biggest warning sign?",
-       "options": [
-         {"key": "a", "text": "It mentions KYC", "misconception": "wrong_signal", "explanation": "KYC itself is real; the problem is how it's asked."},
-         {"key": "b", "text": "The urgent threat plus a look-alike web address", "correct": true, "explanation": "Panic + an unofficial link is a classic phishing pattern."},
-         {"key": "c", "text": "It came by SMS", "misconception": "wrong_signal", "explanation": "Banks do send genuine SMS alerts; the content matters."},
-         {"key": "d", "text": "Nothing; banks often send links like this", "misconception": "trust_official_looking", "explanation": "Banks ask you to use their official app or branch, not random links."}]},
-      {"slug": "init-tg-1", "concept": "too_good_offers", "difficulty": 1,
-       "prompt": "A job ad offers ₹3,000/day for liking videos but asks for a ₹499 registration fee. This is:",
-       "options": [
-         {"key": "a", "text": "A good opportunity worth ₹499", "misconception": "fee_for_job", "explanation": "Real employers pay you; they don't charge to hire you."},
-         {"key": "b", "text": "A scam: unrealistic pay plus an upfront fee", "correct": true, "explanation": "Two strong red flags together."},
-         {"key": "c", "text": "Safe if many people have joined", "misconception": "social_proof", "explanation": "Scammers use fake reviews and group members."},
-         {"key": "d", "text": "Fine if the fee is small", "misconception": "small_fee_ok", "explanation": "Small fees are how these scams start."}]}
+      {
+        "slug": "init-nw-1",
+        "concept": "needs_vs_wants",
+        "difficulty": 1,
+        "prompt": "Sana has ₹500 left this week. Which expense is a NEED?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Bus fare to reach her exam centre"
+          },
+          {
+            "key": "b",
+            "text": "A new phone cover her friends recommended"
+          },
+          {
+            "key": "c",
+            "text": "A movie ticket for the weekend"
+          },
+          {
+            "key": "d",
+            "text": "All of these are equally important"
+          }
+        ]
+      },
+      {
+        "slug": "init-ba-1",
+        "concept": "budget_allocation",
+        "difficulty": 1,
+        "prompt": "Ravi gets ₹3,000 a month. His needs cost ₹2,200. What is the best plan for the remaining ₹800?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Spend it all on wants since needs are covered"
+          },
+          {
+            "key": "b",
+            "text": "Set aside some savings first, then use the rest for wants"
+          },
+          {
+            "key": "c",
+            "text": "Keep it in his pocket and decide later"
+          },
+          {
+            "key": "d",
+            "text": "Lend it to friends so it is safe"
+          }
+        ]
+      },
+      {
+        "slug": "init-gs-1",
+        "concept": "goal_setting",
+        "difficulty": 2,
+        "prompt": "You want to buy a ₹1,800 bicycle helmet in 3 months. How much should you save each month?",
+        "options": [
+          {
+            "key": "a",
+            "text": "₹300"
+          },
+          {
+            "key": "b",
+            "text": "₹600"
+          },
+          {
+            "key": "c",
+            "text": "Whatever is left at month end"
+          },
+          {
+            "key": "d",
+            "text": "₹1,800 in the last month"
+          }
+        ]
+      },
+      {
+        "slug": "init-sh-1",
+        "concept": "saving_habit",
+        "difficulty": 1,
+        "prompt": "Which habit helps you save most reliably?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Saving whatever is left at the end of the month"
+          },
+          {
+            "key": "b",
+            "text": "Putting a fixed amount aside as soon as you receive money"
+          },
+          {
+            "key": "c",
+            "text": "Saving only when you get extra gift money"
+          },
+          {
+            "key": "d",
+            "text": "Saving is only for people with high incomes"
+          }
+        ]
+      },
+      {
+        "slug": "init-ef-1",
+        "concept": "emergency_fund",
+        "difficulty": 2,
+        "prompt": "Why keep an emergency fund separate from your goal savings?",
+        "options": [
+          {
+            "key": "a",
+            "text": "So surprises don't wipe out your goal or force you to borrow"
+          },
+          {
+            "key": "b",
+            "text": "It earns much higher interest"
+          },
+          {
+            "key": "c",
+            "text": "Emergencies rarely happen, so it isn't needed"
+          },
+          {
+            "key": "d",
+            "text": "So you can spend it on sales and offers"
+          }
+        ]
+      },
+      {
+        "slug": "init-sc-1",
+        "concept": "simple_vs_compound",
+        "difficulty": 2,
+        "prompt": "₹1,000 earns 10% interest a year. With COMPOUND interest, what happens in year 2?",
+        "options": [
+          {
+            "key": "a",
+            "text": "You earn ₹100 again, same as year 1"
+          },
+          {
+            "key": "b",
+            "text": "You earn ₹110, because interest is paid on ₹1,100"
+          },
+          {
+            "key": "c",
+            "text": "You earn ₹200, double the first year"
+          },
+          {
+            "key": "d",
+            "text": "You earn nothing until the deposit ends"
+          }
+        ]
+      },
+      {
+        "slug": "init-rr-1",
+        "concept": "risk_return",
+        "difficulty": 2,
+        "prompt": "A message promises '30% guaranteed returns every month, zero risk'. What is the most accurate thought?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Great deal; guaranteed means safe"
+          },
+          {
+            "key": "b",
+            "text": "High returns always come with risk; this is almost certainly a fraud"
+          },
+          {
+            "key": "c",
+            "text": "Invest a little to test it"
+          },
+          {
+            "key": "d",
+            "text": "Returns and risk are unrelated"
+          }
+        ]
+      },
+      {
+        "slug": "init-dv-1",
+        "concept": "diversification",
+        "difficulty": 2,
+        "prompt": "Which option is the most diversified?",
+        "options": [
+          {
+            "key": "a",
+            "text": "All money in one well-known company"
+          },
+          {
+            "key": "b",
+            "text": "Money spread across a basket of many companies plus a deposit"
+          },
+          {
+            "key": "c",
+            "text": "Three companies in the same industry"
+          },
+          {
+            "key": "d",
+            "text": "Moving all money to whichever company rose most last month"
+          }
+        ]
+      },
+      {
+        "slug": "init-th-1",
+        "concept": "time_horizon",
+        "difficulty": 2,
+        "prompt": "Your college fees are due in 10 months. Where should that money be kept?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Somewhere steady, like a deposit, because you need it soon"
+          },
+          {
+            "key": "b",
+            "text": "In one fast-growing company to earn more"
+          },
+          {
+            "key": "c",
+            "text": "In a crypto coin a friend recommended"
+          },
+          {
+            "key": "d",
+            "text": "It doesn't matter where"
+          }
+        ]
+      },
+      {
+        "slug": "init-otp-1",
+        "concept": "otp_pin_safety",
+        "difficulty": 1,
+        "prompt": "A caller says he is from your bank and needs the OTP you just received to 'stop a fraud'. What do you do?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Share it quickly to protect your account"
+          },
+          {
+            "key": "b",
+            "text": "Hang up and call the number on your card or official app"
+          },
+          {
+            "key": "c",
+            "text": "Share only the first three digits"
+          },
+          {
+            "key": "d",
+            "text": "Ask for his employee ID, then share it"
+          }
+        ]
+      },
+      {
+        "slug": "init-ph-1",
+        "concept": "phishing_links",
+        "difficulty": 2,
+        "prompt": "An SMS says: 'Your account is blocked. Update KYC at http://deccanbank-verify.xyz'. What is the biggest warning sign?",
+        "options": [
+          {
+            "key": "a",
+            "text": "It mentions KYC"
+          },
+          {
+            "key": "b",
+            "text": "The urgent threat plus a look-alike web address"
+          },
+          {
+            "key": "c",
+            "text": "It came by SMS"
+          },
+          {
+            "key": "d",
+            "text": "Nothing; banks often send links like this"
+          }
+        ]
+      },
+      {
+        "slug": "init-tg-1",
+        "concept": "too_good_offers",
+        "difficulty": 1,
+        "prompt": "A job ad offers ₹3,000/day for liking videos but asks for a ₹499 registration fee. This is:",
+        "options": [
+          {
+            "key": "a",
+            "text": "A good opportunity worth ₹499"
+          },
+          {
+            "key": "b",
+            "text": "A scam: unrealistic pay plus an upfront fee"
+          },
+          {
+            "key": "c",
+            "text": "Safe if many people have joined"
+          },
+          {
+            "key": "d",
+            "text": "Fine if the fee is small"
+          }
+        ]
+      }
     ]
   },
   {
-    "slug": "quiz-plan-and-budget", "kind": "module", "module": "plan-and-budget", "title": "Plan & Budget quiz",
+    "slug": "quiz-plan-and-budget",
+    "kind": "module",
+    "module": "plan-and-budget",
+    "title": "Plan & Budget quiz",
     "description": "Five scenario questions on needs, wants, budgets and goals.",
     "questions": [
-      {"slug": "pb-1", "concept": "needs_vs_wants", "difficulty": 1,
-       "prompt": "Arjun's phone data is used for college notes and stall orders. His friend says it's a 'want'. Who is right?",
-       "options": [
-         {"key": "a", "text": "Arjun: basic data is a need here because study and work depend on it", "correct": true, "explanation": "Context decides. A basic plan is a need; an expensive unlimited plan might be part want."},
-         {"key": "b", "text": "The friend: phones are always wants", "misconception": "context_ignored", "explanation": "The same item can be a need or want depending on how it's used."},
-         {"key": "c", "text": "Neither; everything is a need", "misconception": "wants_as_needs", "explanation": "Treating everything as a need makes budgeting impossible."},
-         {"key": "d", "text": "It depends on the phone brand", "misconception": "context_ignored", "explanation": "The use matters, not the brand."}]},
-      {"slug": "pb-2", "concept": "budget_allocation", "difficulty": 2,
-       "prompt": "Lakshmi's planned spending adds up to ₹5,300 but her stipend is ₹5,000. What should she do first?",
-       "options": [
-         {"key": "a", "text": "Borrow ₹300 from a friend every month", "misconception": "borrow_to_balance", "explanation": "Regular borrowing to fill a gap builds debt."},
-         {"key": "b", "text": "Reduce wants until spending fits within ₹5,000", "correct": true, "explanation": "A budget must balance. Cut wants before needs."},
-         {"key": "c", "text": "Cut her mess food budget", "misconception": "cut_needs_first", "explanation": "Cutting essential food harms health and studies."},
-         {"key": "d", "text": "Ignore it; the extra ₹300 will work out", "misconception": "no_plan", "explanation": "Overspending doesn't disappear; it shows up as shortages."}]},
-      {"slug": "pb-3", "concept": "goal_setting", "difficulty": 2,
-       "prompt": "Which goal is the most useful for planning?",
-       "options": [
-         {"key": "a", "text": "'I want to save more money'", "misconception": "vague_goal", "explanation": "No amount or deadline, so you can't track it."},
-         {"key": "b", "text": "'Save ₹2,400 for a course by March, ₹800 a month'", "correct": true, "explanation": "Specific amount, deadline and monthly target."},
-         {"key": "c", "text": "'Become rich someday'", "misconception": "vague_goal", "explanation": "Too vague to act on."},
-         {"key": "d", "text": "'Save whenever I feel like it'", "misconception": "irregular_saving", "explanation": "Feelings change; plans help."}]},
-      {"slug": "pb-4", "concept": "budget_allocation", "difficulty": 3,
-       "prompt": "An unexpected ₹400 expense appears. Meera has ₹350 in wants and ₹400 in goal savings. What protects her goal best?",
-       "options": [
-         {"key": "a", "text": "Take all ₹400 from goal savings", "misconception": "raid_goal_first", "explanation": "That fully sets back the goal when wants could absorb most of it."},
-         {"key": "b", "text": "Cut wants by ₹350 and use ₹50 from savings", "correct": true, "explanation": "Flexible spending absorbs the shock first, protecting most of the goal."},
-         {"key": "c", "text": "Borrow ₹400", "misconception": "borrow_first", "explanation": "Borrowing is a last resort when other options exist."},
-         {"key": "d", "text": "Skip a need like her bus pass", "misconception": "cut_needs_first", "explanation": "Skipping needs creates new problems."}]},
-      {"slug": "pb-5", "concept": "needs_vs_wants", "difficulty": 3,
-       "prompt": "Imran's old sneakers still work but friends are buying new ones. His emergency fund is behind schedule. What's the wisest choice?",
-       "options": [
-         {"key": "a", "text": "Buy them; he works hard and deserves it", "misconception": "wants_as_needs", "explanation": "Rewards are fine, but not ahead of a safety net he's behind on."},
-         {"key": "b", "text": "Delay the sneakers until the emergency fund is on track", "correct": true, "explanation": "Delaying a want protects his income if the bike breaks down."},
-         {"key": "c", "text": "Buy them on EMI so it feels cheaper", "misconception": "emi_makes_affordable", "explanation": "EMIs spread cost but add commitments and sometimes interest."},
-         {"key": "d", "text": "Stop saving for 2 months to afford them", "misconception": "pause_saving", "explanation": "Pausing saving for a want weakens his safety net."}]}
+      {
+        "slug": "pb-1",
+        "concept": "needs_vs_wants",
+        "difficulty": 1,
+        "prompt": "Arjun's phone data is used for college notes and stall orders. His friend says it's a 'want'. Who is right?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Arjun: basic data is a need here because study and work depend on it"
+          },
+          {
+            "key": "b",
+            "text": "The friend: phones are always wants"
+          },
+          {
+            "key": "c",
+            "text": "Neither; everything is a need"
+          },
+          {
+            "key": "d",
+            "text": "It depends on the phone brand"
+          }
+        ]
+      },
+      {
+        "slug": "pb-2",
+        "concept": "budget_allocation",
+        "difficulty": 2,
+        "prompt": "Lakshmi's planned spending adds up to ₹5,300 but her stipend is ₹5,000. What should she do first?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Borrow ₹300 from a friend every month"
+          },
+          {
+            "key": "b",
+            "text": "Reduce wants until spending fits within ₹5,000"
+          },
+          {
+            "key": "c",
+            "text": "Cut her mess food budget"
+          },
+          {
+            "key": "d",
+            "text": "Ignore it; the extra ₹300 will work out"
+          }
+        ]
+      },
+      {
+        "slug": "pb-3",
+        "concept": "goal_setting",
+        "difficulty": 2,
+        "prompt": "Which goal is the most useful for planning?",
+        "options": [
+          {
+            "key": "a",
+            "text": "'I want to save more money'"
+          },
+          {
+            "key": "b",
+            "text": "'Save ₹2,400 for a course by March, ₹800 a month'"
+          },
+          {
+            "key": "c",
+            "text": "'Become rich someday'"
+          },
+          {
+            "key": "d",
+            "text": "'Save whenever I feel like it'"
+          }
+        ]
+      },
+      {
+        "slug": "pb-4",
+        "concept": "budget_allocation",
+        "difficulty": 3,
+        "prompt": "An unexpected ₹400 expense appears. Meera has ₹350 in wants and ₹400 in goal savings. What protects her goal best?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Take all ₹400 from goal savings"
+          },
+          {
+            "key": "b",
+            "text": "Cut wants by ₹350 and use ₹50 from savings"
+          },
+          {
+            "key": "c",
+            "text": "Borrow ₹400"
+          },
+          {
+            "key": "d",
+            "text": "Skip a need like her bus pass"
+          }
+        ]
+      },
+      {
+        "slug": "pb-5",
+        "concept": "needs_vs_wants",
+        "difficulty": 3,
+        "prompt": "Imran's old sneakers still work but friends are buying new ones. His emergency fund is behind schedule. What's the wisest choice?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Buy them; he works hard and deserves it"
+          },
+          {
+            "key": "b",
+            "text": "Delay the sneakers until the emergency fund is on track"
+          },
+          {
+            "key": "c",
+            "text": "Buy them on EMI so it feels cheaper"
+          },
+          {
+            "key": "d",
+            "text": "Stop saving for 2 months to afford them"
+          }
+        ]
+      }
     ]
   },
   {
-    "slug": "quiz-save-and-manage", "kind": "module", "module": "save-and-manage", "title": "Save & Manage quiz",
+    "slug": "quiz-save-and-manage",
+    "kind": "module",
+    "module": "save-and-manage",
+    "title": "Save & Manage quiz",
     "description": "Five questions on saving habits, emergency funds and interest.",
     "questions": [
-      {"slug": "sm-1", "concept": "saving_habit", "difficulty": 1,
-       "prompt": "Lakshmi receives her stipend on the 1st. When is the best time to move ₹500 to savings?",
-       "options": [
-         {"key": "a", "text": "On the 1st, right when it arrives", "correct": true, "explanation": "Save first so the money is protected from everyday spending."},
-         {"key": "b", "text": "On the 30th, if anything is left", "misconception": "save_what_is_left", "explanation": "By month-end the money is usually gone."},
-         {"key": "c", "text": "Only in months with no expenses", "misconception": "irregular_saving", "explanation": "Such months never come."},
-         {"key": "d", "text": "After she buys everything she wants", "misconception": "save_what_is_left", "explanation": "Wants can expand to use everything."}]},
-      {"slug": "sm-2", "concept": "emergency_fund", "difficulty": 2,
-       "prompt": "Which of these is a genuine use of an emergency fund?",
-       "options": [
-         {"key": "a", "text": "A big festival sale on headphones", "misconception": "ef_for_wants", "explanation": "A sale is a want dressed up as urgency."},
-         {"key": "b", "text": "Medicines when you fall ill", "correct": true, "explanation": "Unexpected, necessary and urgent: exactly what the fund is for."},
-         {"key": "c", "text": "A weekend trip with friends", "misconception": "ef_for_wants", "explanation": "Planned fun should come from the wants budget."},
-         {"key": "d", "text": "Upgrading to a newer phone", "misconception": "ef_for_wants", "explanation": "An upgrade isn't an emergency."}]},
-      {"slug": "sm-3", "concept": "simple_vs_compound", "difficulty": 2,
-       "prompt": "Two deposits pay 6% a year for 5 years. One uses simple interest, the other compound. Which ends with more?",
-       "options": [
-         {"key": "a", "text": "Simple interest", "misconception": "interest_on_interest_ignored", "explanation": "Simple interest never earns on previous interest."},
-         {"key": "b", "text": "Compound interest", "correct": true, "explanation": "Interest earning interest grows the balance faster each year."},
-         {"key": "c", "text": "Both end the same", "misconception": "interest_on_interest_ignored", "explanation": "They match only in the first period."},
-         {"key": "d", "text": "Impossible to tell", "misconception": "interest_timing", "explanation": "With the same rate and time, compound always wins."}]},
-      {"slug": "sm-4", "concept": "emergency_fund", "difficulty": 3,
-       "prompt": "Imran spends about ₹7,000 a month on essentials. A common guideline is an emergency fund covering a few months of essentials. What's a sensible first target?",
-       "options": [
-         {"key": "a", "text": "₹500", "misconception": "ef_too_small", "explanation": "Barely covers a small repair."},
-         {"key": "b", "text": "Around ₹7,000 to ₹14,000 (one to two months), building over time", "correct": true, "explanation": "A realistic starting cushion he can grow."},
-         {"key": "c", "text": "₹2,00,000 before spending on anything", "misconception": "ef_unrealistic", "explanation": "Unrealistic targets get abandoned."},
-         {"key": "d", "text": "Nothing; he can borrow if needed", "misconception": "no_buffer_needed", "explanation": "Relying on borrowing is risky and costly."}]},
-      {"slug": "sm-5", "concept": "saving_habit", "difficulty": 3,
-       "prompt": "Saving ₹50 a day sounds small. Roughly how much is that in a year?",
-       "options": [
-         {"key": "a", "text": "About ₹1,500", "misconception": "small_amounts_dont_matter", "explanation": "That's one month (₹50 × 30)."},
-         {"key": "b", "text": "About ₹18,000", "correct": true, "explanation": "₹50 × 365 = ₹18,250. Small habits add up."},
-         {"key": "c", "text": "About ₹5,000", "misconception": "small_amounts_dont_matter", "explanation": "It's more than three times that."},
-         {"key": "d", "text": "Too little to matter", "misconception": "small_amounts_dont_matter", "explanation": "₹18,000 could fund a course or an emergency fund."}]}
+      {
+        "slug": "sm-1",
+        "concept": "saving_habit",
+        "difficulty": 1,
+        "prompt": "Lakshmi receives her stipend on the 1st. When is the best time to move ₹500 to savings?",
+        "options": [
+          {
+            "key": "a",
+            "text": "On the 1st, right when it arrives"
+          },
+          {
+            "key": "b",
+            "text": "On the 30th, if anything is left"
+          },
+          {
+            "key": "c",
+            "text": "Only in months with no expenses"
+          },
+          {
+            "key": "d",
+            "text": "After she buys everything she wants"
+          }
+        ]
+      },
+      {
+        "slug": "sm-2",
+        "concept": "emergency_fund",
+        "difficulty": 2,
+        "prompt": "Which of these is a genuine use of an emergency fund?",
+        "options": [
+          {
+            "key": "a",
+            "text": "A big festival sale on headphones"
+          },
+          {
+            "key": "b",
+            "text": "Medicines when you fall ill"
+          },
+          {
+            "key": "c",
+            "text": "A weekend trip with friends"
+          },
+          {
+            "key": "d",
+            "text": "Upgrading to a newer phone"
+          }
+        ]
+      },
+      {
+        "slug": "sm-3",
+        "concept": "simple_vs_compound",
+        "difficulty": 2,
+        "prompt": "Two deposits pay 6% a year for 5 years. One uses simple interest, the other compound. Which ends with more?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Simple interest"
+          },
+          {
+            "key": "b",
+            "text": "Compound interest"
+          },
+          {
+            "key": "c",
+            "text": "Both end the same"
+          },
+          {
+            "key": "d",
+            "text": "Impossible to tell"
+          }
+        ]
+      },
+      {
+        "slug": "sm-4",
+        "concept": "emergency_fund",
+        "difficulty": 3,
+        "prompt": "Imran spends about ₹7,000 a month on essentials. A common guideline is an emergency fund covering a few months of essentials. What's a sensible first target?",
+        "options": [
+          {
+            "key": "a",
+            "text": "₹500"
+          },
+          {
+            "key": "b",
+            "text": "Around ₹7,000 to ₹14,000 (one to two months), building over time"
+          },
+          {
+            "key": "c",
+            "text": "₹2,00,000 before spending on anything"
+          },
+          {
+            "key": "d",
+            "text": "Nothing; he can borrow if needed"
+          }
+        ]
+      },
+      {
+        "slug": "sm-5",
+        "concept": "saving_habit",
+        "difficulty": 3,
+        "prompt": "Saving ₹50 a day sounds small. Roughly how much is that in a year?",
+        "options": [
+          {
+            "key": "a",
+            "text": "About ₹1,500"
+          },
+          {
+            "key": "b",
+            "text": "About ₹18,000"
+          },
+          {
+            "key": "c",
+            "text": "About ₹5,000"
+          },
+          {
+            "key": "d",
+            "text": "Too little to matter"
+          }
+        ]
+      }
     ]
   },
   {
-    "slug": "quiz-understand-investing", "kind": "module", "module": "understand-investing", "title": "Understand Investing quiz",
+    "slug": "quiz-understand-investing",
+    "kind": "module",
+    "module": "understand-investing",
+    "title": "Understand Investing quiz",
     "description": "Five questions on risk, time, compounding and diversification. Education only, never advice.",
     "questions": [
-      {"slug": "ui-1", "concept": "risk_return", "difficulty": 1,
-       "prompt": "Which statement about risk and return is true?",
-       "options": [
-         {"key": "a", "text": "Options with higher possible returns usually have bigger ups and downs", "correct": true, "explanation": "Higher potential return is the reward for accepting more uncertainty."},
-         {"key": "b", "text": "High returns can be guaranteed if you pick carefully", "misconception": "guaranteed_returns", "explanation": "No one can guarantee market returns."},
-         {"key": "c", "text": "Low-risk options always beat high-risk ones", "misconception": "risk_always_bad", "explanation": "Over long periods riskier assets have often grown more, but with no guarantee."},
-         {"key": "d", "text": "Risk only matters for large amounts", "misconception": "risk_amount_confusion", "explanation": "Risk applies to every rupee invested."}]},
-      {"slug": "ui-2", "concept": "compounding", "difficulty": 2,
-       "prompt": "Asha starts saving ₹500 a month at 18; Kiran starts at 28 with the same amount and rate. At 40, who likely has more?",
-       "options": [
-         {"key": "a", "text": "Asha, because her money compounds for 10 extra years", "correct": true, "explanation": "Starting early gives compounding more time."},
-         {"key": "b", "text": "Kiran, because he is older and wiser", "misconception": "compounding_time_ignored", "explanation": "Age doesn't change the maths; time invested does."},
-         {"key": "c", "text": "Both the same", "misconception": "compounding_time_ignored", "explanation": "Asha deposits more AND her money grows longer."},
-         {"key": "d", "text": "It depends only on luck", "misconception": "luck_only", "explanation": "Time and regular saving matter a lot."}]},
-      {"slug": "ui-3", "concept": "diversification", "difficulty": 2,
-       "prompt": "Zippy Gadgets falls 45% after a product failure. Whose fictional portfolio is hurt least?",
-       "options": [
-         {"key": "a", "text": "Someone with 100% in Zippy Gadgets", "misconception": "famous_is_safe", "explanation": "They lose 45% of everything."},
-         {"key": "b", "text": "Someone with 10% in Zippy and the rest in a broad basket and deposit", "correct": true, "explanation": "Only a small slice is affected: the point of diversification."},
-         {"key": "c", "text": "Someone with 50% Zippy, 50% Sunrise Solar", "misconception": "diversify_same_sector", "explanation": "Two single companies still means high concentration."},
-         {"key": "d", "text": "Everyone loses the same", "misconception": "diversification_useless", "explanation": "The loss depends on how much was in Zippy."}]},
-      {"slug": "ui-4", "concept": "time_horizon", "difficulty": 3,
-       "prompt": "Markets fall 25% this year. Which investor is in the best position to wait for a possible recovery?",
-       "options": [
-         {"key": "a", "text": "A student who needs the money for fees next month", "misconception": "short_horizon_high_risk", "explanation": "She may have to sell at a loss."},
-         {"key": "b", "text": "Someone investing for a goal 15 years away", "correct": true, "explanation": "A long horizon gives time to wait, though recovery is never guaranteed."},
-         {"key": "c", "text": "Someone who borrowed money to invest", "misconception": "leverage_ok", "explanation": "Debt repayments may force selling at a loss."},
-         {"key": "d", "text": "All are equally placed", "misconception": "horizon_irrelevant", "explanation": "Timeline is what decides whether you can wait."}]},
-      {"slug": "ui-5", "concept": "risk_return", "difficulty": 3,
-       "prompt": "A simulation shows your fictional ₹10,000 could end between ₹7,000 and ₹19,000 in 5 years. What does this range mean?",
-       "options": [
-         {"key": "a", "text": "You will definitely get ₹19,000", "misconception": "simulation_is_promise", "explanation": "Simulations show possibilities, not promises."},
-         {"key": "b", "text": "Outcomes are uncertain; a loss is possible even though growth is likely", "correct": true, "explanation": "Ranges communicate uncertainty honestly."},
-         {"key": "c", "text": "The average of ₹13,000 is guaranteed", "misconception": "simulation_is_promise", "explanation": "Even averages are assumptions."},
-         {"key": "d", "text": "The simulation is broken because it doesn't give one answer", "misconception": "certainty_expected", "explanation": "Real investing has no single known answer."}]}
+      {
+        "slug": "ui-1",
+        "concept": "risk_return",
+        "difficulty": 1,
+        "prompt": "Which statement about risk and return is true?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Options with higher possible returns usually have bigger ups and downs"
+          },
+          {
+            "key": "b",
+            "text": "High returns can be guaranteed if you pick carefully"
+          },
+          {
+            "key": "c",
+            "text": "Low-risk options always beat high-risk ones"
+          },
+          {
+            "key": "d",
+            "text": "Risk only matters for large amounts"
+          }
+        ]
+      },
+      {
+        "slug": "ui-2",
+        "concept": "compounding",
+        "difficulty": 2,
+        "prompt": "Asha starts saving ₹500 a month at 18; Kiran starts at 28 with the same amount and rate. At 40, who likely has more?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Asha, because her money compounds for 10 extra years"
+          },
+          {
+            "key": "b",
+            "text": "Kiran, because he is older and wiser"
+          },
+          {
+            "key": "c",
+            "text": "Both the same"
+          },
+          {
+            "key": "d",
+            "text": "It depends only on luck"
+          }
+        ]
+      },
+      {
+        "slug": "ui-3",
+        "concept": "diversification",
+        "difficulty": 2,
+        "prompt": "Zippy Gadgets falls 45% after a product failure. Whose fictional portfolio is hurt least?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Someone with 100% in Zippy Gadgets"
+          },
+          {
+            "key": "b",
+            "text": "Someone with 10% in Zippy and the rest in a broad basket and deposit"
+          },
+          {
+            "key": "c",
+            "text": "Someone with 50% Zippy, 50% Sunrise Solar"
+          },
+          {
+            "key": "d",
+            "text": "Everyone loses the same"
+          }
+        ]
+      },
+      {
+        "slug": "ui-4",
+        "concept": "time_horizon",
+        "difficulty": 3,
+        "prompt": "Markets fall 25% this year. Which investor is in the best position to wait for a possible recovery?",
+        "options": [
+          {
+            "key": "a",
+            "text": "A student who needs the money for fees next month"
+          },
+          {
+            "key": "b",
+            "text": "Someone investing for a goal 15 years away"
+          },
+          {
+            "key": "c",
+            "text": "Someone who borrowed money to invest"
+          },
+          {
+            "key": "d",
+            "text": "All are equally placed"
+          }
+        ]
+      },
+      {
+        "slug": "ui-5",
+        "concept": "risk_return",
+        "difficulty": 3,
+        "prompt": "A simulation shows your fictional ₹10,000 could end between ₹7,000 and ₹19,000 in 5 years. What does this range mean?",
+        "options": [
+          {
+            "key": "a",
+            "text": "You will definitely get ₹19,000"
+          },
+          {
+            "key": "b",
+            "text": "Outcomes are uncertain; a loss is possible even though growth is likely"
+          },
+          {
+            "key": "c",
+            "text": "The average of ₹13,000 is guaranteed"
+          },
+          {
+            "key": "d",
+            "text": "The simulation is broken because it doesn't give one answer"
+          }
+        ]
+      }
     ]
   },
   {
-    "slug": "quiz-stay-safe", "kind": "module", "module": "stay-safe", "title": "Stay Financially Safe quiz",
+    "slug": "quiz-stay-safe",
+    "kind": "module",
+    "module": "stay-safe",
+    "title": "Stay Financially Safe quiz",
     "description": "Five questions on OTPs, phishing, too-good offers and protecting your data.",
     "questions": [
-      {"slug": "ss-1", "concept": "otp_pin_safety", "difficulty": 1,
-       "prompt": "To RECEIVE ₹500 from a friend on UPI, you need to:",
-       "options": [
-         {"key": "a", "text": "Enter your UPI PIN", "misconception": "pin_to_receive", "explanation": "A PIN only sends money. Never enter it to receive."},
-         {"key": "b", "text": "Share your UPI ID or let them scan your QR; no PIN needed", "correct": true, "explanation": "Receiving needs no PIN or scanning from your side."},
-         {"key": "c", "text": "Scan the QR code they send you", "misconception": "pin_to_receive", "explanation": "Scanning someone's QR is for paying them."},
-         {"key": "d", "text": "Share your OTP with them", "misconception": "otp_safe_to_share_with_bank", "explanation": "Never share OTPs with anyone."}]},
-      {"slug": "ss-2", "concept": "phishing_links", "difficulty": 2,
-       "prompt": "Which web address is most likely the genuine site of 'Deccan Bank'?",
-       "options": [
-         {"key": "a", "text": "deccanbank-rewards.xyz", "misconception": "trust_official_looking", "explanation": "Extra words and odd endings are common in fakes."},
-         {"key": "b", "text": "deccan-bank-kyc.co", "misconception": "trust_official_looking", "explanation": "Look-alike domain with 'kyc' bait."},
-         {"key": "c", "text": "The address printed in the bank's official app or passbook", "correct": true, "explanation": "Get the address from a trusted source, not a message."},
-         {"key": "d", "text": "Any site with the bank's logo", "misconception": "trust_official_looking", "explanation": "Logos are easy to copy."}]},
-      {"slug": "ss-3", "concept": "too_good_offers", "difficulty": 1,
-       "prompt": "You 'won' a lucky draw you never entered and must pay a ₹2,000 'tax' to claim. You should:",
-       "options": [
-         {"key": "a", "text": "Pay, because tax on prizes is real", "misconception": "fee_for_prize", "explanation": "Genuine prize taxes aren't collected by strangers via UPI."},
-         {"key": "b", "text": "Ignore, block and report it", "correct": true, "explanation": "A prize you never entered plus a fee = scam."},
-         {"key": "c", "text": "Send half and ask for proof", "misconception": "test_the_scam", "explanation": "Any payment is lost money."},
-         {"key": "d", "text": "Share your bank details so they can deposit the prize", "misconception": "share_id_freely", "explanation": "Never share details with unknown senders."}]},
-      {"slug": "ss-4", "concept": "personal_data_privacy", "difficulty": 2,
-       "prompt": "A loan app wants access to your contacts and photo gallery before giving a loan. This is a warning sign because:",
-       "options": [
-         {"key": "a", "text": "Illegal lenders use contacts and photos to harass and blackmail borrowers", "correct": true, "explanation": "Regulated lenders don't need your gallery or contacts."},
-         {"key": "b", "text": "It's normal for all loans", "misconception": "permissions_normal", "explanation": "Over-broad permissions are not normal for lending."},
-         {"key": "c", "text": "It's fine if the app has good ratings", "misconception": "social_proof", "explanation": "Ratings can be faked."},
-         {"key": "d", "text": "Only a problem if you don't repay", "misconception": "permissions_normal", "explanation": "Your data can be misused regardless."}]},
-      {"slug": "ss-5", "concept": "personal_data_privacy", "difficulty": 3,
-       "prompt": "A classmate asks you to send a photo of your Aadhaar so they can 'register you' for a free coaching offer. What's best?",
-       "options": [
-         {"key": "a", "text": "Send it; they're a classmate", "misconception": "share_id_freely", "explanation": "Even friends' phones can be compromised, and the offer itself may be a data scam."},
-         {"key": "b", "text": "Check the offer through the coaching centre's official site or a teacher, and register yourself if it's real", "correct": true, "explanation": "Verify the source and share documents only with the verified organisation."},
-         {"key": "c", "text": "Send a masked copy to everyone who asks", "misconception": "share_id_freely", "explanation": "Masking helps, but sharing with unverified people is still risky."},
-         {"key": "d", "text": "Post it in the class group so everyone can register together", "misconception": "share_id_freely", "explanation": "Never post ID documents in groups."}]}
+      {
+        "slug": "ss-1",
+        "concept": "otp_pin_safety",
+        "difficulty": 1,
+        "prompt": "To RECEIVE ₹500 from a friend on UPI, you need to:",
+        "options": [
+          {
+            "key": "a",
+            "text": "Enter your UPI PIN"
+          },
+          {
+            "key": "b",
+            "text": "Share your UPI ID or let them scan your QR; no PIN needed"
+          },
+          {
+            "key": "c",
+            "text": "Scan the QR code they send you"
+          },
+          {
+            "key": "d",
+            "text": "Share your OTP with them"
+          }
+        ]
+      },
+      {
+        "slug": "ss-2",
+        "concept": "phishing_links",
+        "difficulty": 2,
+        "prompt": "Which web address is most likely the genuine site of 'Deccan Bank'?",
+        "options": [
+          {
+            "key": "a",
+            "text": "deccanbank-rewards.xyz"
+          },
+          {
+            "key": "b",
+            "text": "deccan-bank-kyc.co"
+          },
+          {
+            "key": "c",
+            "text": "The address printed in the bank's official app or passbook"
+          },
+          {
+            "key": "d",
+            "text": "Any site with the bank's logo"
+          }
+        ]
+      },
+      {
+        "slug": "ss-3",
+        "concept": "too_good_offers",
+        "difficulty": 1,
+        "prompt": "You 'won' a lucky draw you never entered and must pay a ₹2,000 'tax' to claim. You should:",
+        "options": [
+          {
+            "key": "a",
+            "text": "Pay, because tax on prizes is real"
+          },
+          {
+            "key": "b",
+            "text": "Ignore, block and report it"
+          },
+          {
+            "key": "c",
+            "text": "Send half and ask for proof"
+          },
+          {
+            "key": "d",
+            "text": "Share your bank details so they can deposit the prize"
+          }
+        ]
+      },
+      {
+        "slug": "ss-4",
+        "concept": "personal_data_privacy",
+        "difficulty": 2,
+        "prompt": "A loan app wants access to your contacts and photo gallery before giving a loan. This is a warning sign because:",
+        "options": [
+          {
+            "key": "a",
+            "text": "Illegal lenders use contacts and photos to harass and blackmail borrowers"
+          },
+          {
+            "key": "b",
+            "text": "It's normal for all loans"
+          },
+          {
+            "key": "c",
+            "text": "It's fine if the app has good ratings"
+          },
+          {
+            "key": "d",
+            "text": "Only a problem if you don't repay"
+          }
+        ]
+      },
+      {
+        "slug": "ss-5",
+        "concept": "personal_data_privacy",
+        "difficulty": 3,
+        "prompt": "A classmate asks you to send a photo of your Aadhaar so they can 'register you' for a free coaching offer. What's best?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Send it; they're a classmate"
+          },
+          {
+            "key": "b",
+            "text": "Check the offer through the coaching centre's official site or a teacher, and register yourself if it's real"
+          },
+          {
+            "key": "c",
+            "text": "Send a masked copy to everyone who asks"
+          },
+          {
+            "key": "d",
+            "text": "Post it in the class group so everyone can register together"
+          }
+        ]
+      }
     ]
   },
   {
-    "slug": "post", "kind": "post", "module": null, "title": "Final check",
+    "slug": "post",
+    "kind": "post",
+    "module": null,
+    "title": "Final check",
     "description": "12 questions covering the same ideas as your starting check, with new situations. Compare where you started with where you are now.",
     "questions": [
-      {"slug": "post-nw-1", "concept": "needs_vs_wants", "difficulty": 1,
-       "prompt": "Farhan has ₹800 left for the month. Which should he pay for first?",
-       "options": [
-         {"key": "a", "text": "Printouts for a project due tomorrow", "correct": true, "explanation": "An essential study expense with a deadline."},
-         {"key": "b", "text": "A trending T-shirt", "misconception": "wants_as_needs", "explanation": "A want that can wait."},
-         {"key": "c", "text": "A gaming top-up on sale", "misconception": "wants_as_needs", "explanation": "Sales create urgency, not need."},
-         {"key": "d", "text": "Split equally across all three", "misconception": "no_prioritisation", "explanation": "Needs should be fully covered first."}]},
-      {"slug": "post-ba-1", "concept": "budget_allocation", "difficulty": 1,
-       "prompt": "Divya earns ₹6,000 and her needs cost ₹4,500. Which budget is healthiest?",
-       "options": [
-         {"key": "a", "text": "Needs ₹4,500, savings ₹900, wants ₹600", "correct": true, "explanation": "Balanced, with savings set aside first."},
-         {"key": "b", "text": "Needs ₹4,500, wants ₹1,500, savings ₹0", "misconception": "spend_all_income", "explanation": "No savings leaves her exposed to surprises."},
-         {"key": "c", "text": "Needs ₹3,500, wants ₹2,500", "misconception": "cut_needs_first", "explanation": "Underfunding needs to buy wants backfires."},
-         {"key": "d", "text": "Needs ₹4,500, wants ₹2,000", "misconception": "over_budget", "explanation": "That's ₹6,500, more than she has."}]},
-      {"slug": "post-gs-1", "concept": "goal_setting", "difficulty": 2,
-       "prompt": "A ₹2,000 course starts in 4 months. What monthly saving reaches the goal?",
-       "options": [
-         {"key": "a", "text": "₹400", "misconception": "goal_math_error", "explanation": "₹400 × 4 = ₹1,600, short by ₹400."},
-         {"key": "b", "text": "₹500", "correct": true, "explanation": "₹2,000 ÷ 4 = ₹500."},
-         {"key": "c", "text": "Save whatever is left each month", "misconception": "save_what_is_left", "explanation": "No target means no guarantee."},
-         {"key": "d", "text": "₹2,000 in the final month", "misconception": "last_minute_saving", "explanation": "Last-minute saving rarely works."}]},
-      {"slug": "post-sh-1", "concept": "saving_habit", "difficulty": 1,
-       "prompt": "Which plan builds savings most reliably?",
-       "options": [
-         {"key": "a", "text": "Automatically moving ₹200 to savings on payday", "correct": true, "explanation": "Automatic, first-thing saving removes temptation."},
-         {"key": "b", "text": "Saving only when there's a festival bonus", "misconception": "irregular_saving", "explanation": "Irregular saving grows slowly."},
-         {"key": "c", "text": "Saving leftover coins at month end", "misconception": "save_what_is_left", "explanation": "Leftovers are small and unreliable."},
-         {"key": "d", "text": "Waiting until income is higher", "misconception": "saving_needs_high_income", "explanation": "The habit matters more than the amount."}]},
-      {"slug": "post-ef-1", "concept": "emergency_fund", "difficulty": 2,
-       "prompt": "Your bicycle breaks and repair costs ₹600. You have a ₹1,000 emergency fund and ₹1,500 saved for a course. What's best?",
-       "options": [
-         {"key": "a", "text": "Pay from the emergency fund and rebuild it over the next months", "correct": true, "explanation": "That's what it's for; your course savings stay intact."},
-         {"key": "b", "text": "Pay from course savings and keep the emergency fund untouched", "misconception": "raid_goal_first", "explanation": "This sets back your goal while the fund sits unused."},
-         {"key": "c", "text": "Borrow ₹600 from a moneylender", "misconception": "borrow_first", "explanation": "Borrowing when you have a cushion adds cost and risk."},
-         {"key": "d", "text": "Leave it broken and walk", "misconception": "no_buffer_needed", "explanation": "If it's essential transport, delays cost you more."}]},
-      {"slug": "post-sc-1", "concept": "simple_vs_compound", "difficulty": 2,
-       "prompt": "₹2,000 at 10% compound interest yearly. Balance after 2 years?",
-       "options": [
-         {"key": "a", "text": "₹2,400", "misconception": "interest_on_interest_ignored", "explanation": "That's simple interest (₹200 + ₹200)."},
-         {"key": "b", "text": "₹2,420", "correct": true, "explanation": "Year 1: ₹2,200. Year 2: ₹2,200 + ₹220 = ₹2,420."},
-         {"key": "c", "text": "₹4,000", "misconception": "compounding_doubles", "explanation": "Compounding doesn't double money that fast at 10%."},
-         {"key": "d", "text": "₹2,200", "misconception": "interest_timing", "explanation": "That's only after year 1."}]},
-      {"slug": "post-rr-1", "concept": "risk_return", "difficulty": 2,
-       "prompt": "A friend's 'scheme' promises to double your money in 3 months, no risk. What do you conclude?",
-       "options": [
-         {"key": "a", "text": "Unrealistic, guaranteed returns: very likely a fraud or Ponzi scheme", "correct": true, "explanation": "High return with no risk does not exist."},
-         {"key": "b", "text": "Safe because a friend recommended it", "misconception": "social_proof", "explanation": "Friends can be fooled too; many schemes spread through friends."},
-         {"key": "c", "text": "Try with a small amount first", "misconception": "test_the_scam", "explanation": "Early payouts are bait for bigger deposits."},
-         {"key": "d", "text": "Risk doesn't apply to short schemes", "misconception": "higher_return_no_risk", "explanation": "Promised high returns always carry risk."}]},
-      {"slug": "post-dv-1", "concept": "diversification", "difficulty": 2,
-       "prompt": "Which fictional portfolio is least likely to be wiped out by one company's failure?",
-       "options": [
-         {"key": "a", "text": "100% in Sunrise Solar", "misconception": "famous_is_safe", "explanation": "Everything rides on one company."},
-         {"key": "b", "text": "50% Growth Basket, 30% Balanced Basket, 20% Steady Deposit", "correct": true, "explanation": "Spread across many companies and a deposit."},
-         {"key": "c", "text": "50% Zippy Gadgets, 50% another gadget company", "misconception": "diversify_same_sector", "explanation": "Same industry, same risks."},
-         {"key": "d", "text": "Whatever rose most last week", "misconception": "chasing_returns", "explanation": "Chasing recent winners concentrates risk."}]},
-      {"slug": "post-th-1", "concept": "time_horizon", "difficulty": 2,
-       "prompt": "You need ₹15,000 for a laptop in 6 months. How much market risk is appropriate for that money?",
-       "options": [
-         {"key": "a", "text": "Very little; keep it steady because the deadline is close", "correct": true, "explanation": "A short horizon leaves no time to recover from a fall."},
-         {"key": "b", "text": "Lots; higher risk means faster growth", "misconception": "short_horizon_high_risk", "explanation": "Higher risk can also mean a loss right when you need the money."},
-         {"key": "c", "text": "Put it all in one trending company", "misconception": "short_horizon_high_risk", "explanation": "Concentrated and short-term: double risk."},
-         {"key": "d", "text": "Timeline doesn't matter", "misconception": "horizon_irrelevant", "explanation": "It is one of the most important factors."}]},
-      {"slug": "post-otp-1", "concept": "otp_pin_safety", "difficulty": 1,
-       "prompt": "A 'delivery agent' calls asking for the OTP you received to 'confirm your parcel'. You should:",
-       "options": [
-         {"key": "a", "text": "Refuse; never share an OTP you didn't request for your own use", "correct": true, "explanation": "The OTP may be authorising a payment or account access."},
-         {"key": "b", "text": "Share it because you're expecting a parcel", "misconception": "otp_safe_to_share_with_bank", "explanation": "Scammers time calls to seem believable."},
-         {"key": "c", "text": "Share half of it", "misconception": "partial_sharing_safe", "explanation": "Never share any part."},
-         {"key": "d", "text": "Share it if the caller knows your name", "misconception": "trust_official_looking", "explanation": "Names are easy to find."}]},
-      {"slug": "post-ph-1", "concept": "phishing_links", "difficulty": 2,
-       "prompt": "An email styled like your scholarship portal says your payment failed: 'Click here within 2 hours to re-verify bank details.' Best response?",
-       "options": [
-         {"key": "a", "text": "Click quickly before the deadline", "misconception": "trust_official_looking", "explanation": "The deadline is designed to rush you."},
-         {"key": "b", "text": "Open the official portal yourself (not via the link) and check your status", "correct": true, "explanation": "Go directly to the source you already know."},
-         {"key": "c", "text": "Reply with your bank details", "misconception": "share_id_freely", "explanation": "Never send bank details in reply to messages."},
-         {"key": "d", "text": "Forward it to classmates to warn them, then click it", "misconception": "wrong_signal", "explanation": "Don't click suspicious links at all."}]},
-      {"slug": "post-tg-1", "concept": "too_good_offers", "difficulty": 1,
-       "prompt": "A website offers a ₹70,000 phone for ₹4,999 if you pay right now through UPI. This is most likely:",
-       "options": [
-         {"key": "a", "text": "A rare genuine deal", "misconception": "too_good_believed", "explanation": "Discounts that large are bait."},
-         {"key": "b", "text": "A scam: unrealistic price plus pressure to pay immediately", "correct": true, "explanation": "Too good to be true + urgency = classic scam."},
-         {"key": "c", "text": "Safe if the site looks professional", "misconception": "trust_official_looking", "explanation": "Professional-looking sites are easy to build."},
-         {"key": "d", "text": "Fine if you pay only half now", "misconception": "small_fee_ok", "explanation": "Any payment to a scam is lost."}]}
+      {
+        "slug": "post-nw-1",
+        "concept": "needs_vs_wants",
+        "difficulty": 1,
+        "prompt": "Farhan has ₹800 left for the month. Which should he pay for first?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Printouts for a project due tomorrow"
+          },
+          {
+            "key": "b",
+            "text": "A trending T-shirt"
+          },
+          {
+            "key": "c",
+            "text": "A gaming top-up on sale"
+          },
+          {
+            "key": "d",
+            "text": "Split equally across all three"
+          }
+        ]
+      },
+      {
+        "slug": "post-ba-1",
+        "concept": "budget_allocation",
+        "difficulty": 1,
+        "prompt": "Divya earns ₹6,000 and her needs cost ₹4,500. Which budget is healthiest?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Needs ₹4,500, savings ₹900, wants ₹600"
+          },
+          {
+            "key": "b",
+            "text": "Needs ₹4,500, wants ₹1,500, savings ₹0"
+          },
+          {
+            "key": "c",
+            "text": "Needs ₹3,500, wants ₹2,500"
+          },
+          {
+            "key": "d",
+            "text": "Needs ₹4,500, wants ₹2,000"
+          }
+        ]
+      },
+      {
+        "slug": "post-gs-1",
+        "concept": "goal_setting",
+        "difficulty": 2,
+        "prompt": "A ₹2,000 course starts in 4 months. What monthly saving reaches the goal?",
+        "options": [
+          {
+            "key": "a",
+            "text": "₹400"
+          },
+          {
+            "key": "b",
+            "text": "₹500"
+          },
+          {
+            "key": "c",
+            "text": "Save whatever is left each month"
+          },
+          {
+            "key": "d",
+            "text": "₹2,000 in the final month"
+          }
+        ]
+      },
+      {
+        "slug": "post-sh-1",
+        "concept": "saving_habit",
+        "difficulty": 1,
+        "prompt": "Which plan builds savings most reliably?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Automatically moving ₹200 to savings on payday"
+          },
+          {
+            "key": "b",
+            "text": "Saving only when there's a festival bonus"
+          },
+          {
+            "key": "c",
+            "text": "Saving leftover coins at month end"
+          },
+          {
+            "key": "d",
+            "text": "Waiting until income is higher"
+          }
+        ]
+      },
+      {
+        "slug": "post-ef-1",
+        "concept": "emergency_fund",
+        "difficulty": 2,
+        "prompt": "Your bicycle breaks and repair costs ₹600. You have a ₹1,000 emergency fund and ₹1,500 saved for a course. What's best?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Pay from the emergency fund and rebuild it over the next months"
+          },
+          {
+            "key": "b",
+            "text": "Pay from course savings and keep the emergency fund untouched"
+          },
+          {
+            "key": "c",
+            "text": "Borrow ₹600 from a moneylender"
+          },
+          {
+            "key": "d",
+            "text": "Leave it broken and walk"
+          }
+        ]
+      },
+      {
+        "slug": "post-sc-1",
+        "concept": "simple_vs_compound",
+        "difficulty": 2,
+        "prompt": "₹2,000 at 10% compound interest yearly. Balance after 2 years?",
+        "options": [
+          {
+            "key": "a",
+            "text": "₹2,400"
+          },
+          {
+            "key": "b",
+            "text": "₹2,420"
+          },
+          {
+            "key": "c",
+            "text": "₹4,000"
+          },
+          {
+            "key": "d",
+            "text": "₹2,200"
+          }
+        ]
+      },
+      {
+        "slug": "post-rr-1",
+        "concept": "risk_return",
+        "difficulty": 2,
+        "prompt": "A friend's 'scheme' promises to double your money in 3 months, no risk. What do you conclude?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Unrealistic, guaranteed returns: very likely a fraud or Ponzi scheme"
+          },
+          {
+            "key": "b",
+            "text": "Safe because a friend recommended it"
+          },
+          {
+            "key": "c",
+            "text": "Try with a small amount first"
+          },
+          {
+            "key": "d",
+            "text": "Risk doesn't apply to short schemes"
+          }
+        ]
+      },
+      {
+        "slug": "post-dv-1",
+        "concept": "diversification",
+        "difficulty": 2,
+        "prompt": "Which fictional portfolio is least likely to be wiped out by one company's failure?",
+        "options": [
+          {
+            "key": "a",
+            "text": "100% in Sunrise Solar"
+          },
+          {
+            "key": "b",
+            "text": "50% Growth Basket, 30% Balanced Basket, 20% Steady Deposit"
+          },
+          {
+            "key": "c",
+            "text": "50% Zippy Gadgets, 50% another gadget company"
+          },
+          {
+            "key": "d",
+            "text": "Whatever rose most last week"
+          }
+        ]
+      },
+      {
+        "slug": "post-th-1",
+        "concept": "time_horizon",
+        "difficulty": 2,
+        "prompt": "You need ₹15,000 for a laptop in 6 months. How much market risk is appropriate for that money?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Very little; keep it steady because the deadline is close"
+          },
+          {
+            "key": "b",
+            "text": "Lots; higher risk means faster growth"
+          },
+          {
+            "key": "c",
+            "text": "Put it all in one trending company"
+          },
+          {
+            "key": "d",
+            "text": "Timeline doesn't matter"
+          }
+        ]
+      },
+      {
+        "slug": "post-otp-1",
+        "concept": "otp_pin_safety",
+        "difficulty": 1,
+        "prompt": "A 'delivery agent' calls asking for the OTP you received to 'confirm your parcel'. You should:",
+        "options": [
+          {
+            "key": "a",
+            "text": "Refuse; never share an OTP you didn't request for your own use"
+          },
+          {
+            "key": "b",
+            "text": "Share it because you're expecting a parcel"
+          },
+          {
+            "key": "c",
+            "text": "Share half of it"
+          },
+          {
+            "key": "d",
+            "text": "Share it if the caller knows your name"
+          }
+        ]
+      },
+      {
+        "slug": "post-ph-1",
+        "concept": "phishing_links",
+        "difficulty": 2,
+        "prompt": "An email styled like your scholarship portal says your payment failed: 'Click here within 2 hours to re-verify bank details.' Best response?",
+        "options": [
+          {
+            "key": "a",
+            "text": "Click quickly before the deadline"
+          },
+          {
+            "key": "b",
+            "text": "Open the official portal yourself (not via the link) and check your status"
+          },
+          {
+            "key": "c",
+            "text": "Reply with your bank details"
+          },
+          {
+            "key": "d",
+            "text": "Forward it to classmates to warn them, then click it"
+          }
+        ]
+      },
+      {
+        "slug": "post-tg-1",
+        "concept": "too_good_offers",
+        "difficulty": 1,
+        "prompt": "A website offers a ₹70,000 phone for ₹4,999 if you pay right now through UPI. This is most likely:",
+        "options": [
+          {
+            "key": "a",
+            "text": "A rare genuine deal"
+          },
+          {
+            "key": "b",
+            "text": "A scam: unrealistic price plus pressure to pay immediately"
+          },
+          {
+            "key": "c",
+            "text": "Safe if the site looks professional"
+          },
+          {
+            "key": "d",
+            "text": "Fine if you pay only half now"
+          }
+        ]
+      }
     ]
   }
 ]

@@ -6,7 +6,7 @@
 
 ## Conventions
 
-**Authentication:** `Authorization: Bearer <access_token>` from `/auth/login` or `/auth/register/*`. Tokens expire after 12 h (configurable).
+**Authentication:** browsers get three cookies from `/auth/login` or `/auth/register/*` and never see a token: `rr_access` (HttpOnly, 15 min), `rr_refresh` (HttpOnly, `SameSite=Strict`, path `/api/v1/auth`, rotated on every use) and `rr_csrf` (readable). Send `credentials: include`, and echo `rr_csrf` as `X-CSRF-Token` on every POST/PUT/PATCH/DELETE; the `Origin` must also be in `RUPEERISE_CORS_ORIGINS`. On a 401 call `POST /auth/refresh` once and retry. Scripts and tests can opt in to bearer mode with the request header `X-Auth-Mode: bearer`, which returns `access_token` in the body, sets no cookies and needs no CSRF header. Reusing an old refresh token revokes the whole session. Full details: [security.md](security.md).
 
 **Errors** always use one envelope:
 
@@ -17,10 +17,11 @@
 | Status | Typical codes |
 |---|---|
 | 401 | `unauthorized`, `invalid_credentials` |
-| 403 | `forbidden`, `invalid_invite` |
-| 404 | `not_found`, `invalid_join_code` (join) |
-| 409 | `username_taken`, `invalid_transition`, `session_closed`, `already_answered`, `assessment_locked`, `already_submitted`, `already_member`, `conflict` |
-| 422 | `validation_error` (with `details[]`), `over_budget`, `over_capacity`, `allocation_total`, `infeasible_response`, `incomplete`, `invalid_persona`, `persona_required` |
+| 403 | `forbidden`, `invalid_invite` (every invitation failure looks the same), `csrf_failed`, `stage_required` (no class chosen yet), `wrong_password`, `locked` |
+| 429 | `rate_limited` (with `Retry-After`), `quiz_cooldown` |
+| 404 | `not_found`, `invalid_join_code` (unknown **or** another organisation's code) |
+| 409 | `username_taken`, `invalid_transition`, `session_closed`, `already_answered`, `assessment_locked`, `already_submitted`, `already_member`, `grade_locked`, `round_action_limit`, `conflict` |
+| 422 | `validation_error` (with `details[]`), `over_budget`, `over_capacity`, `allocation_total`, `infeasible_response`, `incomplete`, `invalid_persona`, `persona_required`, `grade_required`, `same_password` |
 | 500 | `internal_error` (details logged server-side only) |
 
 **Money** is returned as JSON numbers in rupees (computed with `Decimal` server-side, rounded to paise). All money is fictional.
@@ -30,14 +31,19 @@
 | Method & path | Auth | Purpose |
 |---|---|---|
 | `GET /api/health` | – | Liveness + DB check |
-| `POST /auth/register/student` | – | `{username, password(8–64), display_name, join_code?}` → `TokenOut` (201) |
-| `POST /auth/register/educator` | – | `{…, invite_code, organization_name}` → `TokenOut` (201) |
-| `POST /auth/login` | – | `{username, password}` → `TokenOut` |
+| `POST /auth/register/student` | – | `{username, password(8–64), display_name, join_code?}` → `AuthOut` + cookies (201). Limited per IP |
+| `POST /auth/register/educator` | – | `{username, password, display_name, invite_token}` → `AuthOut` + cookies (201). The organisation comes **only** from the invitation. Limited per IP and per token |
+| `POST /auth/login` | – | `{username, password}` → `AuthOut` + cookies. Limited per IP and per IP+username |
+| `POST /auth/refresh` | refresh cookie | Rotate the refresh token, issue a new access cookie |
+| `POST /auth/logout` | cookie | Ends the session on the server; clears cookies (204) |
+| `POST /auth/password` | any | `{current_password, new_password}`; revokes every session, opens a new one here |
 | `GET /auth/me` | any | `UserOut` |
+| `GET/POST /educator/invites` · `DELETE /educator/invites/{id}` | educator | List / create (expiring, limited-use) / revoke invitations **for the educator's own organisation**. A token is shown once and only its hash is stored |
+| `POST /students/me/organization/leave` | student | `{current_password}`; leaves the organisation and all its classes (audited) so a different code can be used |
 | `GET /students/me/profile` | student | `ProfileOut` (grade 7–13, derived `stage`, language, level, persona, onboarding flag, preferences, cohorts) |
-| `PUT /students/me/profile` | student | Partial `ProfileUpdate`; completing onboarding requires a persona |
-| `POST /students/me/cohorts` | student | `{join_code}` join a class |
-| `DELETE /students/me` | student | Delete account and all learning data (204) |
+| `PUT /students/me/profile` | student | Partial `ProfileUpdate`; completing onboarding requires a class (grade) and a persona. After onboarding the class can change once per 30 days (`grade_locked`). The class is self-declared, not verified |
+| `POST /students/me/cohorts` | student | `{join_code}` join a class **in your own organisation**. A student belongs to one organisation. Limited per IP and student |
+| `DELETE /students/me` | student | Body `{current_password}`. Deletes the account and all learning data (204) |
 | `GET /personas` | – | Fictional personas |
 | `GET /concepts` | – | 14-concept glossary (also the tutor's fallback knowledge) |
 | `GET /modules` | any | Modules with scenarios and quiz slug |
@@ -51,22 +57,22 @@
 | `POST /calculators/head-start` | any | Start-now vs start-later comparison |
 | `POST /calculators/investment` | any | Paths, Monte Carlo bands, loss-by-horizon, risk & diversification |
 | `GET /assessments` · `GET /assessments/{slug}` | student | Summaries with attempts, best score, availability/lock reason |
-| `POST /assessments/{slug}/attempts` | student | Start or resume attempt → questions **without** answers (201) |
-| `POST /assessments/attempts/{id}/submit` | owner | `{responses:[{question_slug, option_key, confidence?, response_ms?}]}` → `AttemptResultOut` |
+| `POST /assessments/{slug}/attempts` | student | Start or resume an attempt → questions **without** answers, in a per-attempt random order (201). Module quizzes need a finished mission in the same module (409 `assessment_locked`) and have a short cooldown after repeated failures (429 `quiz_cooldown`) |
+| `POST /assessments/attempts/{id}/submit` | owner | `{responses:[{question_slug, option_key, confidence?, response_ms?}]}` → `AttemptResultOut`. `response_ms` is only a hint: timing is measured on the server |
 | `GET /assessments/attempts/{id}` | owner | Review a submitted attempt |
 | `GET /progress/me` | student | Modules, concept mastery, strengths, practice areas, pre/post, recent, recommendation |
 | `GET /progress/me/recommendation` | student | Next activity + reason |
 | `GET /achievements/me` | student | Catalogue with earned flags |
 | `GET /portfolio` | student | Portfolio Quest view: `access` (gates + reasons), `portfolio` (cash, invested, total, gain, holdings, per-year history; integer **paise**), `instruments` (fictional; price history only up to the current year), `transactions`, `wallet_balance` |
 | `POST /portfolio/open` · `/quote` · `/trades` · `/advance` · `/reset` · `/transfer` | student | Mutations need `request_id` (8–64 chars; a repeat is applied once) and `confirm: true`. Trades: `{instrument_key, side: buy|sell, quantity}`. Transfer: `{amount}` whole rupees from the learning wallet (one-way, capped per run). The server computes every price and total. Errors: `locked` 403, `insufficient_funds` / `insufficient_holdings` / `insufficient_wallet` / `transfer_cap` / `confirmation_required` 422, `run_complete` / `request_id_reused` 409 |
-| `GET /portfolio/transactions?limit=` | student | Append-only transaction history across runs |
+| `GET /portfolio/transactions?limit=&before=` | student | Append-only transaction history across runs, newest first, keyset-paginated: pass the smallest `id` you have as `before`. `limit` ≤ 500. The `GET /portfolio` view carries only the latest 30 plus one persisted value per year. At most 40 buys/sells/transfers fit in one fictional year (409 `round_action_limit`) |
 | `GET /wallet?limit=` | student | Educational reward wallet: `balance`, `total_earned`, `history[]` (amount, reason, source, concept, time). Read-only; amounts come only from the server-side ledger. Simulation results and assessment results also carry the `rewards` just issued |
 | `GET /learning/status` | student | Transparent 0–100 learning score (assessments 40, decisions 30, reflection 20, safe behaviour 10), level 1–5 with a requirement checklist. Uses no money or reward inputs |
 | `GET /reflections/prompt?session_id=` · `POST /reflections` | student | Multiple-choice reflection after a finished session; one answer per question, no free text. Body: `{session_id, question_key, selected, confidence?}` |
 | `GET /banking-explorer` · `POST /banking-explorer/stops/{stop_key}/answer` | student | Banking Explorer: 7 stops, each with official sources, a per-source `checked` note and `last_verified`; progress is stored per student |
 | `GET /educator/cohorts` · `POST /educator/cohorts` | educator | List / create (`{name}` → join code) |
 | `GET /educator/cohorts/{id}/overview` | educator (same org) | Participation, module completion, concept mastery, pre/post, support topics, misconceptions, student rows (nicknames) |
-| `POST /tutor/ask` | student | `{question, concept?, session_id?}` → `{answer, source: ai|fallback, concept, grounded_on[], disclaimer}` |
+| `POST /tutor/ask` | student | Limited per student per hour and per day (429). Refusals (advice, predictions, secrets, jailbreaks) are deterministic and never reach the model. `{question, concept?, session_id?}` → `{answer, source: ai|fallback, concept, grounded_on[], disclaimer}` |
 
 ## Simulation decision contract
 

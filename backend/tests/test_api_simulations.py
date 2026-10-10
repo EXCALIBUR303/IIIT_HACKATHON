@@ -1,4 +1,12 @@
-from tests.conftest import GOOD_BUDGET, complete_budget, register_student
+import pytest
+
+from tests.conftest import (
+    GOOD_BUDGET,
+    complete_budget,
+    register_onboarded,
+    register_student,
+    unlock_quiz,
+)
 
 SESSIONS = "/api/v1/simulations/sessions"
 
@@ -73,7 +81,7 @@ def test_sessions_are_private(client, student):
     s = client.post(
         SESSIONS, headers=student, json={"scenario_slug": "budget-meera-pocket-money"}
     ).json()
-    other, _ = register_student(client)
+    other, _ = register_onboarded(client)
     assert client.get(f"{SESSIONS}/{s['id']}", headers=other).status_code == 404
     assert (
         decide(client, other, s["id"], "allocate", {"allocations": GOOD_BUDGET}).status_code == 404
@@ -145,6 +153,7 @@ def test_investing_one_year_horizon_completes_without_event(client, student):
     assert r.json()["status"] == "completed" and r.json()["result"]["path_result"] is None
 
 
+@pytest.mark.requires_private_content
 def test_safety_flow_and_no_answer_leak(client, student):
     detail = client.get("/api/v1/scenarios/safety-inbox-basics", headers=student).json()
     assert "verdict" not in str(detail["config"])
@@ -221,6 +230,8 @@ def test_concurrent_starts_do_not_error(client, student):
     with ThreadPoolExecutor(max_workers=8) as pool:
         codes = [r.status_code for r in pool.map(start, range(8))]
     assert all(c == 201 for c in codes), codes
+
+    unlock_quiz(client, student, "quiz-stay-safe")
 
     def attempt(_):
         return client.post("/api/v1/assessments/quiz-stay-safe/attempts", headers=student)

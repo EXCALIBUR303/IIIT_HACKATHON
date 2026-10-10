@@ -46,8 +46,14 @@ def new_join_code(db: Session) -> str:
 
 def cohort_summaries(db: Session, educator: User) -> list[dict[str, Any]]:
     rows = db.execute(
-        select(Cohort, func.count(CohortMembership.student_id))
-        .outerjoin(CohortMembership)
+        select(Cohort, func.count(User.id))
+        .outerjoin(CohortMembership, CohortMembership.cohort_id == Cohort.id)
+        # Defence in depth: only students of the cohort's own organisation are ever counted.
+        .outerjoin(
+            User,
+            (User.id == CohortMembership.student_id)
+            & (User.organization_id == Cohort.organization_id),
+        )
         .where(Cohort.organization_id == educator.organization_id)
         .group_by(Cohort.id)
         .order_by(Cohort.created_at)
@@ -65,9 +71,15 @@ def cohort_summaries(db: Session, educator: User) -> list[dict[str, Any]]:
 
 
 def _student_ids(db: Session, cohort: Cohort) -> list:
+    """Members who belong to the cohort's organisation (legacy cross-org rows are ignored)."""
     return list(
         db.scalars(
-            select(CohortMembership.student_id).where(CohortMembership.cohort_id == cohort.id)
+            select(CohortMembership.student_id)
+            .join(User, User.id == CohortMembership.student_id)
+            .where(
+                CohortMembership.cohort_id == cohort.id,
+                User.organization_id == cohort.organization_id,
+            )
         )
     )
 
@@ -273,7 +285,10 @@ def _stage_and_reflection(db, ids, profiles, support, misconceptions) -> dict[st
     """Aggregate-only extras: stage mix, reflection gaps and suggested instructional follow-up."""
     counts: dict[str, int] = defaultdict(int)
     for p in profiles.values():
-        counts[stages.stage_for(p.grade if p else None)] += 1
+        if (
+            p is not None and p.grade is not None
+        ):  # students who have not chosen a class yet are not counted
+            counts[stages.stage_for(p.grade)] += 1
     stage_rows = [
         {
             "key": k,

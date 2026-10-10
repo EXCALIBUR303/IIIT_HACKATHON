@@ -104,3 +104,16 @@ erDiagram
 ## Scale notes (~1,500 students)
 
 Each student generates roughly 30–60 sessions and ~100 question responses over a programme, i.e. well under 1 M rows total. Foreign keys used in filters are indexed (`student_id` on sessions/attempts/responses/decisions). Educator overviews use set-based aggregate queries per cohort rather than per-student loops.
+
+## Security-pass tables (migrations 0007–0009)
+
+| Table / column | Purpose |
+|---|---|
+| `educator_invites` | Organisation-bound invitations: `token_hash` (SHA-256, unique), `expires_at`, `max_uses`, `used_count`, `revoked_at`, `created_by` |
+| `auth_sessions` | One row per sign-in: hashed refresh token, `prev_token_hash` (reuse detection), `revoked_at`, `revoked_reason` |
+| `rate_limit_counters` | Fixed-window counters keyed by a hash; shared by all API instances |
+| `organization_transfers` | Audit trail when a student leaves an organisation |
+| `users.password_changed_at`, `student_profiles.grade_changed_at` | Re-auth and grade-lock bookkeeping |
+| `questions.variant_group`, `assessment_attempts.delivery/elapsed_ms/timing_trusted` | Per-attempt question/option order, server-measured time |
+| `portfolio_round_snapshots` | One value row per student, run and year (≤ 11 per run) for the chart |
+| indexes on `portfolio_transactions` | `(student_id, id DESC)` for pagination, `(student_id, run_number, round)` for per-year counts |

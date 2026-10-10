@@ -1,298 +1,256 @@
 {
- "title": "Banking Explorer",
- "last_verified": "2026-10-10",
- "intro": "A guided, India-specific tour of how a first bank account works, with the official sources behind every fact.",
- "disclaimer": "RupeeRise is a learning tool. It cannot open, link or check a real bank account, and it never asks for Aadhaar, PAN, account numbers, PINs, OTPs, card details or document photos. Rules change: confirm current details with your bank or the official source linked on each stop.",
- "sources": {
-  "rbi_minors": {
-   "title": "RBI: Opening of and operation in deposit accounts of minors (RBI/2025-26/26, 21 April 2025)",
-   "publisher": "Reserve Bank of India",
-   "url": "https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=12835&Mode=0",
-   "checked": "opened the notification page"
-  },
-  "rbi_ombudsman": {
-   "title": "RBI: Integrated Ombudsman Scheme, 2026 (FAQs)",
-   "publisher": "Reserve Bank of India",
-   "url": "https://www.rbi.org.in/commonperson/english/scripts/FAQs.aspx?Id=3407",
-   "checked": "opened the FAQ page"
-  },
-  "rbi_bsbd": {
-   "title": "RBI Kehta Hai: Basic Savings Bank Deposit account",
-   "publisher": "Reserve Bank of India",
-   "url": "https://rbikehtahai.rbi.org.in/bsbd-account.html",
-   "checked": "found via search; page was behind a human-verification step, so details come from RBI circular summaries (2012-15). Confirm current terms with your bank"
-  },
-  "npci_upi": {
-   "title": "NPCI: UPI 123PAY FAQs and UPI help guidelines",
-   "publisher": "National Payments Corporation of India",
-   "url": "https://www.npci.org.in/what-we-do/upi-123pay/faqs",
-   "checked": "found in NPCI search results; paraphrased from search summaries"
-  },
-  "dicgc": {
-   "title": "DICGC: Frequently asked questions",
-   "publisher": "Deposit Insurance and Credit Guarantee Corporation (RBI subsidiary)",
-   "url": "https://www.dicgc.org.in/FAQs",
-   "checked": "found in DICGC search results; paraphrased from search summaries"
-  },
-  "ncrp": {
-   "title": "PIB: National Cyber Crime Reporting Portal and the 1930 helpline",
-   "publisher": "Press Information Bureau, Government of India",
-   "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2085609&reg=3&lang=2",
-   "checked": "found in PIB search results; paraphrased from search summaries"
-  }
- },
- "stops": [
-  {
-   "key": "who-can-open",
-   "title": "Can someone my age have a bank account?",
-   "concept": "banking_basics",
-   "sources": [
-    "rbi_minors"
-   ],
-   "story": "Hyderabad student Meera is 15 and wants a place to keep her scholarship money. Her friend says she must wait until she is 18.",
-   "facts": [
-    "RBI allows a minor of any age to open and operate a savings account through a parent or legal guardian.",
-    "A minor aged 10 or above may be allowed to open and operate a savings account independently, up to limits and terms each bank sets based on its own risk policy.",
-    "A minor's account cannot be overdrawn: it must always stay in credit.",
-    "Banks still do customer due diligence (KYC), and when the minor turns 18 the bank takes fresh operating instructions."
-   ],
-   "question": "Which statement matches the RBI rule?",
-   "options": [
-    {
-     "key": "a",
-     "text": "Only adults can have bank accounts, with no exceptions.",
-     "correct": false,
-     "explanation": "Not so. RBI allows minors to have savings accounts."
+  "title": "Banking Explorer",
+  "last_verified": "2026-10-10",
+  "intro": "A guided, India-specific tour of how a first bank account works, with the official sources behind every fact.",
+  "disclaimer": "RupeeRise is a learning tool. It cannot open, link or check a real bank account, and it never asks for Aadhaar, PAN, account numbers, PINs, OTPs, card details or document photos. Rules change: confirm current details with your bank or the official source linked on each stop.",
+  "sources": {
+    "rbi_minors": {
+      "title": "RBI: Opening of and operation in deposit accounts of minors (RBI/2025-26/26, 21 April 2025)",
+      "publisher": "Reserve Bank of India",
+      "url": "https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=12835&Mode=0",
+      "checked": "opened the notification page"
     },
-    {
-     "key": "b",
-     "text": "A minor can have a savings account through a guardian, and from age 10 may operate one independently within the bank's limits.",
-     "correct": true,
-     "explanation": "Right. The bank sets the exact limits, so always ask the bank what applies to you."
+    "rbi_ombudsman": {
+      "title": "RBI: Integrated Ombudsman Scheme, 2026 (FAQs)",
+      "publisher": "Reserve Bank of India",
+      "url": "https://www.rbi.org.in/commonperson/english/scripts/FAQs.aspx?Id=3407",
+      "checked": "opened the FAQ page"
     },
-    {
-     "key": "c",
-     "text": "A minor can overdraw the account if the bank agrees.",
-     "correct": false,
-     "explanation": "RBI says minors' accounts must always remain in credit."
+    "rbi_bsbd": {
+      "title": "RBI Kehta Hai: Basic Savings Bank Deposit account",
+      "publisher": "Reserve Bank of India",
+      "url": "https://rbikehtahai.rbi.org.in/bsbd-account.html",
+      "checked": "found via search; page was behind a human-verification step, so details come from RBI circular summaries (2012-15). Confirm current terms with your bank"
+    },
+    "npci_upi": {
+      "title": "NPCI: UPI 123PAY FAQs and UPI help guidelines",
+      "publisher": "National Payments Corporation of India",
+      "url": "https://www.npci.org.in/what-we-do/upi-123pay/faqs",
+      "checked": "found in NPCI search results; paraphrased from search summaries"
+    },
+    "dicgc": {
+      "title": "DICGC: Frequently asked questions",
+      "publisher": "Deposit Insurance and Credit Guarantee Corporation (RBI subsidiary)",
+      "url": "https://www.dicgc.org.in/FAQs",
+      "checked": "found in DICGC search results; paraphrased from search summaries"
+    },
+    "ncrp": {
+      "title": "PIB: National Cyber Crime Reporting Portal and the 1930 helpline",
+      "publisher": "Press Information Bureau, Government of India",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2085609&reg=3&lang=2",
+      "checked": "found in PIB search results; paraphrased from search summaries"
     }
-   ]
   },
-  {
-   "key": "documents",
-   "title": "What will a bank ask me to show?",
-   "concept": "personal_data_privacy",
-   "sources": [
-    "rbi_minors"
-   ],
-   "story": "Meera's guardian takes her to a bank branch. A message that evening says: 'Send a photo of your ID on WhatsApp to finish opening your account.'",
-   "facts": [
-    "Banks must verify who you are (called KYC or customer due diligence) under RBI rules.",
-    "Which documents are accepted depends on the bank and the account type, so ask the bank directly.",
-    "You share identity documents only with the bank itself, inside the branch or its official app or website that you opened yourself.",
-    "RupeeRise never asks for any ID number, document or photo, and it cannot open a real account."
-   ],
-   "question": "A message asks you to send ID photos on WhatsApp to 'finish opening' an account. What is the safe move?",
-   "options": [
+  "stops": [
     {
-     "key": "a",
-     "text": "Send the photos quickly so the account is not cancelled.",
-     "correct": false,
-     "explanation": "Pressure to hurry is a warning sign. Documents are never needed over chat."
+      "key": "who-can-open",
+      "title": "Can someone my age have a bank account?",
+      "concept": "banking_basics",
+      "sources": [
+        "rbi_minors"
+      ],
+      "story": "Hyderabad student Meera is 15 and wants a place to keep her scholarship money. Her friend says she must wait until she is 18.",
+      "facts": [
+        "RBI allows a minor of any age to open and operate a savings account through a parent or legal guardian.",
+        "A minor aged 10 or above may be allowed to open and operate a savings account independently, up to limits and terms each bank sets based on its own risk policy.",
+        "A minor's account cannot be overdrawn: it must always stay in credit.",
+        "Banks still do customer due diligence (KYC), and when the minor turns 18 the bank takes fresh operating instructions."
+      ],
+      "question": "Which statement matches the RBI rule?",
+      "options": [
+        {
+          "key": "a",
+          "text": "Only adults can have bank accounts, with no exceptions."
+        },
+        {
+          "key": "b",
+          "text": "A minor can have a savings account through a guardian, and from age 10 may operate one independently within the bank's limits."
+        },
+        {
+          "key": "c",
+          "text": "A minor can overdraw the account if the bank agrees."
+        }
+      ]
     },
     {
-     "key": "b",
-     "text": "Do not send anything. Check with the branch or the bank's official app or website you opened yourself.",
-     "correct": true,
-     "explanation": "Correct. Real banks handle documents at the branch or in their official app."
+      "key": "documents",
+      "title": "What will a bank ask me to show?",
+      "concept": "personal_data_privacy",
+      "sources": [
+        "rbi_minors"
+      ],
+      "story": "Meera's guardian takes her to a bank branch. A message that evening says: 'Send a photo of your ID on WhatsApp to finish opening your account.'",
+      "facts": [
+        "Banks must verify who you are (called KYC or customer due diligence) under RBI rules.",
+        "Which documents are accepted depends on the bank and the account type, so ask the bank directly.",
+        "You share identity documents only with the bank itself, inside the branch or its official app or website that you opened yourself.",
+        "RupeeRise never asks for any ID number, document or photo, and it cannot open a real account."
+      ],
+      "question": "A message asks you to send ID photos on WhatsApp to 'finish opening' an account. What is the safe move?",
+      "options": [
+        {
+          "key": "a",
+          "text": "Send the photos quickly so the account is not cancelled."
+        },
+        {
+          "key": "b",
+          "text": "Do not send anything. Check with the branch or the bank's official app or website you opened yourself."
+        },
+        {
+          "key": "c",
+          "text": "Send only the Aadhaar photo and keep the rest."
+        }
+      ]
     },
     {
-     "key": "c",
-     "text": "Send only the Aadhaar photo and keep the rest.",
-     "correct": false,
-     "explanation": "Any identity document can be misused. Do not send any of them over chat."
+      "key": "fees",
+      "title": "Fees and minimum balances",
+      "concept": "banking_basics",
+      "sources": [
+        "rbi_bsbd"
+      ],
+      "story": "Two accounts look the same, but one will charge Meera if her balance dips below a limit.",
+      "facts": [
+        "Some banks offer a basic account with no minimum balance requirement (RBI calls it a Basic Savings Bank Deposit Account), with limits on free withdrawals and no cheque book as standard.",
+        "Other accounts can have minimum balances, charges or limits on free transactions.",
+        "Before opening, ask for the bank's schedule of charges and read what happens if the balance is low.",
+        "Terms change, so confirm the current rules with the bank."
+      ],
+      "question": "What is the smartest thing to do before choosing an account?",
+      "options": [
+        {
+          "key": "a",
+          "text": "Pick the account with the nicest app."
+        },
+        {
+          "key": "b",
+          "text": "Ask the bank for its list of charges and minimum balance rules, and compare."
+        },
+        {
+          "key": "c",
+          "text": "Assume every savings account has the same charges."
+        }
+      ]
+    },
+    {
+      "key": "pin-otp",
+      "title": "PIN and OTP hygiene",
+      "concept": "otp_pin_safety",
+      "sources": [
+        "npci_upi"
+      ],
+      "story": "Meera gets a UPI 'collect request': 'Enter your PIN to receive ₹2,000.'",
+      "facts": [
+        "Your UPI PIN authorises money going out of your account.",
+        "NPCI says to keep your UPI PIN confidential, and that your bank's customer support will never ask for it.",
+        "To get paid, you only need to share your UPI ID or QR code.",
+        "Never share an OTP with anyone who asks for it."
+      ],
+      "question": "A request says 'Enter your UPI PIN to receive money'. What does that tell you?",
+      "options": [
+        {
+          "key": "a",
+          "text": "It is how the money gets credited."
+        },
+        {
+          "key": "b",
+          "text": "It is a scam sign. A PIN is only for sending money, so decline and report it."
+        },
+        {
+          "key": "c",
+          "text": "It is safe if the amount is small."
+        }
+      ]
+    },
+    {
+      "key": "deposit-insurance",
+      "title": "Is the money in a bank safe?",
+      "concept": "banking_basics",
+      "sources": [
+        "dicgc"
+      ],
+      "story": "Meera's uncle has ₹3 lakh in one bank and ₹4 lakh in another, and worries about what happens if a bank fails.",
+      "facts": [
+        "Bank deposits in insured banks are covered by DICGC, a subsidiary of RBI.",
+        "The cover is up to ₹5 lakh per depositor per bank, including principal and interest.",
+        "The limit applies separately to each bank, and the bank pays the premium, not the depositor.",
+        "Banks display the DICGC details. The list of insured banks is on the DICGC website."
+      ],
+      "question": "Uncle has ₹3 lakh in Bank A and ₹4 lakh in Bank B (both insured). How much of each is covered by deposit insurance?",
+      "options": [
+        {
+          "key": "a",
+          "text": "Only ₹5 lakh in total across both banks."
+        },
+        {
+          "key": "b",
+          "text": "All ₹3 lakh in Bank A and all ₹4 lakh in Bank B, since each is under ₹5 lakh per bank."
+        },
+        {
+          "key": "c",
+          "text": "Nothing, because deposit insurance is only for companies."
+        }
+      ]
+    },
+    {
+      "key": "when-it-goes-wrong",
+      "title": "If something goes wrong",
+      "concept": "banking_basics",
+      "sources": [
+        "rbi_ombudsman",
+        "ncrp"
+      ],
+      "story": "Meera loses money to a fake collect request. Her cousin also has a different problem: a bank has not answered a complaint about a wrong charge.",
+      "facts": [
+        "For online money fraud, report quickly: call the national cyber crime helpline 1930 and file on cybercrime.gov.in. Speed improves the chance of stopping the transfer.",
+        "For a service complaint against a bank, complain to the bank first and keep the reference number.",
+        "If the bank does not reply within 30 days, or you are not satisfied, you can go to the RBI Ombudsman at cms.rbi.org.in, within 90 days, free of charge.",
+        "Ask a trusted adult to help."
+      ],
+      "question": "Your bank has not replied to a complaint about a wrong charge for over 30 days. What is the official next step?",
+      "options": [
+        {
+          "key": "a",
+          "text": "Pay someone online who promises to recover the money."
+        },
+        {
+          "key": "b",
+          "text": "Escalate to the RBI Ombudsman through cms.rbi.org.in, keeping your complaint reference."
+        },
+        {
+          "key": "c",
+          "text": "Post about it publicly and wait."
+        }
+      ]
+    },
+    {
+      "key": "official-routes",
+      "title": "The official way to open an account",
+      "concept": "banking_basics",
+      "sources": [
+        "rbi_minors"
+      ],
+      "story": "Meera is ready. Which route is safe?",
+      "facts": [
+        "Visit the bank's branch with your guardian, or start from the bank's own official website or app that you typed or downloaded yourself.",
+        "Never use links in SMS, WhatsApp or social media messages to apply or 'verify'.",
+        "RupeeRise teaches how this works. It cannot open, link or check any real account, and it will never ask for account numbers, PINs, OTPs or documents."
+      ],
+      "question": "Which is the safest way to start opening a real account?",
+      "options": [
+        {
+          "key": "a",
+          "text": "Tap a link in an SMS that says 'Zero-balance account in 2 minutes'."
+        },
+        {
+          "key": "b",
+          "text": "Go to the branch with a guardian or use the bank's official app or website you reached yourself."
+        },
+        {
+          "key": "c",
+          "text": "Ask RupeeRise to open one for you."
+        }
+      ]
     }
-   ]
-  },
-  {
-   "key": "fees",
-   "title": "Fees and minimum balances",
-   "concept": "banking_basics",
-   "sources": [
-    "rbi_bsbd"
-   ],
-   "story": "Two accounts look the same, but one will charge Meera if her balance dips below a limit.",
-   "facts": [
-    "Some banks offer a basic account with no minimum balance requirement (RBI calls it a Basic Savings Bank Deposit Account), with limits on free withdrawals and no cheque book as standard.",
-    "Other accounts can have minimum balances, charges or limits on free transactions.",
-    "Before opening, ask for the bank's schedule of charges and read what happens if the balance is low.",
-    "Terms change, so confirm the current rules with the bank."
-   ],
-   "question": "What is the smartest thing to do before choosing an account?",
-   "options": [
-    {
-     "key": "a",
-     "text": "Pick the account with the nicest app.",
-     "correct": false,
-     "explanation": "A nice app does not tell you the charges."
-    },
-    {
-     "key": "b",
-     "text": "Ask the bank for its list of charges and minimum balance rules, and compare.",
-     "correct": true,
-     "explanation": "Yes. Fees and limits are in the schedule of charges, so ask to see it."
-    },
-    {
-     "key": "c",
-     "text": "Assume every savings account has the same charges.",
-     "correct": false,
-     "explanation": "Charges and minimum balances differ between banks and account types."
-    }
-   ]
-  },
-  {
-   "key": "pin-otp",
-   "title": "PIN and OTP hygiene",
-   "concept": "otp_pin_safety",
-   "sources": [
-    "npci_upi"
-   ],
-   "story": "Meera gets a UPI 'collect request': 'Enter your PIN to receive ₹2,000.'",
-   "facts": [
-    "Your UPI PIN authorises money going out of your account.",
-    "NPCI says to keep your UPI PIN confidential, and that your bank's customer support will never ask for it.",
-    "To get paid, you only need to share your UPI ID or QR code.",
-    "Never share an OTP with anyone who asks for it."
-   ],
-   "question": "A request says 'Enter your UPI PIN to receive money'. What does that tell you?",
-   "options": [
-    {
-     "key": "a",
-     "text": "It is how the money gets credited.",
-     "correct": false,
-     "explanation": "Receiving money does not need your PIN."
-    },
-    {
-     "key": "b",
-     "text": "It is a scam sign. A PIN is only for sending money, so decline and report it.",
-     "correct": true,
-     "explanation": "Right. Decline the request and report it in your payment app."
-    },
-    {
-     "key": "c",
-     "text": "It is safe if the amount is small.",
-     "correct": false,
-     "explanation": "The size does not matter. Entering the PIN approves a payment from you."
-    }
-   ]
-  },
-  {
-   "key": "deposit-insurance",
-   "title": "Is the money in a bank safe?",
-   "concept": "banking_basics",
-   "sources": [
-    "dicgc"
-   ],
-   "story": "Meera's uncle has ₹3 lakh in one bank and ₹4 lakh in another, and worries about what happens if a bank fails.",
-   "facts": [
-    "Bank deposits in insured banks are covered by DICGC, a subsidiary of RBI.",
-    "The cover is up to ₹5 lakh per depositor per bank, including principal and interest.",
-    "The limit applies separately to each bank, and the bank pays the premium, not the depositor.",
-    "Banks display the DICGC details. The list of insured banks is on the DICGC website."
-   ],
-   "question": "Uncle has ₹3 lakh in Bank A and ₹4 lakh in Bank B (both insured). How much of each is covered by deposit insurance?",
-   "options": [
-    {
-     "key": "a",
-     "text": "Only ₹5 lakh in total across both banks.",
-     "correct": false,
-     "explanation": "The limit applies to each bank separately."
-    },
-    {
-     "key": "b",
-     "text": "All ₹3 lakh in Bank A and all ₹4 lakh in Bank B, since each is under ₹5 lakh per bank.",
-     "correct": true,
-     "explanation": "Correct. The ₹5 lakh limit is per depositor per bank."
-    },
-    {
-     "key": "c",
-     "text": "Nothing, because deposit insurance is only for companies.",
-     "correct": false,
-     "explanation": "It covers individual depositors in insured banks."
-    }
-   ]
-  },
-  {
-   "key": "when-it-goes-wrong",
-   "title": "If something goes wrong",
-   "concept": "banking_basics",
-   "sources": [
-    "rbi_ombudsman",
-    "ncrp"
-   ],
-   "story": "Meera loses money to a fake collect request. Her cousin also has a different problem: a bank has not answered a complaint about a wrong charge.",
-   "facts": [
-    "For online money fraud, report quickly: call the national cyber crime helpline 1930 and file on cybercrime.gov.in. Speed improves the chance of stopping the transfer.",
-    "For a service complaint against a bank, complain to the bank first and keep the reference number.",
-    "If the bank does not reply within 30 days, or you are not satisfied, you can go to the RBI Ombudsman at cms.rbi.org.in, within 90 days, free of charge.",
-    "Ask a trusted adult to help."
-   ],
-   "question": "Your bank has not replied to a complaint about a wrong charge for over 30 days. What is the official next step?",
-   "options": [
-    {
-     "key": "a",
-     "text": "Pay someone online who promises to recover the money.",
-     "correct": false,
-     "explanation": "Recovery agents who ask for fees are a common scam."
-    },
-    {
-     "key": "b",
-     "text": "Escalate to the RBI Ombudsman through cms.rbi.org.in, keeping your complaint reference.",
-     "correct": true,
-     "explanation": "Right. It is free, and you must have complained to the bank first."
-    },
-    {
-     "key": "c",
-     "text": "Post about it publicly and wait.",
-     "correct": false,
-     "explanation": "That does not start any official process."
-    }
-   ]
-  },
-  {
-   "key": "official-routes",
-   "title": "The official way to open an account",
-   "concept": "banking_basics",
-   "sources": [
-    "rbi_minors"
-   ],
-   "story": "Meera is ready. Which route is safe?",
-   "facts": [
-    "Visit the bank's branch with your guardian, or start from the bank's own official website or app that you typed or downloaded yourself.",
-    "Never use links in SMS, WhatsApp or social media messages to apply or 'verify'.",
-    "RupeeRise teaches how this works. It cannot open, link or check any real account, and it will never ask for account numbers, PINs, OTPs or documents."
-   ],
-   "question": "Which is the safest way to start opening a real account?",
-   "options": [
-    {
-     "key": "a",
-     "text": "Tap a link in an SMS that says 'Zero-balance account in 2 minutes'.",
-     "correct": false,
-     "explanation": "Links in messages are a common way to steal details."
-    },
-    {
-     "key": "b",
-     "text": "Go to the branch with a guardian or use the bank's official app or website you reached yourself.",
-     "correct": true,
-     "explanation": "Yes. You control where you end up."
-    },
-    {
-     "key": "c",
-     "text": "Ask RupeeRise to open one for you.",
-     "correct": false,
-     "explanation": "RupeeRise is a learning tool and cannot open real accounts."
-    }
-   ]
-  }
- ]
+  ]
 }

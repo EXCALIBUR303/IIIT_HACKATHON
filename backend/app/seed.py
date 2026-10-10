@@ -100,6 +100,7 @@ def seed_content(db: Session) -> None:
                 prompt=q["prompt"],
                 options=q["options"],
                 order=i,
+                variant_group=q.get("variant_group"),
             )
     for a in loader.achievements():
         upsert(

@@ -1,8 +1,18 @@
+import pytest
 from sqlalchemy import func, select
 
 from app.core.db import SessionLocal
 from app.models import ConceptMastery, SimulationSession
-from tests.conftest import answer_all, complete_budget, onboard, register_educator, register_student
+from tests.conftest import (
+    answer_all,
+    complete_budget,
+    delete_account,
+    onboard,
+    register_educator,
+    register_onboarded,
+    register_student,
+    unlock_quiz,
+)
 
 
 def test_modules_and_content(client, student):
@@ -26,6 +36,7 @@ def test_onboarding_requires_persona_and_awards_badge(client):
     assert any(b["slug"] == "first_steps" and b["earned"] for b in badges)
 
 
+@pytest.mark.requires_private_content
 def test_assessment_hides_answers_and_initial_is_one_shot(client, student):
     start = client.post("/api/v1/assessments/initial/attempts", headers=student).json()
     assert len(start["questions"]) == 12
@@ -42,6 +53,7 @@ def test_assessment_hides_answers_and_initial_is_one_shot(client, student):
 
 
 def test_incomplete_submission_rejected(client, student):
+    unlock_quiz(client, student, "quiz-plan-and-budget")
     start = client.post("/api/v1/assessments/quiz-plan-and-budget/attempts", headers=student).json()
     q = start["questions"][0]
     r = client.post(
@@ -154,6 +166,7 @@ def test_full_journey_pre_post_comparison(client, student):
     )
 
 
+@pytest.mark.requires_private_content
 def test_educator_cohort_flow_and_isolation(client):
     edu = register_educator(client, org="Hyderabad Learning Trust")
     cohort = client.post(
@@ -194,12 +207,13 @@ def test_educator_cohort_flow_and_isolation(client):
 
 def test_account_deletion_removes_learning_data(client, student):
     complete_budget(client, student)
-    assert client.delete("/api/v1/students/me", headers=student).status_code == 204
+    assert delete_account(client, student).status_code == 204
     assert client.get("/api/v1/auth/me", headers=student).status_code == 401
     with SessionLocal() as db:
         assert db.scalar(select(func.count(SimulationSession.id))) == 0
 
 
+@pytest.mark.requires_private_content
 def test_tutor_fallback_is_grounded(client, student):
     r = client.post(
         "/api/v1/tutor/ask", headers=student, json={"question": "Why share OTP is bad?"}
@@ -221,7 +235,7 @@ def test_tutor_fallback_is_grounded(client, student):
     )
     body = explain.json()
     assert body["concept"] is not None and body["answer"].startswith("Your simulation score")
-    other, _ = register_student(client)
+    other, _ = register_onboarded(client)
     r = client.post(
         "/api/v1/tutor/ask", headers=other, json={"question": "explain", "session_id": done["id"]}
     )

@@ -1,253 +1,878 @@
 [
   {
-    "slug": "budget-meera-pocket-money", "stages": ["explorer", "builder", "future_planner", "investor_sandbox"], "module": "plan-and-budget", "kind": "budget", "difficulty": 1, "persona": "meera",
+    "slug": "budget-meera-pocket-money",
+    "stages": [
+      "explorer",
+      "builder",
+      "future_planner",
+      "investor_sandbox"
+    ],
+    "module": "plan-and-budget",
+    "kind": "budget",
+    "difficulty": 1,
+    "persona": "meera",
     "title": "Meera's first monthly budget",
     "intro": "Meera just received ₹2,000 for the month. She needs to reach school, eat lunch and buy stationery, and she wants to save for a ₹1,200 scientific calculator in 3 months. Help her plan.",
     "objective": "Cover every need first, keep wants in check and save toward a goal.",
     "config": {
       "income": 2000,
-      "goal": {"label": "Scientific calculator", "amount": 1200, "months": 3},
+      "goal": {
+        "label": "Scientific calculator",
+        "amount": 1200,
+        "months": 3
+      },
       "categories": [
-        {"key": "bus_pass", "label": "Bus pass", "kind": "need", "essential_min": 600, "hint": "Needed to reach school every day."},
-        {"key": "lunch", "label": "Lunch & snacks at school", "kind": "need", "essential_min": 400, "hint": "Some lunch money is essential."},
-        {"key": "stationery", "label": "Stationery & printouts", "kind": "need", "essential_min": 200, "hint": "Notebooks, pens and project printouts."},
-        {"key": "recharge", "label": "Mobile data recharge", "kind": "need", "essential_min": 149, "hint": "Used for online class notes."},
-        {"key": "outings", "label": "Outings with friends", "kind": "want", "hint": "Fun, but can be adjusted."},
-        {"key": "gaming", "label": "Game top-ups & OTT", "kind": "want", "hint": "Entertainment that can wait."},
-        {"key": "savings", "label": "Savings for calculator", "kind": "savings", "hint": "Goal needs ₹400 a month."}
+        {
+          "key": "bus_pass",
+          "label": "Bus pass",
+          "kind": "need",
+          "essential_min": 600,
+          "hint": "Needed to reach school every day."
+        },
+        {
+          "key": "lunch",
+          "label": "Lunch & snacks at school",
+          "kind": "need",
+          "essential_min": 400,
+          "hint": "Some lunch money is essential."
+        },
+        {
+          "key": "stationery",
+          "label": "Stationery & printouts",
+          "kind": "need",
+          "essential_min": 200,
+          "hint": "Notebooks, pens and project printouts."
+        },
+        {
+          "key": "recharge",
+          "label": "Mobile data recharge",
+          "kind": "need",
+          "essential_min": 149,
+          "hint": "Used for online class notes."
+        },
+        {
+          "key": "outings",
+          "label": "Outings with friends",
+          "kind": "want",
+          "hint": "Fun, but can be adjusted."
+        },
+        {
+          "key": "gaming",
+          "label": "Game top-ups & OTT",
+          "kind": "want",
+          "hint": "Entertainment that can wait."
+        },
+        {
+          "key": "savings",
+          "label": "Savings for calculator",
+          "kind": "savings",
+          "hint": "Goal needs ₹400 a month."
+        }
       ],
       "events": [
-        {"key": "bus_fare_hike", "title": "Bus fares went up", "description": "The bus pass now costs ₹150 more this month.", "amount": 150, "essential": true},
-        {"key": "friend_birthday", "title": "Friend's birthday party", "description": "Friends are collecting ₹300 each for a birthday party at a café.", "amount": 300, "essential": false, "skip_consequence": "You wished your friend and joined for cake without paying for the café. Good friends understand budgets."},
-        {"key": "lost_geometry_box", "title": "Lost geometry box", "description": "Your geometry box went missing before the maths exam. A new one costs ₹250.", "amount": 250, "essential": true}
+        {
+          "key": "bus_fare_hike",
+          "title": "Bus fares went up",
+          "description": "The bus pass now costs ₹150 more this month.",
+          "amount": 150,
+          "essential": true
+        },
+        {
+          "key": "friend_birthday",
+          "title": "Friend's birthday party",
+          "description": "Friends are collecting ₹300 each for a birthday party at a café.",
+          "amount": 300,
+          "essential": false,
+          "skip_consequence": "You wished your friend and joined for cake without paying for the café. Good friends understand budgets."
+        },
+        {
+          "key": "lost_geometry_box",
+          "title": "Lost geometry box",
+          "description": "Your geometry box went missing before the maths exam. A new one costs ₹250.",
+          "amount": 250,
+          "essential": true
+        }
       ]
     }
   },
   {
-    "slug": "budget-lakshmi-stipend", "stages": ["builder", "future_planner", "investor_sandbox"], "module": "plan-and-budget", "kind": "budget", "difficulty": 2, "persona": "lakshmi",
+    "slug": "budget-lakshmi-stipend",
+    "stages": [
+      "builder",
+      "future_planner",
+      "investor_sandbox"
+    ],
+    "module": "plan-and-budget",
+    "kind": "budget",
+    "difficulty": 2,
+    "persona": "lakshmi",
     "title": "Lakshmi's ₹5,000 hostel stipend",
     "intro": "Lakshmi's ₹5,000 scholarship must cover mess top-ups, transport, books, toiletries and her phone. She also wants to join a ₹2,500 spoken-English course in 3 months.",
     "objective": "Balance many needs on a fixed stipend while saving for a goal and staying ready for surprises.",
     "config": {
       "income": 5000,
-      "goal": {"label": "Spoken-English course", "amount": 2500, "months": 3},
+      "goal": {
+        "label": "Spoken-English course",
+        "amount": 2500,
+        "months": 3
+      },
       "categories": [
-        {"key": "mess_topup", "label": "Mess food top-up", "kind": "need", "essential_min": 1500, "hint": "Extra meals beyond the hostel mess."},
-        {"key": "transport", "label": "Transport", "kind": "need", "essential_min": 600, "hint": "Auto and bus to college and coaching."},
-        {"key": "books", "label": "Books & printouts", "kind": "need", "essential_min": 500, "hint": "Guides and study material."},
-        {"key": "toiletries", "label": "Toiletries & personal care", "kind": "need", "essential_min": 400, "hint": "Soap, sanitary products, medicines."},
-        {"key": "recharge", "label": "Phone recharge", "kind": "need", "essential_min": 249, "hint": "Calls home and online notes."},
-        {"key": "snacks", "label": "Snacks & eating out", "kind": "want", "hint": "Treats with hostel friends."},
-        {"key": "shopping", "label": "Clothes & accessories", "kind": "want", "hint": "Nice to have this month."},
-        {"key": "entertainment", "label": "Movies & streaming", "kind": "want", "hint": "Entertainment."},
-        {"key": "savings", "label": "Savings for course", "kind": "savings", "hint": "Goal needs about ₹834 a month."}
+        {
+          "key": "mess_topup",
+          "label": "Mess food top-up",
+          "kind": "need",
+          "essential_min": 1500,
+          "hint": "Extra meals beyond the hostel mess."
+        },
+        {
+          "key": "transport",
+          "label": "Transport",
+          "kind": "need",
+          "essential_min": 600,
+          "hint": "Auto and bus to college and coaching."
+        },
+        {
+          "key": "books",
+          "label": "Books & printouts",
+          "kind": "need",
+          "essential_min": 500,
+          "hint": "Guides and study material."
+        },
+        {
+          "key": "toiletries",
+          "label": "Toiletries & personal care",
+          "kind": "need",
+          "essential_min": 400,
+          "hint": "Soap, sanitary products, medicines."
+        },
+        {
+          "key": "recharge",
+          "label": "Phone recharge",
+          "kind": "need",
+          "essential_min": 249,
+          "hint": "Calls home and online notes."
+        },
+        {
+          "key": "snacks",
+          "label": "Snacks & eating out",
+          "kind": "want",
+          "hint": "Treats with hostel friends."
+        },
+        {
+          "key": "shopping",
+          "label": "Clothes & accessories",
+          "kind": "want",
+          "hint": "Nice to have this month."
+        },
+        {
+          "key": "entertainment",
+          "label": "Movies & streaming",
+          "kind": "want",
+          "hint": "Entertainment."
+        },
+        {
+          "key": "savings",
+          "label": "Savings for course",
+          "kind": "savings",
+          "hint": "Goal needs about ₹834 a month."
+        }
       ],
       "events": [
-        {"key": "fever_medicine", "title": "Fever and medicines", "description": "You caught a viral fever. Doctor's visit and medicines cost ₹700.", "amount": 700, "essential": true},
-        {"key": "exam_registration", "title": "Exam registration fee", "description": "A practical exam registration fee of ₹500 is due this week.", "amount": 500, "essential": true},
-        {"key": "phone_screen", "title": "Cracked phone screen", "description": "Your phone screen cracked and you need it for online classes. Repair costs ₹1,200.", "amount": 1200, "essential": true}
+        {
+          "key": "fever_medicine",
+          "title": "Fever and medicines",
+          "description": "You caught a viral fever. Doctor's visit and medicines cost ₹700.",
+          "amount": 700,
+          "essential": true
+        },
+        {
+          "key": "exam_registration",
+          "title": "Exam registration fee",
+          "description": "A practical exam registration fee of ₹500 is due this week.",
+          "amount": 500,
+          "essential": true
+        },
+        {
+          "key": "phone_screen",
+          "title": "Cracked phone screen",
+          "description": "Your phone screen cracked and you need it for online classes. Repair costs ₹1,200.",
+          "amount": 1200,
+          "essential": true
+        }
       ]
     }
   },
   {
-    "slug": "budget-arjun-stall", "module": "plan-and-budget", "kind": "budget", "difficulty": 2, "persona": "arjun",
+    "slug": "budget-arjun-stall",
+    "module": "plan-and-budget",
+    "kind": "budget",
+    "difficulty": 2,
+    "persona": "arjun",
     "title": "Arjun's weekend earnings",
     "intro": "Arjun earns about ₹4,500 a month at his family's tiffin stall. He contributes to the household, pays for his own transport and lunch, and wants ₹3,000 for a mock test series in 3 months.",
     "objective": "Plan with irregular income: protect family commitments, save for the goal and prepare for a slow month.",
     "config": {
       "income": 4500,
-      "goal": {"label": "Mock test series", "amount": 3000, "months": 3},
+      "goal": {
+        "label": "Mock test series",
+        "amount": 3000,
+        "months": 3
+      },
       "categories": [
-        {"key": "family_share", "label": "Contribution to household", "kind": "need", "essential_min": 1500, "hint": "Promised to family for groceries."},
-        {"key": "transport", "label": "Transport", "kind": "need", "essential_min": 400, "hint": "Bus to college."},
-        {"key": "exam_material", "label": "Exam study material", "kind": "need", "essential_min": 500, "hint": "Practice books."},
-        {"key": "recharge", "label": "Phone recharge", "kind": "need", "essential_min": 249, "hint": "Needed for stall orders."},
-        {"key": "lunch", "label": "Lunch", "kind": "need", "essential_min": 600, "hint": "Meals on college days."},
-        {"key": "cricket", "label": "Cricket & outings", "kind": "want", "hint": "Weekend fun."},
-        {"key": "gaming", "label": "Mobile games", "kind": "want", "hint": "In-game purchases."},
-        {"key": "savings", "label": "Savings for mock tests", "kind": "savings", "hint": "Goal needs ₹1,000 a month."}
+        {
+          "key": "family_share",
+          "label": "Contribution to household",
+          "kind": "need",
+          "essential_min": 1500,
+          "hint": "Promised to family for groceries."
+        },
+        {
+          "key": "transport",
+          "label": "Transport",
+          "kind": "need",
+          "essential_min": 400,
+          "hint": "Bus to college."
+        },
+        {
+          "key": "exam_material",
+          "label": "Exam study material",
+          "kind": "need",
+          "essential_min": 500,
+          "hint": "Practice books."
+        },
+        {
+          "key": "recharge",
+          "label": "Phone recharge",
+          "kind": "need",
+          "essential_min": 249,
+          "hint": "Needed for stall orders."
+        },
+        {
+          "key": "lunch",
+          "label": "Lunch",
+          "kind": "need",
+          "essential_min": 600,
+          "hint": "Meals on college days."
+        },
+        {
+          "key": "cricket",
+          "label": "Cricket & outings",
+          "kind": "want",
+          "hint": "Weekend fun."
+        },
+        {
+          "key": "gaming",
+          "label": "Mobile games",
+          "kind": "want",
+          "hint": "In-game purchases."
+        },
+        {
+          "key": "savings",
+          "label": "Savings for mock tests",
+          "kind": "savings",
+          "hint": "Goal needs ₹1,000 a month."
+        }
       ],
       "events": [
-        {"key": "slow_month", "title": "Slow month at the stall", "description": "Rain kept customers away. You earned ₹1,000 less than planned.", "amount": 1000, "kind": "income_drop", "essential": true},
-        {"key": "bicycle_repair", "title": "Bicycle repair", "description": "Your bicycle chain and tyre need replacing: ₹450.", "amount": 450, "essential": true},
-        {"key": "wedding_gift", "title": "Cousin's wedding gift", "description": "Relatives suggest each cousin gives ₹500 as a wedding gift.", "amount": 500, "essential": false, "skip_consequence": "You gave a handmade card and helped serve guests. Contributions do not always have to be money."}
+        {
+          "key": "slow_month",
+          "title": "Slow month at the stall",
+          "description": "Rain kept customers away. You earned ₹1,000 less than planned.",
+          "amount": 1000,
+          "kind": "income_drop",
+          "essential": true
+        },
+        {
+          "key": "bicycle_repair",
+          "title": "Bicycle repair",
+          "description": "Your bicycle chain and tyre need replacing: ₹450.",
+          "amount": 450,
+          "essential": true
+        },
+        {
+          "key": "wedding_gift",
+          "title": "Cousin's wedding gift",
+          "description": "Relatives suggest each cousin gives ₹500 as a wedding gift.",
+          "amount": 500,
+          "essential": false,
+          "skip_consequence": "You gave a handmade card and helped serve guests. Contributions do not always have to be money."
+        }
       ]
     }
   },
   {
-    "slug": "budget-imran-delivery", "module": "plan-and-budget", "kind": "budget", "difficulty": 3, "persona": "imran",
+    "slug": "budget-imran-delivery",
+    "module": "plan-and-budget",
+    "kind": "budget",
+    "difficulty": 3,
+    "persona": "imran",
     "title": "Imran's delivery job budget",
     "intro": "Imran earns ₹9,000 a month delivering orders. He pays a ₹1,500 phone instalment, fuel, a family share and food, and wants a ₹10,000 emergency fund within 6 months. The numbers are tight.",
     "objective": "Make realistic trade-offs when income barely covers needs, and protect against a work-stopping emergency.",
     "config": {
       "income": 9000,
-      "goal": {"label": "Emergency fund", "amount": 10000, "months": 6},
+      "goal": {
+        "label": "Emergency fund",
+        "amount": 10000,
+        "months": 6
+      },
       "categories": [
-        {"key": "phone_emi", "label": "Phone instalment (EMI)", "kind": "need", "essential_min": 1500, "hint": "Missing it adds late fees."},
-        {"key": "fuel", "label": "Bike fuel", "kind": "need", "essential_min": 2000, "hint": "No fuel, no deliveries, no income."},
-        {"key": "family", "label": "Family contribution", "kind": "need", "essential_min": 2500, "hint": "Rent and groceries at home."},
-        {"key": "food", "label": "Food on shift", "kind": "need", "essential_min": 1200, "hint": "Meals during long shifts."},
-        {"key": "recharge", "label": "Phone data", "kind": "need", "essential_min": 299, "hint": "The delivery app needs data."},
-        {"key": "eating_out", "label": "Eating out with friends", "kind": "want", "hint": "Weekend treats."},
-        {"key": "shoes", "label": "New sneakers", "kind": "want", "hint": "Old pair still works."},
-        {"key": "streaming", "label": "Streaming subscription", "kind": "want", "hint": "Entertainment."},
-        {"key": "savings", "label": "Emergency fund savings", "kind": "savings", "hint": "Goal needs about ₹1,667 a month."}
+        {
+          "key": "phone_emi",
+          "label": "Phone instalment (EMI)",
+          "kind": "need",
+          "essential_min": 1500,
+          "hint": "Missing it adds late fees."
+        },
+        {
+          "key": "fuel",
+          "label": "Bike fuel",
+          "kind": "need",
+          "essential_min": 2000,
+          "hint": "No fuel, no deliveries, no income."
+        },
+        {
+          "key": "family",
+          "label": "Family contribution",
+          "kind": "need",
+          "essential_min": 2500,
+          "hint": "Rent and groceries at home."
+        },
+        {
+          "key": "food",
+          "label": "Food on shift",
+          "kind": "need",
+          "essential_min": 1200,
+          "hint": "Meals during long shifts."
+        },
+        {
+          "key": "recharge",
+          "label": "Phone data",
+          "kind": "need",
+          "essential_min": 299,
+          "hint": "The delivery app needs data."
+        },
+        {
+          "key": "eating_out",
+          "label": "Eating out with friends",
+          "kind": "want",
+          "hint": "Weekend treats."
+        },
+        {
+          "key": "shoes",
+          "label": "New sneakers",
+          "kind": "want",
+          "hint": "Old pair still works."
+        },
+        {
+          "key": "streaming",
+          "label": "Streaming subscription",
+          "kind": "want",
+          "hint": "Entertainment."
+        },
+        {
+          "key": "savings",
+          "label": "Emergency fund savings",
+          "kind": "savings",
+          "hint": "Goal needs about ₹1,667 a month."
+        }
       ],
       "events": [
-        {"key": "bike_repair", "title": "Bike breakdown", "description": "Your bike's clutch failed. Repair costs ₹2,500 and you cannot work until it is fixed.", "amount": 2500, "essential": true},
-        {"key": "fuel_hike", "title": "Fuel price rise", "description": "Fuel prices rose. This month's fuel costs ₹400 more.", "amount": 400, "essential": true},
-        {"key": "festival_shopping", "title": "Festival shopping", "description": "Friends are planning ₹1,500 festival shopping.", "amount": 1500, "essential": false, "skip_consequence": "You celebrated at home with family and kept your emergency fund growing."}
+        {
+          "key": "bike_repair",
+          "title": "Bike breakdown",
+          "description": "Your bike's clutch failed. Repair costs ₹2,500 and you cannot work until it is fixed.",
+          "amount": 2500,
+          "essential": true
+        },
+        {
+          "key": "fuel_hike",
+          "title": "Fuel price rise",
+          "description": "Fuel prices rose. This month's fuel costs ₹400 more.",
+          "amount": 400,
+          "essential": true
+        },
+        {
+          "key": "festival_shopping",
+          "title": "Festival shopping",
+          "description": "Friends are planning ₹1,500 festival shopping.",
+          "amount": 1500,
+          "essential": false,
+          "skip_consequence": "You celebrated at home with family and kept your emergency fund growing."
+        }
       ]
     }
   },
   {
-    "slug": "savings-meera-calculator", "stages": ["builder", "future_planner", "investor_sandbox"], "module": "save-and-manage", "kind": "savings", "difficulty": 1, "persona": "meera",
+    "slug": "savings-meera-calculator",
+    "stages": [
+      "builder",
+      "future_planner",
+      "investor_sandbox"
+    ],
+    "module": "save-and-manage",
+    "kind": "savings",
+    "difficulty": 1,
+    "persona": "meera",
     "title": "Meera saves for her calculator",
     "intro": "After regular spending, Meera can save up to ₹600 a month. She needs ₹1,200 for a calculator within 4 months. Where will she keep the money, and what if a school trip fee pops up?",
     "objective": "Save regularly, keep a small emergency cushion and notice the difference interest makes.",
     "config": {
-      "income": 2000, "fixed_spending": 1400, "months": 4,
-      "goal": {"label": "Scientific calculator", "amount": 1200},
+      "income": 2000,
+      "fixed_spending": 1400,
+      "months": 4,
+      "goal": {
+        "label": "Scientific calculator",
+        "amount": 1200
+      },
       "accounts": [
-        {"key": "piggy_bank", "label": "Piggy bank at home", "annual_rate": 0, "compounding": "none", "note": "Safe from spending? Only if you don't open it. Earns nothing."},
-        {"key": "savings_account", "label": "Student savings account (fictional, 3%)", "annual_rate": 0.03, "compounding": "monthly", "note": "Illustrative rate. Interest added monthly."}
+        {
+          "key": "piggy_bank",
+          "label": "Piggy bank at home",
+          "annual_rate": 0,
+          "compounding": "none",
+          "note": "Safe from spending? Only if you don't open it. Earns nothing."
+        },
+        {
+          "key": "savings_account",
+          "label": "Student savings account (fictional, 3%)",
+          "annual_rate": 0.03,
+          "compounding": "monthly",
+          "note": "Illustrative rate. Interest added monthly."
+        }
       ],
-      "event": {"month": 3, "title": "School trip fee", "description": "The class science trip costs ₹400, due this month.", "amount": 400}
+      "event": {
+        "month": 3,
+        "title": "School trip fee",
+        "description": "The class science trip costs ₹400, due this month.",
+        "amount": 400
+      }
     }
   },
   {
-    "slug": "savings-lakshmi-course", "module": "save-and-manage", "kind": "savings", "difficulty": 2, "persona": "lakshmi",
+    "slug": "savings-lakshmi-course",
+    "module": "save-and-manage",
+    "kind": "savings",
+    "difficulty": 2,
+    "persona": "lakshmi",
     "title": "Lakshmi's course fund and safety net",
     "intro": "Lakshmi can save up to ₹1,200 a month from her stipend. She wants ₹2,500 for a course in 6 months, and she knows illness or fees can appear without warning.",
     "objective": "Split savings between a goal and an emergency fund, and compare simple and compound interest.",
     "config": {
-      "income": 5000, "fixed_spending": 3800, "months": 6,
-      "goal": {"label": "Spoken-English course", "amount": 2500},
+      "income": 5000,
+      "fixed_spending": 3800,
+      "months": 6,
+      "goal": {
+        "label": "Spoken-English course",
+        "amount": 2500
+      },
       "accounts": [
-        {"key": "cash_box", "label": "Cash box in hostel", "annual_rate": 0, "compounding": "none", "note": "No interest and risk of loss."},
-        {"key": "simple_deposit", "label": "Simple-interest deposit (fictional, 6%)", "annual_rate": 0.06, "compounding": "simple", "note": "Interest only on money you deposit."},
-        {"key": "compound_deposit", "label": "Compound recurring deposit (fictional, 6%)", "annual_rate": 0.06, "compounding": "monthly", "note": "Interest also earns interest."}
+        {
+          "key": "cash_box",
+          "label": "Cash box in hostel",
+          "annual_rate": 0,
+          "compounding": "none",
+          "note": "No interest and risk of loss."
+        },
+        {
+          "key": "simple_deposit",
+          "label": "Simple-interest deposit (fictional, 6%)",
+          "annual_rate": 0.06,
+          "compounding": "simple",
+          "note": "Interest only on money you deposit."
+        },
+        {
+          "key": "compound_deposit",
+          "label": "Compound recurring deposit (fictional, 6%)",
+          "annual_rate": 0.06,
+          "compounding": "monthly",
+          "note": "Interest also earns interest."
+        }
       ],
-      "event": {"month": 3, "title": "Fever and medicines", "description": "A doctor's visit and medicines cost ₹700.", "amount": 700}
+      "event": {
+        "month": 3,
+        "title": "Fever and medicines",
+        "description": "A doctor's visit and medicines cost ₹700.",
+        "amount": 700
+      }
     }
   },
   {
-    "slug": "savings-imran-emergency", "module": "save-and-manage", "kind": "savings", "difficulty": 3, "persona": "imran",
+    "slug": "savings-imran-emergency",
+    "module": "save-and-manage",
+    "kind": "savings",
+    "difficulty": 3,
+    "persona": "imran",
     "title": "Imran's year-long emergency fund",
     "intro": "Imran can save up to ₹2,000 a month. He wants ₹10,000 saved in 12 months so a breakdown never stops his income. In month 5, his bike needs a ₹2,500 repair.",
     "objective": "Plan a longer savings timeline, absorb a large shock and see compounding over a year.",
     "config": {
-      "income": 9000, "fixed_spending": 7000, "months": 12,
-      "goal": {"label": "₹10,000 emergency fund", "amount": 10000},
+      "income": 9000,
+      "fixed_spending": 7000,
+      "months": 12,
+      "goal": {
+        "label": "₹10,000 emergency fund",
+        "amount": 10000
+      },
       "accounts": [
-        {"key": "cash", "label": "Cash at home", "annual_rate": 0, "compounding": "none", "note": "Easy to spend, earns nothing."},
-        {"key": "savings_account", "label": "Savings account (fictional, 3.5%)", "annual_rate": 0.035, "compounding": "monthly", "note": "Flexible, low interest."},
-        {"key": "recurring_deposit", "label": "Recurring deposit (fictional, 6.5%)", "annual_rate": 0.065, "compounding": "monthly", "note": "Higher interest for regular monthly deposits."}
+        {
+          "key": "cash",
+          "label": "Cash at home",
+          "annual_rate": 0,
+          "compounding": "none",
+          "note": "Easy to spend, earns nothing."
+        },
+        {
+          "key": "savings_account",
+          "label": "Savings account (fictional, 3.5%)",
+          "annual_rate": 0.035,
+          "compounding": "monthly",
+          "note": "Flexible, low interest."
+        },
+        {
+          "key": "recurring_deposit",
+          "label": "Recurring deposit (fictional, 6.5%)",
+          "annual_rate": 0.065,
+          "compounding": "monthly",
+          "note": "Higher interest for regular monthly deposits."
+        }
       ],
-      "event": {"month": 5, "title": "Bike breakdown", "description": "The clutch failed. Repair costs ₹2,500.", "amount": 2500}
+      "event": {
+        "month": 5,
+        "title": "Bike breakdown",
+        "description": "The clutch failed. Repair costs ₹2,500.",
+        "amount": 2500
+      }
     }
   },
   {
-    "slug": "investing-time-horizon", "module": "understand-investing", "kind": "investing", "difficulty": 1, "persona": null,
+    "slug": "investing-time-horizon",
+    "module": "understand-investing",
+    "kind": "investing",
+    "difficulty": 1,
+    "persona": null,
     "title": "Time is your superpower",
     "intro": "Imagine you have ₹10,000 of fictional money and three fictional options. Choose a mix and a timeline, then watch what an illustrative market does. Nothing here is a real product or a recommendation.",
     "objective": "See how time horizon changes the chance of loss and how compounding builds over years.",
-    "config": {"amount": 10000, "assets": ["steady_deposit", "balanced_basket", "growth_basket"], "horizons": [1, 3, 5, 10]}
+    "config": {
+      "amount": 10000,
+      "assets": [
+        "steady_deposit",
+        "balanced_basket",
+        "growth_basket"
+      ],
+      "horizons": [
+        1,
+        3,
+        5,
+        10
+      ]
+    }
   },
   {
-    "slug": "investing-diversification", "module": "understand-investing", "kind": "investing", "difficulty": 2, "persona": null,
+    "slug": "investing-diversification",
+    "module": "understand-investing",
+    "kind": "investing",
+    "difficulty": 2,
+    "persona": null,
     "title": "Don't put all your eggs in one basket",
     "intro": "Your friend says Zippy Gadgets Ltd is 'sure to double'. You have ₹10,000 of fictional money and five fictional options, including two single companies. Build a mix and see what happens when markets wobble.",
     "objective": "Understand concentration risk and why diversification limits damage.",
-    "config": {"amount": 10000, "assets": ["steady_deposit", "balanced_basket", "growth_basket", "zippy_gadgets", "sunrise_solar"], "horizons": [1, 3, 5, 10]}
+    "config": {
+      "amount": 10000,
+      "assets": [
+        "steady_deposit",
+        "balanced_basket",
+        "growth_basket",
+        "zippy_gadgets",
+        "sunrise_solar"
+      ],
+      "horizons": [
+        1,
+        3,
+        5,
+        10
+      ]
+    }
   },
   {
-    "slug": "investing-college-in-three", "module": "understand-investing", "kind": "investing", "difficulty": 3, "persona": "lakshmi",
+    "slug": "investing-college-in-three",
+    "module": "understand-investing",
+    "kind": "investing",
+    "difficulty": 3,
+    "persona": "lakshmi",
     "title": "Money needed for college in 3 years",
     "intro": "Lakshmi's family has ₹25,000 of fictional savings that must pay college admission fees in exactly 3 years. Decide how to hold it, knowing markets can fall.",
     "objective": "Match risk to a fixed, short horizon and reason about the cost of a loss you cannot wait out.",
-    "config": {"amount": 25000, "assets": ["steady_deposit", "balanced_basket", "growth_basket", "zippy_gadgets", "sunrise_solar"], "horizons": [3]}
+    "config": {
+      "amount": 25000,
+      "assets": [
+        "steady_deposit",
+        "balanced_basket",
+        "growth_basket",
+        "zippy_gadgets",
+        "sunrise_solar"
+      ],
+      "horizons": [
+        3
+      ]
+    }
   },
   {
-    "slug": "safety-inbox-basics", "stages": ["explorer", "builder", "future_planner", "investor_sandbox"], "module": "stay-safe", "kind": "safety", "difficulty": 1, "persona": null,
+    "slug": "safety-inbox-basics",
+    "stages": [
+      "explorer",
+      "builder",
+      "future_planner",
+      "investor_sandbox"
+    ],
+    "module": "stay-safe",
+    "kind": "safety",
+    "difficulty": 1,
+    "persona": null,
     "title": "Spot the scam: inbox basics",
     "intro": "Your phone buzzes with four messages. Decide which are scams, spot the red flags and choose what to do. Some messages are genuine.",
     "objective": "Recognise common scam signals and learn that genuine messages exist too.",
-    "config": {"messages": [
-      {"id": "lottery", "channel": "SMS", "sender": "+91 98xxx 41207",
-       "body": "CONGRATULATIONS!! Your number won ₹25,00,000 in the National Lucky Draw. Pay ₹5,000 processing fee today to claim. Reply YES now!",
-       "verdict": "scam", "red_flags": ["too_good", "upfront_fee", "urgency"], "safe_actions": ["report_block", "ignore_delete"], "best_action": "report_block",
-       "explanation": "You cannot win a lottery you never entered, and real prizes never charge a fee to release money."},
-      {"id": "bank_otp", "channel": "SMS", "sender": "DECCNB",
-       "body": "482913 is your OTP to log in to Deccan Bank app. Do NOT share this OTP with anyone, including bank staff. -Deccan Bank",
-       "verdict": "genuine", "red_flags": [], "safe_actions": ["proceed_normally", "verify_official", "ignore_delete"], "best_action": "proceed_normally",
-       "explanation": "This is an automatic OTP you requested. It warns you not to share it and asks for nothing. Use it yourself only in the official app."},
-      {"id": "kyc_block", "channel": "SMS", "sender": "+91 70xxx 99812",
-       "body": "Dear customer your Deccan Bank account will be BLOCKED today. Update KYC immediately: http://deccanbank-kyc-update.co/verify",
-       "verdict": "scam", "red_flags": ["urgency", "suspicious_link", "impersonation"], "safe_actions": ["report_block", "verify_official", "ignore_delete"], "best_action": "verify_official",
-       "explanation": "Banks don't send KYC links from personal numbers. The web address imitates the bank. Open the official app or visit the branch instead."},
-      {"id": "school_notice", "channel": "WhatsApp", "sender": "Class 12 Teacher (saved contact)",
-       "body": "Practical exam schedule is on the school notice board and the school app. Please check your slot and bring your record book.",
-       "verdict": "genuine", "red_flags": [], "safe_actions": ["proceed_normally", "verify_official"], "best_action": "proceed_normally",
-       "explanation": "A known contact sharing information without asking for money, data or links to unknown sites."}
-    ]}
+    "config": {
+      "messages": [
+        {
+          "id": "lottery",
+          "channel": "SMS",
+          "sender": "+91 98xxx 41207",
+          "body": "CONGRATULATIONS!! Your number won ₹25,00,000 in the National Lucky Draw. Pay ₹5,000 processing fee today to claim. Reply YES now!"
+        },
+        {
+          "id": "bank_otp",
+          "channel": "SMS",
+          "sender": "DECCNB",
+          "body": "482913 is your OTP to log in to Deccan Bank app. Do NOT share this OTP with anyone, including bank staff. -Deccan Bank"
+        },
+        {
+          "id": "kyc_block",
+          "channel": "SMS",
+          "sender": "+91 70xxx 99812",
+          "body": "Dear customer your Deccan Bank account will be BLOCKED today. Update KYC immediately: http://deccanbank-kyc-update.co/verify"
+        },
+        {
+          "id": "school_notice",
+          "channel": "WhatsApp",
+          "sender": "Class 12 Teacher (saved contact)",
+          "body": "Practical exam schedule is on the school notice board and the school app. Please check your slot and bring your record book."
+        }
+      ]
+    }
   },
   {
-    "slug": "safety-upi-and-jobs", "stages": ["builder", "future_planner", "investor_sandbox"], "module": "stay-safe", "kind": "safety", "difficulty": 2, "persona": null,
+    "slug": "safety-upi-and-jobs",
+    "stages": [
+      "builder",
+      "future_planner",
+      "investor_sandbox"
+    ],
+    "module": "stay-safe",
+    "kind": "safety",
+    "difficulty": 2,
+    "persona": null,
     "title": "UPI tricks and fake jobs",
     "intro": "Scammers love UPI and online job offers. Review these five messages carefully. Look at what each one asks you to do.",
     "objective": "Understand that a PIN only sends money, and recognise fee-based job scams and impersonation calls.",
-    "config": {"messages": [
-      {"id": "upi_cashback", "channel": "UPI app", "sender": "cashback.rewards@okpay",
-       "body": "You have received a collect request: ₹2,000 CASHBACK REWARD. Enter your UPI PIN to receive the money in your account.",
-       "verdict": "scam", "red_flags": ["pin_to_receive", "asks_otp_pin", "too_good"], "safe_actions": ["report_block", "ignore_delete"], "best_action": "report_block",
-       "explanation": "A collect request takes money FROM you. Entering a PIN always sends money out; you never need a PIN to receive."},
-      {"id": "like_videos_job", "channel": "Telegram", "sender": "HR Priya - Digital Jobs",
-       "body": "Part-time job! Earn ₹3,000/day just liking videos from home. Limited seats. Pay ₹499 registration to start today.",
-       "verdict": "scam", "red_flags": ["too_good", "upfront_fee", "urgency"], "safe_actions": ["report_block", "ignore_delete"], "best_action": "report_block",
-       "explanation": "Real jobs pay you; they never charge registration. Easy money for liking videos is a classic task scam."},
-      {"id": "bank_call", "channel": "Phone call", "sender": "Caller: 'Deccan Bank fraud department'",
-       "body": "Sir, suspicious transaction on your card. To stop it, tell me the OTP you just received. Quickly, otherwise money will be debited.",
-       "verdict": "scam", "red_flags": ["asks_otp_pin", "impersonation", "urgency"], "safe_actions": ["report_block", "verify_official"], "best_action": "verify_official",
-       "explanation": "Real bank staff never ask for an OTP. Hang up and call the number printed on your card or in the official app."},
-      {"id": "scholarship_portal", "channel": "SMS", "sender": "NSPORT",
-       "body": "Reminder: Post-matric scholarship applications close on 31 Oct. Apply only on the official scholarship portal. No fee is charged at any stage.",
-       "verdict": "genuine", "red_flags": [], "safe_actions": ["verify_official", "proceed_normally"], "best_action": "verify_official",
-       "explanation": "It asks for nothing, says there is no fee and points you to the official portal. Open the portal yourself rather than through a forwarded link."},
-      {"id": "split_bill", "channel": "UPI app", "sender": "Rahul (classmate, saved contact)",
-       "body": "Request: ₹120 for your share of yesterday's pizza 🍕",
-       "verdict": "genuine", "red_flags": [], "safe_actions": ["proceed_normally", "verify_official"], "best_action": "proceed_normally",
-       "explanation": "A known friend requesting your share of a real expense. Paying it with your PIN is fine because you intend to send money."}
-    ]}
+    "config": {
+      "messages": [
+        {
+          "id": "upi_cashback",
+          "channel": "UPI app",
+          "sender": "cashback.rewards@okpay",
+          "body": "You have received a collect request: ₹2,000 CASHBACK REWARD. Enter your UPI PIN to receive the money in your account."
+        },
+        {
+          "id": "like_videos_job",
+          "channel": "Telegram",
+          "sender": "HR Priya - Digital Jobs",
+          "body": "Part-time job! Earn ₹3,000/day just liking videos from home. Limited seats. Pay ₹499 registration to start today."
+        },
+        {
+          "id": "bank_call",
+          "channel": "Phone call",
+          "sender": "Caller: 'Deccan Bank fraud department'",
+          "body": "Sir, suspicious transaction on your card. To stop it, tell me the OTP you just received. Quickly, otherwise money will be debited."
+        },
+        {
+          "id": "scholarship_portal",
+          "channel": "SMS",
+          "sender": "NSPORT",
+          "body": "Reminder: Post-matric scholarship applications close on 31 Oct. Apply only on the official scholarship portal. No fee is charged at any stage."
+        },
+        {
+          "id": "split_bill",
+          "channel": "UPI app",
+          "sender": "Rahul (classmate, saved contact)",
+          "body": "Request: ₹120 for your share of yesterday's pizza 🍕"
+        }
+      ]
+    }
   },
   {
-    "slug": "safety-privacy-social", "module": "stay-safe", "kind": "safety", "difficulty": 3, "persona": null,
+    "slug": "safety-privacy-social",
+    "module": "stay-safe",
+    "kind": "safety",
+    "difficulty": 3,
+    "persona": null,
     "title": "Privacy, loan apps and social media",
     "intro": "Some scams target your personal data rather than your money directly. These five messages test whether you can protect your identity.",
     "objective": "Protect personal documents, avoid predatory loan apps and verify urgent requests from 'family'.",
-    "config": {"messages": [
-      {"id": "iphone_giveaway", "channel": "Instagram DM", "sender": "@tech.giveaways.india_official2",
-       "body": "You're selected for a FREE iPhone! Send a photo of your Aadhaar card and home address for delivery. Offer ends tonight!",
-       "verdict": "scam", "red_flags": ["too_good", "personal_info", "urgency", "impersonation"], "safe_actions": ["report_block", "ignore_delete"], "best_action": "report_block",
-       "explanation": "Aadhaar photos can be misused for fake loans and SIM cards. Real giveaways don't need your ID document."},
-      {"id": "instant_loan", "channel": "Ad in a game", "sender": "QuickCash Loan App",
-       "body": "Instant ₹10,000 loan in 5 minutes, no documents! Just install and allow access to contacts, photos and SMS.",
-       "verdict": "scam", "red_flags": ["too_good", "excessive_permissions"], "safe_actions": ["report_block", "ignore_delete", "verify_official"], "best_action": "ignore_delete",
-       "explanation": "Illegal loan apps harvest contacts and photos to harass borrowers. Regulated lenders check documents and never need your photo gallery."},
-      {"id": "qr_receive", "channel": "OLX-style marketplace chat", "sender": "Buyer: 'Army officer Vikram'",
-       "body": "I will buy your old cycle for ₹3,000. Scan this QR code to RECEIVE the payment. Please do it now, I'm being transferred.",
-       "verdict": "scam", "red_flags": ["pin_to_receive", "urgency", "impersonation"], "safe_actions": ["report_block", "ignore_delete"], "best_action": "report_block",
-       "explanation": "Scanning a QR code and entering a PIN sends money. To receive, you only share your UPI ID; you never scan."},
-      {"id": "cousin_new_number", "channel": "WhatsApp", "sender": "Unknown number: 'Hi it's your cousin Faiz, new number'",
-       "body": "Urgent!! I'm stuck, need ₹4,000 right now. Please don't tell Ammi, I'll return tomorrow. Send to this UPI.",
-       "verdict": "scam", "red_flags": ["impersonation", "urgency", "secrecy"], "safe_actions": ["verify_official", "report_block"], "best_action": "verify_official",
-       "explanation": "Call your cousin on the number you already have, or ask family. Requests for secrecy plus urgency are a classic impersonation pattern."},
-      {"id": "electricity_bill", "channel": "Official utility app notification", "sender": "Power distribution company app",
-       "body": "Your electricity bill of ₹640 is due on 15th. Pay inside this app or at the payment counter.",
-       "verdict": "genuine", "red_flags": [], "safe_actions": ["proceed_normally", "verify_official"], "best_action": "proceed_normally",
-       "explanation": "A notification inside an app you installed from the official store, asking you to pay inside the same app. No link, no data request."}
-    ]}
+    "config": {
+      "messages": [
+        {
+          "id": "iphone_giveaway",
+          "channel": "Instagram DM",
+          "sender": "@tech.giveaways.india_official2",
+          "body": "You're selected for a FREE iPhone! Send a photo of your Aadhaar card and home address for delivery. Offer ends tonight!"
+        },
+        {
+          "id": "instant_loan",
+          "channel": "Ad in a game",
+          "sender": "QuickCash Loan App",
+          "body": "Instant ₹10,000 loan in 5 minutes, no documents! Just install and allow access to contacts, photos and SMS."
+        },
+        {
+          "id": "qr_receive",
+          "channel": "OLX-style marketplace chat",
+          "sender": "Buyer: 'Army officer Vikram'",
+          "body": "I will buy your old cycle for ₹3,000. Scan this QR code to RECEIVE the payment. Please do it now, I'm being transferred."
+        },
+        {
+          "id": "cousin_new_number",
+          "channel": "WhatsApp",
+          "sender": "Unknown number: 'Hi it's your cousin Faiz, new number'",
+          "body": "Urgent!! I'm stuck, need ₹4,000 right now. Please don't tell Ammi, I'll return tomorrow. Send to this UPI."
+        },
+        {
+          "id": "electricity_bill",
+          "channel": "Official utility app notification",
+          "sender": "Power distribution company app",
+          "body": "Your electricity bill of ₹640 is due on 15th. Pay inside this app or at the payment counter."
+        }
+      ]
+    }
   },
-  {"slug": "money-lab-500", "module": "save-and-manage", "kind": "money_lab", "difficulty": 2, "persona": null, "stages": ["builder", "future_planner", "investor_sandbox"], "title": "The ₹500 Money Lab", "intro": "You have a fictional ₹500. You want a good pair of earphones in six months, but prices creep up and surprises happen. Split the money across four buckets, then see what time, inflation and a surprise do to your plan.", "objective": "Balance goals, spending, liquidity, risk and inflation in one small decision.", "config": {"total": 500, "essential_min": 100, "months": 6, "goal": {"label": "Earphones", "amount": 250}, "inflation": 0.06, "deposit_rate": 0.06, "borrow_cost_rate": 0.1, "event": {"month": 3, "title": "Bicycle tyre burst", "description": "Your bicycle tyre bursts on the way to school. The repair costs ₹120 and cannot wait.", "amount": 120}, "growth_paths": [{"key": "steady", "label": "Steady climb", "monthly_pct": [2, 1, 2, 1, 2, 1]}, {"key": "dip", "label": "Dip, then recovery", "monthly_pct": [-8, -6, 3, 5, 6, 4]}, {"key": "slump", "label": "Early drop, slow recovery", "monthly_pct": [-12, -5, -3, 2, 3, 3]}]}},
-  {"slug": "safety-money-scams", "stages": ["builder", "future_planner", "investor_sandbox"], "module": "stay-safe", "kind": "safety", "difficulty": 2, "persona": null, "title": "Fake returns, fake fees, fake helplines", "intro": "These five messages use more advanced tricks: guaranteed returns, fees to release money, parcel links and fake helplines. One is genuine. Look at what each asks you to do, not how official it sounds.", "objective": "Spot fake-investment, advance-fee and impersonation scams, and choose the safest next step.", "config": {"messages": [{"id": "double_money", "channel": "Telegram", "sender": "@wealth.growth.club (fictional)", "body": "Join our Gold Circle! Put in ₹5,000 and get ₹15,000 back in 30 days. 100% guaranteed. 40 seats left, join today.", "verdict": "scam", "red_flags": ["too_good", "urgency", "upfront_fee"], "safe_actions": ["report_block", "ignore_delete"], "best_action": "report_block", "explanation": "No real investment can guarantee to triple your money in a month. Guaranteed big returns plus pressure to join now is the classic investment scam pattern."}, {"id": "scholar_fee", "channel": "Email", "sender": "scholarship.release@gov-scheme-help.example", "body": "Congratulations! You are selected for a ₹50,000 scholarship. Pay a ₹1,200 processing fee to release it today.", "verdict": "scam", "red_flags": ["upfront_fee", "too_good", "urgency"], "safe_actions": ["report_block", "verify_official", "ignore_delete"], "best_action": "verify_official", "explanation": "Real scholarships never charge a fee to release money. Check only on the official scholarship portal your school uses, or ask a trusted adult."}, {"id": "courier_fee", "channel": "SMS", "sender": "COURIER-ALERT", "body": "Your parcel is held. Pay ₹49 redelivery fee at http://parcel-fee.example/pay or it will be returned.", "verdict": "scam", "red_flags": ["suspicious_link", "urgency", "upfront_fee"], "safe_actions": ["report_block", "ignore_delete", "verify_official"], "best_action": "verify_official", "explanation": "Tiny fees are a trick to collect your card or UPI details. Track real parcels only in the courier's official app or website."}, {"id": "care_number", "channel": "Search result", "sender": "Customer care: 98xxx 00000 (not the official number)", "body": "Wallet app stuck? Call our 24x7 helpline and share the screen with our executive to fix it.", "verdict": "scam", "red_flags": ["impersonation", "asks_otp_pin", "excessive_permissions"], "safe_actions": ["report_block", "verify_official", "ignore_delete"], "best_action": "verify_official", "explanation": "Fake helpline numbers sit in search results. Never install screen-sharing apps for a stranger. Use the number inside the official app."}, {"id": "school_fee_notice", "channel": "School app", "sender": "Principal's office (saved school app)", "body": "Term-2 fee receipts are ready to download from your school app. No payment is needed to view them.", "verdict": "genuine", "red_flags": [], "safe_actions": ["proceed_normally", "verify_official"], "best_action": "proceed_normally", "explanation": "This arrives in the school's own saved app, asks for no money or secrets and gives a normal reason."}]}}
+  {
+    "slug": "money-lab-500",
+    "module": "save-and-manage",
+    "kind": "money_lab",
+    "difficulty": 2,
+    "persona": null,
+    "stages": [
+      "builder",
+      "future_planner",
+      "investor_sandbox"
+    ],
+    "title": "The ₹500 Money Lab",
+    "intro": "You have a fictional ₹500. You want a good pair of earphones in six months, but prices creep up and surprises happen. Split the money across four buckets, then see what time, inflation and a surprise do to your plan.",
+    "objective": "Balance goals, spending, liquidity, risk and inflation in one small decision.",
+    "config": {
+      "total": 500,
+      "essential_min": 100,
+      "months": 6,
+      "goal": {
+        "label": "Earphones",
+        "amount": 250
+      },
+      "inflation": 0.06,
+      "deposit_rate": 0.06,
+      "borrow_cost_rate": 0.1,
+      "event": {
+        "month": 3,
+        "title": "Bicycle tyre burst",
+        "description": "Your bicycle tyre bursts on the way to school. The repair costs ₹120 and cannot wait.",
+        "amount": 120
+      },
+      "growth_paths": [
+        {
+          "key": "steady",
+          "label": "Steady climb",
+          "monthly_pct": [
+            2,
+            1,
+            2,
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "key": "dip",
+          "label": "Dip, then recovery",
+          "monthly_pct": [
+            -8,
+            -6,
+            3,
+            5,
+            6,
+            4
+          ]
+        },
+        {
+          "key": "slump",
+          "label": "Early drop, slow recovery",
+          "monthly_pct": [
+            -12,
+            -5,
+            -3,
+            2,
+            3,
+            3
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "safety-money-scams",
+    "stages": [
+      "builder",
+      "future_planner",
+      "investor_sandbox"
+    ],
+    "module": "stay-safe",
+    "kind": "safety",
+    "difficulty": 2,
+    "persona": null,
+    "title": "Fake returns, fake fees, fake helplines",
+    "intro": "These five messages use more advanced tricks: guaranteed returns, fees to release money, parcel links and fake helplines. One is genuine. Look at what each asks you to do, not how official it sounds.",
+    "objective": "Spot fake-investment, advance-fee and impersonation scams, and choose the safest next step.",
+    "config": {
+      "messages": [
+        {
+          "id": "double_money",
+          "channel": "Telegram",
+          "sender": "@wealth.growth.club (fictional)",
+          "body": "Join our Gold Circle! Put in ₹5,000 and get ₹15,000 back in 30 days. 100% guaranteed. 40 seats left, join today."
+        },
+        {
+          "id": "scholar_fee",
+          "channel": "Email",
+          "sender": "scholarship.release@gov-scheme-help.example",
+          "body": "Congratulations! You are selected for a ₹50,000 scholarship. Pay a ₹1,200 processing fee to release it today."
+        },
+        {
+          "id": "courier_fee",
+          "channel": "SMS",
+          "sender": "COURIER-ALERT",
+          "body": "Your parcel is held. Pay ₹49 redelivery fee at http://parcel-fee.example/pay or it will be returned."
+        },
+        {
+          "id": "care_number",
+          "channel": "Search result",
+          "sender": "Customer care: 98xxx 00000 (not the official number)",
+          "body": "Wallet app stuck? Call our 24x7 helpline and share the screen with our executive to fix it."
+        },
+        {
+          "id": "school_fee_notice",
+          "channel": "School app",
+          "sender": "Principal's office (saved school app)",
+          "body": "Term-2 fee receipts are ready to download from your school app. No payment is needed to view them."
+        }
+      ]
+    }
+  }
 ]

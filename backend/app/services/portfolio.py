@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Any
 
 from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -24,6 +25,7 @@ from app.models import (
     ConceptMastery,
     Portfolio,
     PortfolioHolding,
+    PortfolioRoundSnapshot,
     PortfolioTransaction,
     Scenario,
     SimulationSession,
@@ -189,6 +191,8 @@ def view(db: Session, student: User, *, extra: dict[str, Any] | None = None) -> 
         "transfer_remaining_rupees": max(
             engine.MAX_TRANSFER_RUPEES_PER_RUN - transferred // engine.PAISE_PER_RUPEE, 0
         ),
+        "actions_this_round": _actions_this_round(db, student, p),
+        "max_actions_per_round": get_settings().portfolio_max_actions_per_round,
         **val,
         "history": _value_history(db, student, p),
     }
@@ -219,21 +223,62 @@ def _transferred_this_run(db: Session, student: User, run_number: int) -> int:
 
 
 def _value_history(db: Session, student: User, p: Portfolio) -> list[dict[str, Any]]:
-    """Total value at the end of each round reached, recomputed from the transaction log."""
-    path = engine.path_for(p.seed)
-    txs = list(
+    """Total value at the end of each round reached: at most 11 persisted rows per run."""
+    rows = _snapshot_rows(db, student, p)
+    if not rows and p.round >= 0:
+        _backfill_snapshots(db, student, p)  # a run from before snapshots existed
+        rows = _snapshot_rows(db, student, p)
+    return [{"round": r.round, "total_paise": r.total_paise} for r in rows]
+
+
+def _snapshot_rows(db: Session, student: User, p: Portfolio) -> list[PortfolioRoundSnapshot]:
+    return list(
         db.scalars(
-            select(PortfolioTransaction)
+            select(PortfolioRoundSnapshot)
             .where(
-                PortfolioTransaction.student_id == student.id,
-                PortfolioTransaction.run_number == p.run_number,
+                PortfolioRoundSnapshot.student_id == student.id,
+                PortfolioRoundSnapshot.run_number == p.run_number,
             )
-            .order_by(PortfolioTransaction.id)
+            .order_by(PortfolioRoundSnapshot.round)
         )
     )
+
+
+def _record_snapshot(db: Session, p: Portfolio) -> None:
+    """Remember the portfolio's total value for the current round (latest action wins)."""
+    prices = engine.prices_at(engine.path_for(p.seed), p.round)
+    total = int(
+        engine.valuation(p.cash_paise, _holdings(p), prices, p.contributed_paise)["total_paise"]
+    )  # type: ignore[call-overload]
+    stmt = pg_insert(PortfolioRoundSnapshot).values(
+        student_id=p.student_id,
+        run_number=p.run_number,
+        round=p.round,
+        total_paise=total,
+        cash_paise=p.cash_paise,
+    )
+    db.execute(
+        stmt.on_conflict_do_update(
+            index_elements=["student_id", "run_number", "round"],
+            set_={"total_paise": stmt.excluded.total_paise, "cash_paise": stmt.excluded.cash_paise},
+        )
+    )
+
+
+def _backfill_snapshots(db: Session, student: User, p: Portfolio) -> None:
+    """One-off: rebuild a pre-snapshot run from its log (bounded), then never again."""
+    path = engine.path_for(p.seed)
+    txs = db.scalars(
+        select(PortfolioTransaction)
+        .where(
+            PortfolioTransaction.student_id == student.id,
+            PortfolioTransaction.run_number == p.run_number,
+        )
+        .order_by(PortfolioTransaction.id)
+        .limit(5000)
+    )
     holdings: dict[str, int] = {}
-    cash = 0
-    snapshots: dict[int, int] = {}
+    snapshots: dict[int, tuple[int, int]] = {}
     for t in txs:
         cash = t.cash_after_paise
         if t.kind == "buy" and t.instrument_key:
@@ -241,8 +286,42 @@ def _value_history(db: Session, student: User, p: Portfolio) -> list[dict[str, A
         elif t.kind == "sell" and t.instrument_key:
             holdings[t.instrument_key] = holdings.get(t.instrument_key, 0) - (t.quantity or 0)
         prices = engine.prices_at(path, t.round)
-        snapshots[t.round] = cash + sum(q * prices[k] for k, q in holdings.items())
-    return [{"round": r, "total_paise": v} for r, v in sorted(snapshots.items())]
+        snapshots[t.round] = (cash + sum(q * prices[k] for k, q in holdings.items()), cash)
+    for rnd, (total, cash) in snapshots.items():
+        stmt = pg_insert(PortfolioRoundSnapshot).values(
+            student_id=student.id, run_number=p.run_number, round=rnd, total_paise=total,
+            cash_paise=cash,
+        )  # fmt: skip
+        db.execute(stmt.on_conflict_do_nothing())
+
+
+def _actions_this_round(db: Session, student: User, p: Portfolio) -> int:
+    """Buys, sells and wallet transfers made in the current fictional year of this run."""
+    return int(
+        db.scalar(
+            select(func.count())
+            .select_from(PortfolioTransaction)
+            .where(
+                PortfolioTransaction.student_id == student.id,
+                PortfolioTransaction.run_number == p.run_number,
+                PortfolioTransaction.round == p.round,
+                PortfolioTransaction.kind.in_(("buy", "sell", "transfer_in")),
+            )
+        )
+        or 0
+    )
+
+
+def _require_action_budget(db: Session, student: User, p: Portfolio) -> None:
+    """Cap how many trades fit in one year, so a run's history stays small and meaningful."""
+    cap = get_settings().portfolio_max_actions_per_round
+    if _actions_this_round(db, student, p) >= cap:
+        raise ApiError(
+            409,
+            "round_action_limit",
+            f"You have made {cap} changes this year, which is the most allowed. "
+            "Move to the next year to keep going.",
+        )
 
 
 def _instruments(
@@ -271,15 +350,16 @@ def _instruments(
     return out
 
 
-def transactions(db: Session, student: User, limit: int = 100) -> list[dict[str, Any]]:
+def transactions(
+    db: Session, student: User, limit: int = 100, before_id: int | None = None
+) -> list[dict[str, Any]]:
+    """Newest first. Pass the last id you received as ``before_id`` to get the next page."""
+    query = select(PortfolioTransaction).where(PortfolioTransaction.student_id == student.id)
+    if before_id is not None:
+        query = query.where(PortfolioTransaction.id < before_id)
     return [
         _tx_out(t)
-        for t in db.scalars(
-            select(PortfolioTransaction)
-            .where(PortfolioTransaction.student_id == student.id)
-            .order_by(PortfolioTransaction.id.desc())
-            .limit(limit)
-        )
+        for t in db.scalars(query.order_by(PortfolioTransaction.id.desc()).limit(min(limit, 500)))
     ]
 
 
@@ -305,6 +385,7 @@ def open_portfolio(db: Session, student: User, request_id: str) -> dict[str, Any
     db.add(p)
     db.flush()
     _log(db, p, "open", request_id, amount=cash, note="Practice cash provided to start the run")
+    _record_snapshot(db, p)
     return view(db, student)
 
 
@@ -393,6 +474,7 @@ def trade(
     p = _locked_portfolio(db, student)
     if _already_processed(db, student, request_id, side):
         return view(db, student, extra={"replayed": True})
+    _require_action_budget(db, student, p)
     qty = engine.parse_quantity(quantity)
     asset = _asset(instrument_key)
     price = engine.price_at(instrument_key, engine.path_for(p.seed), p.round)
@@ -416,6 +498,7 @@ def trade(
         _log(db, p, "sell", request_id, proceeds, instrument_key, qty, price)
     db.flush()
     db.refresh(p)
+    _record_snapshot(db, p)
     return view(db, student)
 
 
@@ -470,6 +553,7 @@ def advance(db: Session, student: User, *, request_id: str, confirm: bool) -> di
     event = engine.year_event(path, p.round)
     _log(db, p, "advance", request_id, 0, note=str(event["headline"])[:200])
     db.flush()
+    _record_snapshot(db, p)
     return view(
         db,
         student,
@@ -501,6 +585,7 @@ def reset(db: Session, student: User, *, request_id: str, confirm: bool) -> dict
         note="Practice reset: a new market run. Earlier transfers are not refunded.",
     )
     db.refresh(p)
+    _record_snapshot(db, p)
     return view(db, student)
 
 
@@ -513,6 +598,7 @@ def transfer_in(
     p = _locked_portfolio(db, student)
     if _already_processed(db, student, request_id, "transfer_in"):
         return view(db, student, extra={"replayed": True})
+    _require_action_budget(db, student, p)
     if isinstance(amount, bool) or not isinstance(amount, int) or amount < 1:
         raise SimulationError("Amount must be a whole number of rupees", field="amount")
     used = _transferred_this_run(db, student, p.run_number) // engine.PAISE_PER_RUPEE
@@ -529,4 +615,5 @@ def transfer_in(
     p.contributed_paise += paise
     _log(db, p, "transfer_in", request_id, paise, note="From learning wallet (one-way)")
     db.flush()
+    _record_snapshot(db, p)
     return view(db, student)

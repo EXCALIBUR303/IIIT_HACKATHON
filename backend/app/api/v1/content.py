@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 
 from app.api.deps import DB, CurrentUser
 from app.content import loader
-from app.core.errors import not_found
+from app.core.errors import ApiError, forbidden, not_found
 from app.engine import investing, safety
 from app.learning import stages
 from app.models import Assessment, LearningModule, Scenario, User
@@ -25,10 +25,25 @@ router = APIRouter(tags=["content"])
 
 
 def stage_of(user: User) -> str | None:
-    """Stage for students; educators (no profile) see all content."""
+    """Stage for students; educators (no profile) see all content.
+
+    A student who has not chosen a class gets 403 ``stage_required`` rather than a default stage.
+    """
     if user.role != "student":
         return None
-    return stages.stage_for(user.profile.grade if user.profile else None)
+    grade = user.profile.grade if user.profile else None
+    if grade is None:
+        raise ApiError(
+            403, "stage_required", "Choose your class to unlock your learning stage first", "grade"
+        )
+    return stages.stage_for(grade)
+
+
+def require_pillar(user: User, pillar: str) -> None:
+    """Stop a student from reaching a pillar their stage has not opened (educators may preview)."""
+    stage = stage_of(user)
+    if stage is not None and pillar not in stages.info(stage).pillars:
+        raise forbidden("This topic opens at a later learning stage.")
 
 
 def eligible(user: User, s: Scenario) -> bool:
@@ -103,10 +118,13 @@ def list_scenarios(db: DB, user: CurrentUser, kind: ScenarioKind | None = None) 
 
 
 @router.get("/scenarios/{slug}", response_model=ScenarioDetail)
-def get_scenario(slug: str, db: DB, _: CurrentUser) -> dict:
+def get_scenario(slug: str, db: DB, user: CurrentUser) -> dict:
     s = db.scalar(select(Scenario).where(Scenario.slug == slug))
     if s is None:
         raise not_found("Scenario")
+    # Same rule as starting it, so the detail route cannot be used to read ahead.
+    if not eligible(user, s):
+        raise forbidden("This scenario is not part of your learning stage yet.")
     config = dict(s.config)
     if s.kind == "safety":  # never leak answers
         config = {
@@ -116,8 +134,9 @@ def get_scenario(slug: str, db: DB, _: CurrentUser) -> dict:
 
 
 @router.get("/catalog/investing")
-def investing_catalog(_: CurrentUser) -> dict:
+def investing_catalog(user: CurrentUser) -> dict:
     """Fictional assets and illustrative market paths for the investment explorer."""
+    require_pillar(user, "investing")
     return {
         "assets": [
             {

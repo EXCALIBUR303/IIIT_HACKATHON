@@ -34,8 +34,7 @@ export default function RegisterPage() {
     password: '',
     display_name: '',
     join_code: params.get('code') ?? '',
-    invite_code: '',
-    organization_name: '',
+    invite_token: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState<string | null>(null)
@@ -49,8 +48,7 @@ export default function RegisterPage() {
     e.preventDefault()
     const v = validateRegistration(form)
     if (role === 'educator') {
-      if (!form.invite_code.trim()) v.invite_code = 'Ask your programme coordinator for the invite code.'
-      if (form.organization_name.trim().length < 2) v.organization_name = 'Enter your organisation or school.'
+      if (!form.invite_token.trim()) v.invite_token = 'Paste the invitation token your organisation gave you.'
     }
     setErrors(v)
     if (Object.keys(v).length) return
@@ -61,7 +59,7 @@ export default function RegisterPage() {
       const res =
         role === 'student'
           ? await api.auth.registerStudent({ ...base, join_code: form.join_code.trim() || undefined })
-          : await api.auth.registerEducator({ ...base, invite_code: form.invite_code.trim(), organization_name: form.organization_name.trim() })
+          : await api.auth.registerEducator({ ...base, invite_token: form.invite_token.trim() })
       signIn(res)
       navigate(role === 'student' ? '/onboarding' : '/educator', { replace: true })
     } catch (err) {
@@ -107,14 +105,9 @@ export default function RegisterPage() {
             {(p) => <Input {...p} value={form.join_code} onChange={set('join_code')} maxLength={12} className="uppercase" />}
           </Field>
         ) : (
-          <>
-            <Field label={t('auth.organization')} error={errors.organization_name}>
-              {(p) => <Input {...p} value={form.organization_name} onChange={set('organization_name')} />}
-            </Field>
-            <Field label={t('auth.inviteCode')} error={errors.invite_code}>
-              {(p) => <Input {...p} value={form.invite_code} onChange={set('invite_code')} />}
-            </Field>
-          </>
+          <Field label={t('auth.inviteToken')} error={errors.invite_token} hint="Your organisation sets you up. The token works once and expires.">
+            {(p) => <Input {...p} value={form.invite_token} onChange={set('invite_token')} autoComplete="off" autoCapitalize="none" spellCheck={false} />}
+          </Field>
         )}
         <Button type="submit" className="w-full" size="lg" loading={busy}>
           {t('auth.createAccount')}

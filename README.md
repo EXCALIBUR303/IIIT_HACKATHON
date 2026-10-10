@@ -78,7 +78,14 @@ npm install
 npm run dev
 ```
 
-Sample accounts created by `--demo` (local development only): `demo.student` and `demo.educator`, password `rupeerise-demo`. To register your own educator account locally, use the invite code from `backend/.env` (`RUPEERISE_EDUCATOR_INVITE_CODE`).
+Sample accounts created by `--demo` (local development only): `demo.student` and `demo.educator`, password `rupeerise-demo`. To register your own educator account, an operator creates an organisation and a one-time invitation, then you paste the token on the educator sign-up tab:
+
+```bash
+uv run python -m app.admin create-org "My NGO"
+uv run python -m app.admin create-invite --org "My NGO"   # prints the token once
+```
+
+Answer keys are not in the repository (see [docs/content-privacy.md](docs/content-privacy.md)). Without the private bundle, development runs with clearly labelled placeholder keys.
 
 Optional AI tutor: `uv sync --group ai`, then set `RUPEERISE_ANTHROPIC_API_KEY` in `backend/.env`. Without it, the tutor answers from the verified concept glossary and the student's own simulation feedback.
 
@@ -86,14 +93,14 @@ Docker alternative: see [docs/deployment.md](docs/deployment.md) (`docker compos
 
 ## Environment variables
 
-All backend settings use the `RUPEERISE_` prefix; see [`backend/.env.example`](backend/.env.example), [`frontend/.env.example`](frontend/.env.example) and [`.env.example`](.env.example) (Docker). Production refuses to start with the default secret key or educator invite code. Never commit `.env` files.
+All backend settings use the `RUPEERISE_` prefix; see [`backend/.env.example`](backend/.env.example), [`frontend/.env.example`](frontend/.env.example) and [`.env.example`](.env.example) (Docker). Production refuses to start with the default secret key, insecure cookies or missing answer keys. Never commit `.env` files.
 
 ## Testing
 
 ```bash
 createdb rupeerise_test && createdb rupeerise_e2e   # once
-cd backend && uv run pytest                          # 252 tests: engine, ledger, portfolio, learning, API on real Postgres
-cd frontend && npm test                              # 29 unit/component tests
+cd backend && uv run pytest                          # 417 tests: engine, ledger, portfolio, learning, security, API on real Postgres
+cd frontend && npm test                              # 31 unit/component tests
 cd frontend && npx playwright install chromium && npm run test:e2e   # 22 end-to-end journeys incl. axe accessibility scan
 ```
 
@@ -119,6 +126,7 @@ More in [docs/testing.md](docs/testing.md).
 | [requirements.md](docs/requirements.md) | Requirement classification and traceability matrix |
 | [architecture.md](docs/architecture.md) | Components, pipelines, rubrics, ADRs (Mermaid diagrams) |
 | [database-design.md](docs/database-design.md) | ER diagram, constraints, privacy design |
+| [security.md](docs/security.md) · [content-privacy.md](docs/content-privacy.md) | Security model, limits, residual risks |
 | [api-contracts.md](docs/api-contracts.md) · [openapi.json](docs/openapi.json) | Stable API contract |
 | [development-roadmap.md](docs/development-roadmap.md) | Milestones and tracks |
 | [team-ownership.md](docs/team-ownership.md) · [team-handoff/](docs/team-handoff/) | Who owns what; per-member briefs |

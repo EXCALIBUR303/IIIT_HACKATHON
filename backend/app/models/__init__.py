@@ -26,6 +26,7 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -79,6 +80,7 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     last_active_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    password_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     organization: Mapped[Organization | None] = relationship()
     profile: Mapped[StudentProfile | None] = relationship(
@@ -99,6 +101,8 @@ class StudentProfile(Base):
     learning_level: Mapped[str] = mapped_column(String(20), default="beginner")
     persona_key: Mapped[str | None] = mapped_column(String(30))
     onboarding_completed: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Grade is self-declared (never verified); changes after onboarding are rate-limited.
+    grade_changed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     preferences: Mapped[dict[str, Any]] = mapped_column(JsonType, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, onupdate=utcnow
@@ -146,6 +150,85 @@ class CohortMembership(Base):
 
     cohort: Mapped[Cohort] = relationship(back_populates="memberships")
     student: Mapped[User] = relationship()
+
+
+class EducatorInvite(Base):
+    """An organisation-bound, expiring, limited-use invitation to register as an educator.
+
+    Only a hash of the token is stored. The organisation comes from the invite row, never
+    from anything the registering user types.
+    """
+
+    __tablename__ = "educator_invites"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    organization_id: Mapped[int] = mapped_column(
+        ForeignKey("organizations.id", ondelete="CASCADE"), index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    max_uses: Mapped[int] = mapped_column(Integer, default=1)
+    used_count: Mapped[int] = mapped_column(Integer, default=0)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        CheckConstraint("max_uses BETWEEN 1 AND 100", name="max_uses_range"),
+        CheckConstraint("used_count BETWEEN 0 AND max_uses", name="used_count_range"),
+    )
+
+
+class AuthSession(Base):
+    """A login session. The refresh token is stored hashed and rotates on every use.
+
+    ``prev_token_hash`` remembers the previous token so replay of an already-rotated token
+    (a stolen copy) revokes the whole session.
+    """
+
+    __tablename__ = "auth_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=new_uuid)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(64))
+    prev_token_hash: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    last_used_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoke_reason: Mapped[str | None] = mapped_column(String(30))
+
+
+class RateLimitCounter(Base):
+    """Fixed-window counters shared by every API instance."""
+
+    __tablename__ = "rate_limit_counters"
+
+    key: Mapped[str] = mapped_column(String(160), primary_key=True)
+    window_start: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
+    count: Mapped[int] = mapped_column(Integer, default=0)
+
+    __table_args__ = (Index("ix_rate_limit_counters_window_start", "window_start"),)
+
+
+class OrganizationTransfer(Base):
+    """Audit trail of a student leaving an organisation (an explicit, student-initiated act)."""
+
+    __tablename__ = "organization_transfers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    student_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    from_organization_id: Mapped[int | None] = mapped_column(
+        ForeignKey("organizations.id", ondelete="SET NULL")
+    )
+    cohorts_left: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
 # ---------------------------------------------------------------------------
@@ -234,6 +317,8 @@ class Question(Base):
     # [{key, text, correct?, misconception?, explanation}]
     options: Mapped[list[dict[str, Any]]] = mapped_column(JsonType)
     order: Mapped[int] = mapped_column(Integer)
+    # Alternate items for the same idea share a group; each attempt is served one of them.
+    variant_group: Mapped[str | None] = mapped_column(String(40))
 
     assessment: Mapped[Assessment] = relationship(back_populates="questions")
 
@@ -316,6 +401,11 @@ class AssessmentAttempt(Base):
     total: Mapped[int | None] = mapped_column(Integer)
     score_pct: Mapped[int | None] = mapped_column(Integer)
     flagged_guessing: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Server-side delivery state: which questions were served, in what order, with options in
+    # what order, and when. The client never decides any of it.
+    delivery: Mapped[dict[str, Any] | None] = mapped_column(JsonType)
+    elapsed_ms: Mapped[int | None] = mapped_column(Integer)  # server clock, start to submit
+    timing_trusted: Mapped[bool | None] = mapped_column(Boolean)
 
     assessment: Mapped[Assessment] = relationship()
     responses: Mapped[list[QuestionResponse]] = relationship(
@@ -493,10 +583,33 @@ class PortfolioTransaction(Base):
 
     __table_args__ = (
         UniqueConstraint("student_id", "request_id", name="uq_portfolio_request"),
+        Index("ix_portfolio_tx_student_run_round", "student_id", "run_number", "round"),
+        Index("ix_portfolio_tx_student_id_desc", "student_id", text("id DESC")),
         CheckConstraint(
             "kind IN ('open', 'buy', 'sell', 'transfer_in', 'advance', 'reset')", name="kind"
         ),
         CheckConstraint("cash_after_paise >= 0", name="cash_after_non_negative"),
+    )
+
+
+class PortfolioRoundSnapshot(Base):
+    """Total value at the end of each round of a run, kept so charts never replay the log."""
+
+    __tablename__ = "portfolio_round_snapshots"
+
+    student_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    run_number: Mapped[int] = mapped_column(Integer, primary_key=True)
+    round: Mapped[int] = mapped_column(Integer, primary_key=True)
+    total_paise: Mapped[int] = mapped_column(BigInteger)
+    cash_paise: Mapped[int] = mapped_column(BigInteger)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+    __table_args__ = (
+        CheckConstraint("round BETWEEN 0 AND 10", name="ck_portfolio_snapshot_round"),
     )
 
 

@@ -4,7 +4,7 @@ import json
 import re
 
 from app.content import loader
-from tests.conftest import register_educator, register_student
+from tests.conftest import register_educator, register_onboarded
 
 URL = "/api/v1/banking-explorer"
 ALLOWED_HOSTS = (
@@ -100,7 +100,7 @@ def test_invalid_stop_and_option_rejected(client, student):
 
 def test_progress_is_private_and_student_only(client, student):
     answer(client, student, "pin-otp", correct_key("pin-otp"))
-    other, _ = register_student(client)
+    other, _ = register_onboarded(client)
     assert client.get(URL, headers=other).json()["completed"] == 0
     assert client.get(URL).status_code == 401
     assert client.get(URL, headers=register_educator(client)).status_code == 403

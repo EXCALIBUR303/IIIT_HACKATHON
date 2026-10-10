@@ -5,7 +5,10 @@ collecting a date of birth. Content declares which stages it suits; the
 backend filters scenarios and recommendations with it.
 
 Grade 13 means "finished Class 12 / around 18", the Investor Sandbox audience.
-A missing grade falls back to the original Class 11-12 pilot stage.
+
+Grade is self-declared and never verified, so stages are age-appropriate *personalisation*
+that the server enforces consistently, not proof of age. A missing grade is NOT defaulted to
+an older stage: stage-gated routes answer 403 ``stage_required`` until the student chooses one.
 """
 
 from __future__ import annotations
@@ -69,9 +72,13 @@ STAGES: dict[str, StageInfo] = {
 
 
 def stage_for(grade: int | None) -> str:
-    """Map a grade (7-13) to a stage key. ``None`` keeps the Class 11-12 default."""
+    """Map a grade (7-13) to a stage key.
+
+    ``None`` falls back to the youngest stage so any caller that forgets to require a grade
+    fails safe (less content, no Portfolio Quest) instead of exposing older-stage material.
+    """
     if grade is None:
-        return DEFAULT_STAGE
+        return EXPLORER
     if grade <= 8:
         return EXPLORER
     if grade <= 10:

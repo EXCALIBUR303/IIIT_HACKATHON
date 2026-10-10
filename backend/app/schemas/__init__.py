@@ -44,9 +44,24 @@ class StudentRegister(BaseModel):
         return v
 
 
-class EducatorRegister(StudentRegister):
-    invite_code: str = Field(min_length=1, max_length=64)
-    organization_name: str = Field(min_length=2, max_length=120)
+class EducatorRegister(BaseModel):
+    """Educators join an existing organisation with a single-organisation invitation token.
+
+    There is deliberately no organisation field: the organisation comes from the invite.
+    """
+
+    username: str = Field(pattern=USERNAME_PATTERN, description="3-40 letters, digits, _ . -")
+    password: str = Field(min_length=8, max_length=64)
+    display_name: str = Field(min_length=1, max_length=40)
+    invite_token: str = Field(min_length=1, max_length=100)
+
+    @field_validator("display_name")
+    @classmethod
+    def strip_name(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("display name cannot be blank")
+        return v
 
 
 class LoginRequest(BaseModel):
@@ -62,11 +77,44 @@ class UserOut(ORM):
     organization_id: int | None = None
 
 
-class TokenOut(BaseModel):
-    access_token: str
-    token_type: Literal["bearer"] = "bearer"
-    expires_in: int
+class AuthOut(BaseModel):
+    """Result of login/register/refresh. The session itself lives in HttpOnly cookies.
+
+    ``access_token`` is present only for non-browser clients that send ``X-Auth-Mode: bearer``.
+    """
+
     user: UserOut
+    expires_in: int
+    csrf_token: str | None = None
+    access_token: str | None = None
+    token_type: Literal["bearer"] | None = None
+
+
+class PasswordChange(BaseModel):
+    current_password: str = Field(min_length=1, max_length=64)
+    new_password: str = Field(min_length=8, max_length=64)
+
+
+class Reauth(BaseModel):
+    """Current-password confirmation for irreversible account actions."""
+
+    current_password: str = Field(min_length=1, max_length=64)
+
+
+class InviteCreate(BaseModel):
+    days_valid: int = Field(default=7, ge=1, le=30)
+    max_uses: int = Field(default=1, ge=1, le=20)
+
+
+class InviteOut(BaseModel):
+    id: int
+    expires_at: datetime
+    max_uses: int
+    used_count: int
+    created_at: datetime
+    revoked_at: datetime | None
+    status: Literal["active", "used", "expired", "revoked"]
+    token: str | None = None  # shown once, at creation only
 
 
 # --- Student profile ------------------------------------------------------
@@ -254,6 +302,7 @@ class AssessmentSummary(BaseModel):
     best_score: int | None
     available: bool
     locked_reason: str | None = None
+    cooldown_seconds: int = 0  # >0: a new attempt unlocks after this long (open ones resume)
 
 
 class AttemptStartOut(BaseModel):

@@ -106,7 +106,7 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (!profile.data) return
-    if (profile.data.onboarding_completed) navigate('/app', { replace: true })
+    if (profile.data.onboarding_completed && profile.data.grade !== null) navigate('/app', { replace: true })
     setName(profile.data.user.display_name)
     setGrade(profile.data.grade)
     setLanguage(profile.data.language)

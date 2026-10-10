@@ -48,20 +48,6 @@ def test_wrong_password_and_missing_token(client):
     assert bad.status_code == 401
 
 
-def test_educator_requires_invite(client):
-    r = client.post(
-        "/api/v1/auth/register/educator",
-        json={
-            "username": "teacher1",
-            "password": "password123",
-            "display_name": "T",
-            "invite_code": "wrong",
-            "organization_name": "Org",
-        },
-    )
-    assert r.status_code == 403
-
-
 def test_role_separation(client):
     student_headers, _ = register_student(client)
     educator_headers = register_educator(client)

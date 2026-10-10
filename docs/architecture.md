@@ -121,7 +121,7 @@ flowchart LR
 
 ## 5. Security & privacy
 
-- Passwords: bcrypt (12 rounds). Sessions: HS256 JWT bearer tokens (12 h). Production refuses to start with the default secret or invite code.
+- Passwords: bcrypt (12 rounds). Sessions: server-side `auth_sessions` rows with a 15-minute HS256 access JWT and a rotating hashed refresh token, both in HttpOnly cookies, plus a CSRF token. Educators join only through organisation-bound, hashed, expiring invitations. Abuse limits are Postgres counters. Production refuses to start with the default secret, insecure cookies or missing answer keys. Details: [security.md](security.md).
 - Roles: `student`, `educator`, `admin`. Educator endpoints require an organisation and only return cohorts of that organisation (404 for others, so IDs can't be probed).
 - Data minimisation: nickname, username, grade band, language, preferences. No email, phone, school ID, Aadhaar, or real financial data.
 - Students can delete their account; all learning data cascades.
@@ -150,6 +150,6 @@ See [deployment.md](deployment.md).
 | ADR-2 | Synchronous SQLAlchemy 2 | Async ORM | Simpler code/tests; threadpool handles target load |
 | ADR-3 | Content as versioned JSON seeded into DB by slug | Hard-coded Python / CMS | Translators & educators can edit; FK integrity for attempts |
 | ADR-4 | Deterministic engine with Decimal | Float maths / LLM-generated outcomes | Correctness, reproducibility, testability |
-| ADR-5 | JWT in `localStorage` | httpOnly cookies | Simple cross-origin deployment for a hackathon; see limitations |
+| ADR-5 | HttpOnly cookie sessions + CSRF, server-side session rows | JWT in `localStorage` | The earlier `localStorage` token was replaceable by any XSS bug; same-origin deployment through the bundled proxy makes cookies practical. Supersedes the hackathon choice |
 | ADR-6 | Hand-written shadcn-style components on Radix primitives | Full shadcn CLI / MUI | No generator dependency, small bundle, full design control |
 | ADR-7 | Optional Claude tutor via official SDK, deterministic fallback | Required LLM | Platform works offline from AI; no hallucinated numbers |

@@ -39,7 +39,7 @@ RupeeRise answers this with persona-led financial-life simulations backed by a d
 |---|---|---|
 | A-01 | Students may not have email or phones of their own → username + password + nickname only | Inclusion and data minimisation |
 | A-02 | Delivery happens through NGOs/schools on shared or low-end devices → responsive web app, small bundles, no install | Reach |
-| A-03 | Educators self-register with an invite code issued by the programme coordinator | Prevents arbitrary access to student analytics |
+| A-03 | Educators register only with an expiring, limited-use invitation bound to one organisation, created by an operator or by an educator of that organisation | Prevents arbitrary access to student analytics and attaching to another organisation |
 | A-04 | Hindi and Telugu are the priority languages after English for Hyderabad; Urdu is a candidate for the next round | Local context |
 | A-05 | All amounts are fictional rupees; interest rates and market paths are illustrative | M-17, M-18 |
 | A-06 | A module is "completed" after one simulation plus a module quiz score of ≥60% | Clear, explainable completion rule |

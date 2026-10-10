@@ -27,6 +27,7 @@ def test_perfect_scam_answer_scores_100():
     assert r["flags_missed"] == []
 
 
+@pytest.mark.requires_private_content
 def test_partial_flags_and_risky_action():
     m = messages()["kyc_block"]
     r = safety.evaluate_message(
@@ -72,6 +73,7 @@ def test_summary():
     assert safety.summarize([]) == {"score": 0, "correct_verdicts": 0, "total": 0}
 
 
+@pytest.mark.requires_private_content
 def test_every_safety_scenario_validates_and_covers_the_required_scam_types():
     from app.content import loader
     from app.engine import safety

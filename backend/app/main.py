@@ -18,15 +18,18 @@ app = FastAPI(
     version="0.1.0",
     description="Financial literacy learning platform: fictional simulations, assessments, "
     "adaptive learning and educator analytics. Educational use only; not financial advice.",
-    docs_url="/api/docs",
-    openapi_url="/api/openapi.json",
+    # The schema and interactive docs describe every route; keep them off in production
+    # unless an operator opts in (RUPEERISE_ENABLE_API_DOCS=true), ideally behind auth.
+    docs_url="/api/docs" if settings.docs_enabled else None,
+    redoc_url=None,
+    openapi_url="/api/openapi.json" if settings.docs_enabled else None,
 )
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "X-CSRF-Token", "X-Auth-Mode"],
 )
 register_error_handlers(app)
 app.include_router(api_router)

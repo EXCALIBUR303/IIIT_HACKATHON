@@ -35,3 +35,8 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 *.log
+
+# --- Private answer keys (never commit; see docs/content-privacy.md) ---------
+backend/private_content/
+private_content/
+**/answer_keys.json

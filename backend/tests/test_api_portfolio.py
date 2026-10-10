@@ -7,7 +7,14 @@ from sqlalchemy import func, select
 
 from app.core.db import SessionLocal
 from app.models import Portfolio, PortfolioHolding, PortfolioTransaction, RewardLedgerEntry
-from tests.conftest import answer_all, complete_budget, register_educator, register_student
+from tests.conftest import (
+    answer_all,
+    complete_budget,
+    delete_account,
+    register_educator,
+    register_onboarded,
+    register_student,
+)
 
 P = "/api/v1/portfolio"
 SESSIONS = "/api/v1/simulations/sessions"
@@ -421,7 +428,7 @@ def test_portfolio_profit_never_changes_rewards_or_learning(client, investor):
 def test_portfolios_are_private_and_role_restricted(client, investor):
     opened(client, investor)
     trade(client, investor, "steady_deposit", "buy", 3)
-    other, _ = register_student(client)
+    other, _ = register_onboarded(client)
     complete_investing(client, other)
     view = client.get(P, headers=other).json()
     assert view["portfolio"] is None  # the other student's portfolio is not visible
@@ -438,7 +445,7 @@ def test_portfolios_are_private_and_role_restricted(client, investor):
 def test_deleting_the_account_erases_portfolio_data(client, investor):
     opened(client, investor)
     trade(client, investor, "steady_deposit", "buy", 3)
-    assert client.delete("/api/v1/students/me", headers=investor).status_code == 204
+    assert delete_account(client, investor).status_code == 204
     with SessionLocal() as db:
         for model in (Portfolio, PortfolioHolding, PortfolioTransaction):
             assert db.scalar(select(func.count()).select_from(model)) == 0

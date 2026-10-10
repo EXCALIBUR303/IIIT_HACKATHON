@@ -60,6 +60,56 @@ function LanguageCard({ value, onChange }: { value: Language; onChange: (l: Lang
   )
 }
 
+function PasswordCard() {
+  const [current, setCurrent] = useState('')
+  const [next, setNext] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [status, setStatus] = useState<{ tone: 'success' | 'danger'; text: string } | null>(null)
+
+  async function change(e: React.FormEvent) {
+    e.preventDefault()
+    if (next.length < 8) {
+      setStatus({ tone: 'danger', text: 'Use at least 8 characters for the new password.' })
+      return
+    }
+    setBusy(true)
+    setStatus(null)
+    try {
+      await api.auth.changePassword(current, next)
+      setCurrent('')
+      setNext('')
+      setStatus({ tone: 'success', text: 'Password changed. You were signed out of every other device.' })
+    } catch (err) {
+      setStatus({ tone: 'danger', text: errorMessage(err) })
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Password</CardTitle>
+        <CardDescription>Changing it signs you out everywhere else.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={change} className="grid max-w-sm gap-4">
+          {status && <Alert tone={status.tone}>{status.text}</Alert>}
+          <Field label="Current password">
+            {(p) => <Input {...p} type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} />}
+          </Field>
+          <Field label="New password" hint="At least 8 characters.">
+            {(p) => <Input {...p} type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} />}
+          </Field>
+          <Button type="submit" variant="secondary" loading={busy} disabled={!current || !next} className="justify-self-start">
+            Change password
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
 function StudentSettings() {
   const { t, setLang } = useI18n()
   const ctx = useOptionalProfile()
@@ -72,6 +122,7 @@ function StudentSettings() {
   const [busy, setBusy] = useState(false)
   const [code, setCode] = useState('')
   const [confirmDelete, setConfirmDelete] = useState('')
+  const [deletePassword, setDeletePassword] = useState('')
 
   const profile = draft ?? loaded.data
   if (loaded.error) return <ErrorState message={loaded.error.message} onRetry={loaded.reload} />
@@ -114,7 +165,7 @@ function StudentSettings() {
 
   async function deleteAccount() {
     try {
-      await api.profile.deleteAccount()
+      await api.profile.deleteAccount(deletePassword)
       signOut()
       navigate('/', { replace: true })
     } catch (err) {
@@ -196,15 +247,24 @@ function StudentSettings() {
             <p className="mt-1 text-sm text-ink-soft">
               This permanently removes your account, simulations, answers and badges. Type <strong>DELETE</strong> to confirm.
             </p>
-            <div className="mt-3 flex max-w-sm gap-2">
-              <Input aria-label="Type DELETE to confirm" value={confirmDelete} onChange={(e) => setConfirmDelete(e.target.value)} />
-              <Button variant="danger" disabled={confirmDelete !== 'DELETE'} onClick={deleteAccount}>
+            <div className="mt-3 grid max-w-sm gap-2">
+              <Input aria-label="Type DELETE to confirm" placeholder="Type DELETE" value={confirmDelete} onChange={(e) => setConfirmDelete(e.target.value)} />
+              <Input
+                aria-label="Your current password"
+                type="password"
+                placeholder="Your current password"
+                autoComplete="current-password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+              />
+              <Button variant="danger" disabled={confirmDelete !== 'DELETE' || !deletePassword} onClick={deleteAccount} className="justify-self-start">
                 <Trash2 /> Delete
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
+      <PasswordCard />
     </div>
   )
 }
@@ -234,6 +294,7 @@ function EducatorSettings() {
           </p>
         </CardContent>
       </Card>
+      <PasswordCard />
     </div>
   )
 }

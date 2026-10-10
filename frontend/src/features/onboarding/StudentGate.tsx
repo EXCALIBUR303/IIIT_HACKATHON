@@ -46,6 +46,7 @@ export function StudentGate({ children }: { children: ReactNode }) {
       </div>
     )
   if (!data) return null
-  if (!data.onboarding_completed) return <Navigate to="/onboarding" replace />
+  // A class is required for stage-appropriate content, so older accounts without one finish it here.
+  if (!data.onboarding_completed || data.grade === null) return <Navigate to="/onboarding" replace />
   return <ProfileContext.Provider value={{ profile: data, setProfile: setData }}>{children}</ProfileContext.Provider>
 }

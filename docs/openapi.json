@@ -30,7 +30,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TokenOut"
+                  "$ref": "#/components/schemas/AuthOut"
                 }
               }
             }
@@ -54,7 +54,7 @@
           "auth"
         ],
         "summary": "Register Educator",
-        "description": "Educators register with an invite code issued by the programme coordinator.",
+        "description": "Join an organisation as an educator with its invitation token.\n\nThe organisation is taken from the invite. Nothing the caller types can choose, name or\nmatch an organisation, so there is no way to attach to someone else's.",
         "operationId": "register_educator_api_v1_auth_register_educator_post",
         "requestBody": {
           "content": {
@@ -72,7 +72,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TokenOut"
+                  "$ref": "#/components/schemas/AuthOut"
                 }
               }
             }
@@ -113,7 +113,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TokenOut"
+                  "$ref": "#/components/schemas/AuthOut"
                 }
               }
             }
@@ -127,6 +127,43 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh",
+        "description": "Rotate the refresh token and issue a fresh access token (cookie sessions only).",
+        "operationId": "refresh_api_v1_auth_refresh_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "description": "End this session on the server (the cookies alone are not what makes it end).",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           }
         }
       }
@@ -145,6 +182,53 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Change Password",
+        "description": "Change the password. Every existing session is revoked; this device gets a new one.",
+        "operationId": "change_password_api_v1_auth_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -320,6 +404,7 @@
           "students"
         ],
         "summary": "Join Cohort",
+        "description": "Join a class by code. A student belongs to one organisation at a time.\n\nA code from a different organisation is refused with the same message as an unknown code,\nso codes cannot be used to probe other organisations. Leaving an organisation is an\nexplicit act (``POST /students/me/organization/leave``).",
         "operationId": "join_cohort_api_v1_students_me_cohorts_post",
         "requestBody": {
           "content": {
@@ -360,17 +445,84 @@
         ]
       }
     },
+    "/api/v1/students/me/organization/leave": {
+      "post": {
+        "tags": [
+          "students"
+        ],
+        "summary": "Leave Organization",
+        "description": "Leave your organisation and all its classes, so you could join a different one.\n\nTheir educators lose sight of your data immediately. The move is written to an audit table.",
+        "operationId": "leave_organization_api_v1_students_me_organization_leave_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reauth"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/v1/students/me": {
       "delete": {
         "tags": [
           "students"
         ],
         "summary": "Delete Account",
-        "description": "Permanently delete the student's account and all learning data (privacy right).",
+        "description": "Permanently delete the student's account and all learning data (privacy right).\n\nIrreversible, so it needs the current password even though the caller is signed in.",
         "operationId": "delete_account_api_v1_students_me_delete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Reauth"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "204": {
             "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -1419,6 +1571,121 @@
         }
       }
     },
+    "/api/v1/educator/invites": {
+      "get": {
+        "tags": [
+          "educator"
+        ],
+        "summary": "List Invites",
+        "operationId": "list_invites_api_v1_educator_invites_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InviteOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Invites Api V1 Educator Invites Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "educator"
+        ],
+        "summary": "Create Invite",
+        "description": "Invite a colleague into *your own* organisation. The token is returned once.",
+        "operationId": "create_invite_api_v1_educator_invites_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InviteOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/educator/invites/{invite_id}": {
+      "delete": {
+        "tags": [
+          "educator"
+        ],
+        "summary": "Revoke Invite",
+        "operationId": "revoke_invite_api_v1_educator_invites__invite_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "invite_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Invite Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/learning/status": {
       "get": {
         "tags": [
@@ -1868,6 +2135,7 @@
           "portfolio"
         ],
         "summary": "Transactions",
+        "description": "Newest first, keyset-paginated: pass the smallest id you have as ``before``.",
         "operationId": "transactions_api_v1_portfolio_transactions_get",
         "security": [
           {
@@ -1886,6 +2154,25 @@
               "default": 100,
               "title": "Limit"
             }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return entries older than this id",
+              "title": "Before"
+            },
+            "description": "Return entries older than this id"
           }
         ],
         "responses": {
@@ -2166,6 +2453,11 @@
               }
             ],
             "title": "Locked Reason"
+          },
+          "cooldown_seconds": {
+            "type": "integer",
+            "title": "Cooldown Seconds",
+            "default": 0
           }
         },
         "type": "object",
@@ -2303,6 +2595,58 @@
           "questions"
         ],
         "title": "AttemptStartOut"
+      },
+      "AuthOut": {
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "csrf_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Csrf Token"
+          },
+          "access_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Access Token"
+          },
+          "token_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "bearer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Token Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user",
+          "expires_in"
+        ],
+        "title": "AuthOut",
+        "description": "Result of login/register/refresh. The session itself lives in HttpOnly cookies.\n\n``access_token`` is present only for non-browser clients that send ``X-Auth-Mode: bearer``."
       },
       "CohortCreate": {
         "properties": {
@@ -2508,32 +2852,13 @@
             "type": "string",
             "maxLength": 40,
             "minLength": 1,
-            "title": "Display Name",
-            "description": "A first name or nickname"
+            "title": "Display Name"
           },
-          "join_code": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 12
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Join Code"
-          },
-          "invite_code": {
+          "invite_token": {
             "type": "string",
-            "maxLength": 64,
+            "maxLength": 100,
             "minLength": 1,
-            "title": "Invite Code"
-          },
-          "organization_name": {
-            "type": "string",
-            "maxLength": 120,
-            "minLength": 2,
-            "title": "Organization Name"
+            "title": "Invite Token"
           }
         },
         "type": "object",
@@ -2541,10 +2866,10 @@
           "username",
           "password",
           "display_name",
-          "invite_code",
-          "organization_name"
+          "invite_token"
         ],
-        "title": "EducatorRegister"
+        "title": "EducatorRegister",
+        "description": "Educators join an existing organisation with a single-organisation invitation token.\n\nThere is deliberately no organisation field: the organisation comes from the invite."
       },
       "HTTPValidationError": {
         "properties": {
@@ -2628,6 +2953,96 @@
           "horizon_years"
         ],
         "title": "InvestmentProjectionIn"
+      },
+      "InviteCreate": {
+        "properties": {
+          "days_valid": {
+            "type": "integer",
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Days Valid",
+            "default": 7
+          },
+          "max_uses": {
+            "type": "integer",
+            "maximum": 20.0,
+            "minimum": 1.0,
+            "title": "Max Uses",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "title": "InviteCreate"
+      },
+      "InviteOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At"
+          },
+          "max_uses": {
+            "type": "integer",
+            "title": "Max Uses"
+          },
+          "used_count": {
+            "type": "integer",
+            "title": "Used Count"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "revoked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revoked At"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "used",
+              "expired",
+              "revoked"
+            ],
+            "title": "Status"
+          },
+          "token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "expires_at",
+          "max_uses",
+          "used_count",
+          "created_at",
+          "revoked_at",
+          "status"
+        ],
+        "title": "InviteOut"
       },
       "JoinCohort": {
         "properties": {
@@ -2829,6 +3244,28 @@
           "text"
         ],
         "title": "OptionOut"
+      },
+      "PasswordChange": {
+        "properties": {
+          "current_password": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Current Password"
+          },
+          "new_password": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "New Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current_password",
+          "new_password"
+        ],
+        "title": "PasswordChange"
       },
       "PersonaOut": {
         "properties": {
@@ -3320,6 +3757,22 @@
           "quantity"
         ],
         "title": "QuoteIn"
+      },
+      "Reauth": {
+        "properties": {
+          "current_password": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Current Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "current_password"
+        ],
+        "title": "Reauth",
+        "description": "Current-password confirmation for irreversible account actions."
       },
       "Recommendation": {
         "properties": {
@@ -4060,34 +4513,6 @@
           "responses"
         ],
         "title": "SubmitIn"
-      },
-      "TokenOut": {
-        "properties": {
-          "access_token": {
-            "type": "string",
-            "title": "Access Token"
-          },
-          "token_type": {
-            "type": "string",
-            "const": "bearer",
-            "title": "Token Type",
-            "default": "bearer"
-          },
-          "expires_in": {
-            "type": "integer",
-            "title": "Expires In"
-          },
-          "user": {
-            "$ref": "#/components/schemas/UserOut"
-          }
-        },
-        "type": "object",
-        "required": [
-          "access_token",
-          "expires_in",
-          "user"
-        ],
-        "title": "TokenOut"
       },
       "TradeIn": {
         "properties": {

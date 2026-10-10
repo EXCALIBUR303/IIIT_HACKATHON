@@ -47,7 +47,7 @@ def start_attempt(slug: str, user: Student, db: DB) -> dict:
     return {
         "attempt_id": attempt.id,
         "assessment": svc.summary(db, user, assessment),
-        "questions": svc.public_questions(assessment),
+        "questions": svc.public_questions(assessment, attempt),
     }
 
 

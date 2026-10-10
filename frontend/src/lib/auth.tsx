@@ -1,12 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { setUnauthorizedHandler, tokenStore } from './api/client'
+import { hasSessionHint, setUnauthorizedHandler } from './api/client'
 import { api } from './api/endpoints'
-import type { TokenResponse, User } from './api/types'
+import type { AuthResponse, User } from './api/types'
 
 interface AuthContextValue {
   user: User | null
   ready: boolean
-  signIn: (res: TokenResponse) => void
+  signIn: (res: AuthResponse) => void
   signOut: () => void
 }
 
@@ -16,29 +16,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [ready, setReady] = useState(false)
 
+  // Local-only: the session has already ended (or is being ended) on the server.
+  const clear = useCallback(() => setUser(null), [])
+
+  // Logging out is a server action: the cookies alone are not what ends a session.
   const signOut = useCallback(() => {
-    tokenStore.set(null)
     setUser(null)
+    void api.auth.logout().catch(() => undefined)
   }, [])
 
-  const signIn = useCallback((res: TokenResponse) => {
-    tokenStore.set(res.access_token)
-    setUser(res.user)
-  }, [])
+  const signIn = useCallback((res: AuthResponse) => setUser(res.user), [])
 
   useEffect(() => {
-    setUnauthorizedHandler(signOut)
-    if (!tokenStore.get()) {
+    setUnauthorizedHandler(clear)
+    // The session lives in HttpOnly cookies the page cannot read; the readable CSRF cookie
+    // tells us whether it is worth asking who is signed in.
+    if (!hasSessionHint()) {
       setReady(true)
-      return
+    } else {
+      api.auth
+        .me()
+        .then(setUser)
+        .catch(() => undefined)
+        .finally(() => setReady(true))
     }
-    api.auth
-      .me()
-      .then(setUser)
-      .catch(() => tokenStore.set(null))
-      .finally(() => setReady(true))
     return () => setUnauthorizedHandler(null)
-  }, [signOut])
+  }, [clear])
 
   const value = useMemo(() => ({ user, ready, signIn, signOut }), [user, ready, signIn, signOut])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

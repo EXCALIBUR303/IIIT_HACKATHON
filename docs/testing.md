@@ -31,7 +31,7 @@ cd frontend && npx playwright install chromium
 
 ## Added in v2
 
-- **Stages:** grade-to-stage mapping, server-side scenario eligibility (403), None-grade default.
+- **Stages:** grade-to-stage mapping, server-side scenario eligibility (403), missing grade fails safe.
 - **Reward ledger:** append-only, idempotent (duplicate key absorbed), sign/type constraint, balance = SUM, no reward for rapid guessing, borrowing, unsafe choices or concentrated investing.
 - **Portfolio Quest:** integer-paise maths, seeded price paths, request idempotency, `confirm` required, transfer cap and one-way rule, locks and unlocks, concurrency on the portfolio row.
 - **Learning score and levels:** pure functions, no money input, levels cannot be skipped.
@@ -39,7 +39,30 @@ cd frontend && npx playwright install chromium
 - **E2E:** learn-to-earn journey, public `/journey-demo`, axe scan of ten key pages.
 - Migrations are tested by dropping and recreating the schema, then running every migration.
 
-## Latest local results (v2, 2026-10-10)
+## Added in the security hardening pass
+
+- `test_security_invites.py`: single-use, expiry, revocation, use limits, identical failures, race for the last use, no organisation chosen by the registrant.
+- `test_security_sessions.py`: HttpOnly/Secure/SameSite cookies, no token in bodies, CSRF (missing, foreign session, foreign origin), refresh rotation and replay revocation, logout, password change revoking sessions, re-authentication for deletion, every rate limit.
+- `test_cohort_isolation.py`: one organisation per student, cross-organisation join rejected like an unknown code, audited leave, educator isolation.
+- `test_content_privacy.py`: no answers in public JSON, no key file tracked, production refuses placeholders.
+- `test_quiz_integrity.py`: mission-before-quiz, forged timing, cooldown and resume, shuffled order, variant groups, module completion needs mission and quiz.
+- `test_stage_gating.py`: missing grade, every stage against detail, start, catalog, calculators and Portfolio Quest, grade lock.
+- `test_tutor_safety.py`: adversarial prompts (personal picks, product recommendations, jailbreaks, OTPs, predictions), obfuscation, bad model answers, data minimisation, budgets.
+- `test_portfolio_scale.py`: per-round cap, rate limit, snapshots, backfill, 5,000-row history, pagination, accounting invariants.
+- Frontend: cookie client (CSRF header, single refresh-and-retry, no token in storage).
+- E2E use the real cookie flow; educator specs create an invitation with `python -m app.admin`. The Banking Explorer wrong-answer test needs the private answer keys and skips without them.
+- CI also runs `scripts/check-repo-hygiene.sh`.
+
+Backend tests that assert real answers are marked `requires_private_content` and skip when the bundle is absent. Run the suite both ways: `uv run pytest` and `RUPEERISE_PRIVATE_CONTENT_DIR=none uv run pytest`.
+
+## Latest local results (security pass, 2026-10-11)
+
+- Backend: **417 passed** with the private bundle; **410 passed, 7 skipped** without it; ruff clean; `alembic check` clean
+- Frontend unit/component: **31 passed**; `tsc` clean; production build succeeds
+- E2E: **22 passed** with the bundle; 21 passed, 1 skipped without it
+- nginx / Docker: **not run** (no Docker daemon or nginx available)
+
+## Earlier results (v2, 2026-10-10)
 
 - Backend: **252 passed** (`uv run pytest`); ruff clean; `alembic check` clean
 - Frontend unit/component: **29 passed** (`npm test`); `tsc` clean; production build succeeds

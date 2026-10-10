@@ -20,7 +20,7 @@ import type {
   ScenarioSummary,
   Session,
   SessionSummary,
-  TokenResponse,
+  AuthResponse,
   TutorAnswer,
   User,
   ExplorerAnswer,
@@ -64,23 +64,27 @@ export const api = {
     get: (limit = 50) => http.get<Wallet>(`/wallet?limit=${limit}`),
   },
   auth: {
-    login: (username: string, password: string) => http.post<TokenResponse>('/auth/login', { username, password }),
+    login: (username: string, password: string) => http.post<AuthResponse>('/auth/login', { username, password }),
     registerStudent: (body: { username: string; password: string; display_name: string; join_code?: string }) =>
-      http.post<TokenResponse>('/auth/register/student', body),
+      http.post<AuthResponse>('/auth/register/student', body),
     registerEducator: (body: {
       username: string
       password: string
       display_name: string
-      invite_code: string
-      organization_name: string
-    }) => http.post<TokenResponse>('/auth/register/educator', body),
+      invite_token: string
+    }) => http.post<AuthResponse>('/auth/register/educator', body),
     me: () => http.get<User>('/auth/me'),
+    logout: () => http.post<void>('/auth/logout'),
+    changePassword: (current_password: string, new_password: string) =>
+      http.post<AuthResponse>('/auth/password', { current_password, new_password }),
   },
   profile: {
     get: () => http.get<Profile>('/students/me/profile'),
     update: (body: ProfileUpdate) => http.put<Profile>('/students/me/profile', body),
     joinCohort: (join_code: string) => http.post<Profile>('/students/me/cohorts', { join_code }),
-    deleteAccount: () => http.del<void>('/students/me'),
+    deleteAccount: (current_password: string) => http.del<void>('/students/me', { current_password }),
+    leaveOrganization: (current_password: string) =>
+      http.post<Profile>('/students/me/organization/leave', { current_password }),
   },
   content: {
     personas: () => http.get<Persona[]>('/personas'),

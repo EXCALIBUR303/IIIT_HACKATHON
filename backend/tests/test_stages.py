@@ -21,7 +21,7 @@ from app.seed import seed_content
         (11, "future_planner"),
         (12, "future_planner"),
         (13, "investor_sandbox"),
-        (None, "future_planner"),
+        (None, "explorer"),  # fails safe: never defaults to an older stage
     ],
 )
 def test_stage_for_grade(grade, stage):
@@ -84,6 +84,7 @@ def _register(client, username):
     r = client.post(
         "/api/v1/auth/register/student",
         json={"username": username, "password": "password123", "display_name": username},
+        headers={"X-Auth-Mode": "bearer"},
     )
     h = {"Authorization": f"Bearer {r.json()['access_token']}"}
     return h
@@ -91,9 +92,11 @@ def _register(client, username):
 
 def test_profile_reports_stage_and_explorer_sees_fewer_scenarios(client):
     h = _register(client, "kid7")
+    # No class chosen yet: no stage, and stage-gated routes refuse rather than guess.
     assert client.get("/api/v1/students/me/profile", headers=h).json()["stage"]["key"] == (
-        "future_planner"
+        "unselected"
     )
+    assert client.get("/api/v1/scenarios", headers=h).status_code == 403
     r = client.put("/api/v1/students/me/profile", headers=h, json={"grade": 7})
     assert r.status_code == 200, r.text
     assert r.json()["stage"]["key"] == "explorer"

@@ -240,7 +240,7 @@ function RiskLab() {
       <div className="space-y-4 rounded-[var(--radius-panel)] border border-line bg-canvas-deep/40 p-4">
         <p className="px-1 text-xs font-bold uppercase tracking-wider text-muted">Your mix</p>
         <HorizonPicker horizons={catalog.data.horizons} value={horizon} onChange={setHorizon} />
-        <AllocationEditor assets={catalog.data.assets} allocation={allocation} onChange={setAllocation} />
+        <AllocationEditor assets={catalog.data.assets} allocation={allocation} onChange={setAllocation} keepTotal />
       </div>
       <div className="space-y-5">
         <section aria-labelledby="rx-h" className="rounded-[var(--radius-panel)] border border-line bg-surface p-5 shadow-[var(--shadow-card)] sm:p-6">

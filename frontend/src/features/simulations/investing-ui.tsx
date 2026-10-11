@@ -13,10 +13,35 @@ export const RISK_STYLE: Record<Asset['risk_level'], { label: string; tone: 'suc
   very_high: { label: 'Very high risk', tone: 'danger' },
 }
 
-export function AllocationEditor({ assets, allocation, onChange }: {
+/**
+ * Set one share and spread the difference over the others in proportion to what they hold now
+ * (in 5% steps, largest remainder first), so the mix keeps adding up to 100%.
+ */
+export function rebalance(allocation: Record<string, number>, keys: string[], key: string, value: number): Record<string, number> {
+  const others = keys.filter((k) => k !== key)
+  const units = Math.round((100 - value) / 5)
+  const weights = others.map((k) => allocation[k] ?? 0)
+  const sum = weights.reduce((a, b) => a + b, 0)
+  const raw = others.map((_, i) => (sum > 0 ? (units * weights[i]) / sum : units / others.length))
+  const base = raw.map(Math.floor)
+  let left = units - base.reduce((a, b) => a + b, 0)
+  const order = raw.map((r, i) => [r - Math.floor(r), i] as const).sort((a, b) => b[0] - a[0])
+  for (const [, i] of order) {
+    if (left <= 0) break
+    base[i] += 1
+    left -= 1
+  }
+  const next: Record<string, number> = { ...allocation, [key]: value }
+  others.forEach((k, i) => (next[k] = base[i] * 5))
+  return next
+}
+
+export function AllocationEditor({ assets, allocation, onChange, keepTotal = false }: {
   assets: Asset[]
   allocation: Record<string, number>
   onChange: (next: Record<string, number>) => void
+  /** Rebalance the other sliders so the total stays at 100%. */
+  keepTotal?: boolean
 }) {
   const total = Object.values(allocation).reduce((a, b) => a + b, 0)
   return (
@@ -44,7 +69,10 @@ export function AllocationEditor({ assets, allocation, onChange }: {
               value={value}
               className="rr-range mt-3 w-full"
               style={{ ['--range-color' as string]: 'var(--color-investing)', ['--range-fill' as string]: `${value}%` }}
-              onChange={(e) => onChange({ ...allocation, [a.key]: Number(e.target.value) })}
+              onChange={(e) => {
+                const v = Number(e.target.value)
+                onChange(keepTotal ? rebalance(allocation, assets.map((x) => x.key), a.key, v) : { ...allocation, [a.key]: v })
+              }}
             />
           </div>
         )
@@ -119,7 +147,7 @@ export function LossByHorizon({ data }: { data: { horizon_years: number; probabi
         <BarChart data={rows} margin={{ top: 20, right: 8, left: 0, bottom: 0 }}>
           <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={12} />
           <YAxis hide domain={[0, 'dataMax + 10']} />
-          <Bar dataKey="pct" fill="var(--color-warning)" radius={[6, 6, 0, 0]}>
+          <Bar dataKey="pct" fill="var(--color-warning)" radius={[6, 6, 0, 0]} isAnimationActive={false}>
             <LabelList dataKey="pct" position="top" formatter={(v) => `${v}%`} fontSize={12} />
           </Bar>
         </BarChart>

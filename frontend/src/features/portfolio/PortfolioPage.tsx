@@ -15,7 +15,7 @@ import type { PortfolioEvent, PortfolioInstrument, PortfolioView, TradeQuote } f
 import { inr, inrPaise, relativeDate, signedPaise } from '@/lib/format'
 import { useAsync } from '@/lib/useAsync'
 import { cn } from '@/lib/utils'
-import { useAnime } from '@/lib/anime'
+import { useAnime, has } from '@/lib/anime'
 import { AnimatedNumber } from '@/components/motion/AnimatedNumber'
 import { DecadeSimulator } from './DecadeSimulator'
 import { LockedJourney } from './LockedJourney'
@@ -172,8 +172,8 @@ function Sparkline({ points, up }: { points: number[]; up: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   useAnime(
     ref,
-    () => {
-      animate(svg.createDrawable('.spark'), { draw: ['0 0', '0 1'], duration: 1100, ease: 'inOutQuad', delay: 150 })
+    (scope) => {
+      if (has(scope, '.spark')) animate(svg.createDrawable('.spark'), { draw: ['0 0', '0 1'], duration: 1100, ease: 'inOutQuad', delay: 150 })
     },
     [points.length],
   )

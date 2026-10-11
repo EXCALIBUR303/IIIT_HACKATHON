@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { PILLARS, PillarIcon } from '@/components/common/pillars'
 import { ErrorState, LoadingState, PageHeader } from '@/components/common/states'
 import { Button } from '@/components/ui/button'
-import { useAnime } from '@/lib/anime'
+import { useAnime, has } from '@/lib/anime'
 import { api } from '@/lib/api/endpoints'
 import type { AssessmentSummary, Module } from '@/lib/api/types'
 import { useI18n } from '@/lib/i18n'
@@ -106,11 +106,11 @@ export default function AssessmentsPage() {
 
   useAnime(
     ref,
-    () => {
+    (scope) => {
       if (!data.data) return
-      animate('.as-line', { scaleY: { from: 0 }, duration: 1600, ease: 'inOutQuart', delay: 200 })
-      animate('.as-node', { scale: { from: 0 }, delay: stagger(250, { start: 250 }), duration: 700, ease: 'outBack(2.2)' })
-      animate('.as-meter', { scaleX: { from: 0 }, delay: stagger(80, { start: 700 }), duration: 900, ease: 'outExpo' })
+      if (has(scope, '.as-line')) animate('.as-line', { scaleY: { from: 0 }, duration: 1600, ease: 'inOutQuart', delay: 200 })
+      if (has(scope, '.as-node')) animate('.as-node', { scale: { from: 0 }, delay: stagger(250, { start: 250 }), duration: 700, ease: 'outBack(2.2)' })
+      if (has(scope, '.as-meter')) animate('.as-meter', { scaleX: { from: 0 }, delay: stagger(80, { start: 700 }), duration: 900, ease: 'outExpo' })
     },
     [!!data.data],
   )

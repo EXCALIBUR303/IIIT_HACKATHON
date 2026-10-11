@@ -220,14 +220,14 @@ export function AppShell({ role }: { role: 'student' | 'educator' }) {
         )}
       </AnimatePresence>
 
-      <main id="main" className="lg:pl-60">
+      <main id="main" className="dash-canvas lg:pl-60">
         {/* Route transition: a short fade and rise. Under reduced motion only the fade remains. */}
         <motion.div
           key={pathname}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.32, ease: EASE_OUT }}
-          className="mx-auto w-full max-w-[1180px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-9"
+          className="relative z-[1] mx-auto w-full max-w-[1180px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-9"
         >
           <Outlet />
         </motion.div>

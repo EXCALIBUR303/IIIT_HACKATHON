@@ -2,7 +2,7 @@ import { animate, svg } from 'animejs'
 import { useRef } from 'react'
 import type { DataStatus, Impact, NewsCategory } from '@/lib/api/types'
 import { CATEGORY } from './lib'
-import { useAnime } from '@/lib/anime'
+import { useAnime, has } from '@/lib/anime'
 import { cn } from '@/lib/utils'
 
 const STATUS: Record<DataStatus, { label: string; dot: string; text: string; title: string }> = {
@@ -84,8 +84,8 @@ export function Sparkline({ reference = [], simulated, className }: { reference?
   const ref = useRef<HTMLDivElement>(null)
   useAnime(
     ref,
-    () => {
-      animate(svg.createDrawable('.spark-sim'), { draw: ['0 0', '0 1'], duration: 900, ease: 'inOutQuad' })
+    (scope) => {
+      if (has(scope, '.spark-sim')) animate(svg.createDrawable('.spark-sim'), { draw: ['0 0', '0 1'], duration: 900, ease: 'inOutQuad' })
     },
     [simulated.length],
   )

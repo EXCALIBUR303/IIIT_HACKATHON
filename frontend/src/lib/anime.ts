@@ -7,6 +7,11 @@ export function prefersReducedMotion() {
   return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('pref-reduced-motion')
 }
 
+/** True when `selector` matches something inside the scope's root, so an animation never targets nothing. */
+export function has(scope: Scope, selector: string) {
+  return !!(scope.root as Element | undefined)?.querySelector?.(selector)
+}
+
 /**
  * Run anime.js animations scoped to one element. Selectors inside `setup` resolve
  * within `root`, everything is reverted on unmount, and nothing runs when the

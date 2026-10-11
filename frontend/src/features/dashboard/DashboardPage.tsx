@@ -9,7 +9,7 @@ import { PILLAR_ORDER, PILLARS } from '@/components/common/pillars'
 import { ErrorState, LoadingState } from '@/components/common/states'
 import { AnimatedNumber } from '@/components/motion/AnimatedNumber'
 import { useProfile } from '@/features/onboarding/StudentGate'
-import { useAnime } from '@/lib/anime'
+import { useAnime, has } from '@/lib/anime'
 import { api } from '@/lib/api/endpoints'
 import type { MasteryLevel, Progress, Recommendation } from '@/lib/api/types'
 import { useI18n } from '@/lib/i18n'
@@ -72,8 +72,8 @@ function ContinueHero({ rec, steps }: { rec: Recommendation; steps: Step[] }) {
   const current = Math.max(0, steps.findIndex((s) => s.active))
 
   // The one drawn element on this page: a rising line behind the call to action.
-  useAnime(ref, () => {
-    animate(svg.createDrawable('.hero-line'), { draw: ['0 0', '0 1'], duration: 1600, ease: 'inOutQuart', delay: 150 })
+  useAnime(ref, (scope) => {
+    if (has(scope, '.hero-line')) animate(svg.createDrawable('.hero-line'), { draw: ['0 0', '0 1'], duration: 1600, ease: 'inOutQuart', delay: 150 })
   }, [rec.slug])
 
   return (

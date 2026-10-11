@@ -5,7 +5,7 @@ import { useRef, useState } from 'react'
 import { AnimatedNumber } from '@/components/motion/AnimatedNumber'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { useAnime } from '@/lib/anime'
+import { useAnime, has } from '@/lib/anime'
 import { api } from '@/lib/api/endpoints'
 import type { PortfolioEvent, PortfolioView, YearMood, YearSummary } from '@/lib/api/types'
 import { inrPaise } from '@/lib/format'
@@ -140,8 +140,8 @@ function Timeline({ years, round, max, selected, busy, history, onPick }: {
 
   useAnime(
     ref,
-    () => {
-      animate(svg.createDrawable('.decade-line'), { draw: ['0 0', '0 1'], duration: 900, ease: 'inOutQuad' })
+    (scope) => {
+      if (has(scope, '.decade-line')) animate(svg.createDrawable('.decade-line'), { draw: ['0 0', '0 1'], duration: 900, ease: 'inOutQuad' })
     },
     [round],
   )

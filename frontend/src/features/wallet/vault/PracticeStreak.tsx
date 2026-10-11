@@ -2,7 +2,7 @@ import { animate, stagger } from 'animejs'
 import { CalendarDays, Check, Flame, Lock, Trophy } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useRef } from 'react'
-import { useAnime } from '@/lib/anime'
+import { useAnime, has } from '@/lib/anime'
 import type { Streak } from '@/lib/api/types'
 import { SPRING } from '@/lib/motion'
 import { cn } from '@/lib/utils'
@@ -21,8 +21,8 @@ export function PracticeStreak({ streak }: { streak: Streak }) {
 
   useAnime(
     ref,
-    () => {
-      animate('.streak-cell', { opacity: { from: 0 }, scale: { from: 0.4 }, delay: stagger(9), duration: 380, ease: 'outBack(1.6)' })
+    (scope) => {
+      if (has(scope, '.streak-cell')) animate('.streak-cell', { opacity: { from: 0 }, scale: { from: 0.4 }, delay: stagger(9), duration: 380, ease: 'outBack(1.6)' })
     },
     [streak.days.length],
   )

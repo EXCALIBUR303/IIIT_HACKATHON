@@ -10,7 +10,7 @@ import { api } from '@/lib/api/endpoints'
 import { ApiError } from '@/lib/api/client'
 import type { ExplorerAnswer, ExplorerJourney, ExplorerStop } from '@/lib/api/types'
 import { useAsync } from '@/lib/useAsync'
-import { useAnime } from '@/lib/anime'
+import { useAnime, has } from '@/lib/anime'
 import { cn } from '@/lib/utils'
 import { OptionCard } from '@/features/simulations/shared'
 
@@ -56,9 +56,9 @@ function MetroMap({ stops, active, onPick, completed, total }: { stops: Explorer
   const fill = stops.length > 1 ? (Math.max(0, furthest) / (stops.length - 1)) * 100 : 0
   useAnime(
     ref,
-    () => {
-      animate('.mt-fill', { scaleX: { from: 0 }, duration: 1400, ease: 'inOutQuart', delay: 200 })
-      animate('.mt-stn', { scale: { from: 0 }, delay: stagger(80, { start: 150 }), duration: 600, ease: 'outBack(2.4)' })
+    (scope) => {
+      if (has(scope, '.mt-fill')) animate('.mt-fill', { scaleX: { from: 0 }, duration: 1400, ease: 'inOutQuart', delay: 200 })
+      if (has(scope, '.mt-stn')) animate('.mt-stn', { scale: { from: 0 }, delay: stagger(80, { start: 150 }), duration: 600, ease: 'outBack(2.4)' })
     },
     [],
   )
@@ -131,15 +131,15 @@ function StopCard({ stop, last, onAnswered, onNext }: { stop: ExplorerStop; last
   const cardRef = useRef<HTMLDivElement>(null)
   useAnime(
     cardRef,
-    () => {
-      animate('.sc-in', { opacity: { from: 0 }, y: { from: 14 }, delay: stagger(60), duration: 550, ease: 'outExpo' })
+    (scope) => {
+      if (has(scope, '.sc-in')) animate('.sc-in', { opacity: { from: 0 }, y: { from: 14 }, delay: stagger(60), duration: 550, ease: 'outExpo' })
     },
     [],
   )
   useAnime(
     cardRef,
-    () => {
-      if (result) animate('.sc-result', { opacity: { from: 0 }, scale: { from: 0.96 }, y: { from: 8 }, duration: 500, ease: 'outBack(1.6)' })
+    (scope) => {
+      if (result && has(scope, '.sc-result')) animate('.sc-result', { opacity: { from: 0 }, scale: { from: 0.96 }, y: { from: 8 }, duration: 500, ease: 'outBack(1.6)' })
     },
     [result],
   )

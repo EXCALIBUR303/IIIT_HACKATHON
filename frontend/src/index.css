@@ -206,3 +206,37 @@ html.pref-reduced-motion .lift:hover {
     linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
   background-size: 32px 32px;
 }
+
+/* Page canvas behind the dashboard content: a faint planning grid and a soft
+   emerald/indigo atmosphere near the top. Sits under all content, never scrolls sideways. */
+.dash-canvas {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  background: linear-gradient(180deg, #f9fafe 0, #f6f8fc 420px, #f6f8fc 100%);
+}
+.dash-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgb(79 70 229 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(71 85 105 / 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 55%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 55%, transparent 100%);
+}
+.dash-canvas::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 640px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 46% 60% at 28% 38%, rgb(16 185 129 / 0.1), transparent 70%),
+    radial-gradient(ellipse 46% 60% at 76% 34%, rgb(99 102 241 / 0.1), transparent 70%);
+  filter: blur(40px);
+}

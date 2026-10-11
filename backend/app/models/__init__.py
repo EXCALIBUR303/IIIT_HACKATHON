@@ -658,3 +658,43 @@ class ExplorerProgress(Base):
     )
 
     __table_args__ = (CheckConstraint("attempts >= 0", name="attempts_non_negative"),)
+
+
+class MarketLabSession(Base):
+    """One Market Lab scenario attempt (fictional money; integer paise; one active per student).
+
+    Holdings, the decision journal and per-step values live in ``state`` because they are only
+    ever read and written as a whole, under a row lock, by the Market Lab service.
+    """
+
+    __tablename__ = "market_lab_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=new_uuid)
+    student_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    scenario_key: Mapped[str] = mapped_column(String(40))
+    attempt_number: Mapped[int] = mapped_column(Integer)
+    seed: Mapped[int] = mapped_column(BigInteger)
+    step: Mapped[int] = mapped_column(Integer, default=0)
+    status: Mapped[str] = mapped_column(String(12), default="active")
+    cash_paise: Mapped[int] = mapped_column(BigInteger)
+    starting_cash_paise: Mapped[int] = mapped_column(BigInteger)
+    state: Mapped[dict[str, Any]] = mapped_column(JsonType, default=dict)
+    debrief_correct: Mapped[bool | None] = mapped_column(Boolean)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        CheckConstraint("status IN ('active', 'completed', 'abandoned')", name="status"),
+        CheckConstraint("cash_paise >= 0", name="cash_non_negative"),
+        CheckConstraint("step >= 0 AND step <= 20", name="step_range"),
+        Index("ix_market_lab_student_created", "student_id", "created_at"),
+        Index(
+            "uq_market_lab_one_active",
+            "student_id",
+            unique=True,
+            postgresql_where=text("status = 'active'"),
+        ),
+    )

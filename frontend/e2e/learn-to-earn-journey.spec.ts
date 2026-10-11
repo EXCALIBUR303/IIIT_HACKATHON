@@ -62,8 +62,11 @@ test('learn to earn: mission, reward, wallet, portfolio, market event and learni
   await page.getByRole('button', { name: 'Fast-forward to the end' }).click()
   await expect(page.getByText('The bigger picture: 1,000 possible futures')).toBeVisible()
 
-  // 7. Portfolio Quest opens; fictional money is clearly labelled.
+  // 7. Portfolio Quest opens on the Market lab; the ten-year run is the second tab.
   await page.goto('/app/portfolio')
+  await expect(page.getByRole('button', { name: 'Start market day' })).toBeVisible()
+  await expect(page.getByText('Practice money only · Not financial advice')).toBeVisible()
+  await page.getByRole('tab', { name: /ten-year run/i }).click()
   await page.getByRole('button', { name: 'Start Portfolio Quest' }).click()
   await expect(page.getByText('Practice cash')).toBeVisible()
   await expect(page.getByText('₹10,000.00').first()).toBeVisible()
@@ -87,6 +90,19 @@ test('learn to earn: mission, reward, wallet, portfolio, market event and learni
   await expect(page.getByRole('status').getByText(/the fictional market moved/)).toBeVisible()
   await expect(page.getByText(/Your practice portfolio (rose|fell|stayed)/).first()).toBeVisible()
   await expect(page.getByText('Year 1 of 10')).toBeVisible()
+
+  // 10b. Market lab: real company names, a reasoned practice buy, then a news-driven day.
+  await page.getByRole('tab', { name: /market lab/i }).click()
+  await page.getByRole('button', { name: 'Start Results day surprise' }).click()
+  await expect(page.getByRole('heading', { name: 'Portfolio value' })).toBeVisible()
+  await page.getByRole('button', { name: /^Infosys, .*Open details/ }).click()
+  await page.getByRole('radio', { name: 'Reacting to the news' }).click()
+  await page.getByRole('button', { name: 'Place practice buy' }).click()
+  await expect(page.getByText(/Bought 1 Infosys\. It is in your decision journal\./)).toBeVisible()
+  await page.getByRole('button', { name: 'Close' }).click()
+  await page.getByRole('button', { name: 'Start Day 2' }).click()
+  await expect(page.getByText(/Breaking · Day 2/)).toBeVisible()
+  await expect(page.getByText(/^Since you bought, Infosys moved/)).toBeVisible()
 
   // 11. The dashboard keeps learning, rewards and the practice portfolio apart.
   await page.goto('/app')

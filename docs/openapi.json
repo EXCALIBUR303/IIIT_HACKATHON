@@ -2204,6 +2204,358 @@
         }
       }
     },
+    "/api/v1/portfolio/market-data": {
+      "get": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "Market Data",
+        "description": "Reference closes for the watchlist (delayed real data or demo), never live trading data.",
+        "operationId": "market_data_api_v1_portfolio_market_data_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Market Data Api V1 Portfolio Market Data Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/news": {
+      "get": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "News",
+        "operationId": "news_api_v1_portfolio_news_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response News Api V1 Portfolio News Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/scenario": {
+      "get": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "Scenario",
+        "operationId": "scenario_api_v1_portfolio_scenario_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Scenario Api V1 Portfolio Scenario Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/scenario/start": {
+      "post": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "Start",
+        "operationId": "start_api_v1_portfolio_scenario_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Start Api V1 Portfolio Scenario Start Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/scenario/decisions": {
+      "post": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "Decide",
+        "operationId": "decide_api_v1_portfolio_scenario_decisions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Decide Api V1 Portfolio Scenario Decisions Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/scenario/advance": {
+      "post": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "Advance",
+        "operationId": "advance_api_v1_portfolio_scenario_advance_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdvanceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Advance Api V1 Portfolio Scenario Advance Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/scenario/finish": {
+      "post": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "Finish",
+        "operationId": "finish_api_v1_portfolio_scenario_finish_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinishIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Finish Api V1 Portfolio Scenario Finish Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/streak": {
+      "get": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "Get Streak",
+        "operationId": "get_streak_api_v1_portfolio_streak_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Streak Api V1 Portfolio Streak Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/portfolio/news/{item_id}/image": {
+      "get": {
+        "tags": [
+          "market-lab"
+        ],
+        "summary": "News Image",
+        "description": "A cached article thumbnail, served same-origin (the page never loads third-party images).",
+        "operationId": "news_image_api_v1_portfolio_news__item_id__image_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9-]{1,64}$",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tutor/ask": {
       "post": {
         "tags": [
@@ -2371,6 +2723,21 @@
           "awarded_at"
         ],
         "title": "AchievementOut"
+      },
+      "AdvanceIn": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "title": "AdvanceIn"
       },
       "AnswerIn": {
         "properties": {
@@ -2813,6 +3180,53 @@
         ],
         "title": "ConfirmIn"
       },
+      "DecideIn": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "buy",
+              "sell",
+              "hold"
+            ],
+            "title": "Action"
+          },
+          "company_key": {
+            "type": "string",
+            "maxLength": 30,
+            "title": "Company Key"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "default": 0
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 30,
+            "title": "Reason"
+          },
+          "confirm": {
+            "type": "boolean",
+            "title": "Confirm",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "action",
+          "company_key",
+          "reason"
+        ],
+        "title": "DecideIn"
+      },
       "DecisionIn": {
         "properties": {
           "type": {
@@ -2870,6 +3284,27 @@
         ],
         "title": "EducatorRegister",
         "description": "Educators join an existing organisation with a single-organisation invitation token.\n\nThere is deliberately no organisation field: the organisation comes from the invite."
+      },
+      "FinishIn": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          },
+          "answer": {
+            "type": "string",
+            "maxLength": 4,
+            "title": "Answer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "answer"
+        ],
+        "title": "FinishIn"
       },
       "HTTPValidationError": {
         "properties": {
@@ -4453,6 +4888,27 @@
           "portfolio_quest"
         ],
         "title": "StageOut"
+      },
+      "StartIn": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 8,
+            "title": "Request Id"
+          },
+          "scenario_key": {
+            "type": "string",
+            "maxLength": 40,
+            "title": "Scenario Key"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "scenario_key"
+        ],
+        "title": "StartIn"
       },
       "StudentRegister": {
         "properties": {

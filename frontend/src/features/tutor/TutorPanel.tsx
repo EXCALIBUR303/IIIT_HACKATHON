@@ -8,6 +8,7 @@ import { Sheet } from '@/components/ui/sheet'
 import { api } from '@/lib/api/endpoints'
 import type { TutorAnswer } from '@/lib/api/types'
 import { useI18n } from '@/lib/i18n'
+import { prefersReducedMotion } from '@/lib/motion'
 import { errorMessage } from '@/lib/useAsync'
 
 const OPEN_EVENT = 'rupeerise:open-tutor'
@@ -80,7 +81,7 @@ export function TutorButton() {
       {/* Enters once after the page, then only reacts to the pointer. No looping attention-grabber. */}
       <motion.button
         onClick={() => setOpen(true)}
-        initial={{ opacity: 0, y: 12, scale: 0.96 }}
+        initial={prefersReducedMotion() ? false : { opacity: 0, y: 12, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ delay: 0.6, type: 'spring', stiffness: 320, damping: 26 }}
         whileHover={{ y: -2 }}

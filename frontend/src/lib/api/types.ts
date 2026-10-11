@@ -788,3 +788,212 @@ export interface ExplorerAnswer {
   journey_complete: boolean
   rewards: RewardEntry[]
 }
+
+// --- Market Lab (Portfolio Quest) ------------------------------------------------------
+
+export type DataStatus = 'live' | 'delayed' | 'mixed' | 'demo'
+export type NewsCategory = 'Earnings' | 'Policy' | 'Sector' | 'Global' | 'Company' | 'Macro'
+export type Impact = 'Up' | 'Down' | 'Mixed' | 'Watch'
+
+export interface ReferenceQuote {
+  key: string
+  name: string
+  ticker: string
+  symbol: string
+  sector: string
+  about: string
+  risk_level: string
+  price_paise: number
+  prev_close_paise: number
+  change_paise: number
+  change_pct: number
+  history: { date: string; close_paise: number }[]
+  as_of: string
+  source: 'alpha_vantage' | 'demo'
+}
+
+export interface MarketData {
+  status: Exclude<DataStatus, 'live'>
+  provider: string
+  note: string
+  as_of: string | null
+  quotes: ReferenceQuote[]
+  disclaimer: string
+}
+
+export interface NewsItem {
+  id: string
+  title: string
+  snippet: string
+  source: string
+  url: string | null
+  image_url: string | null
+  published_at: string | null
+  category: NewsCategory
+  impact: Impact
+  why: string
+  affected: string[]
+  is_demo: boolean
+}
+
+export interface NewsFeed {
+  status: 'live' | 'demo'
+  provider: string
+  note: string
+  items: NewsItem[]
+}
+
+export interface ScenarioCard {
+  key: string
+  title: string
+  kicker: string
+  summary: string
+  skills: string[]
+  steps: number
+  unit: 'day' | 'year'
+  focus: string[]
+  attempts: number
+  completed: number
+  best_result_pct: number | null
+  understood: boolean
+  reward: number
+}
+
+export interface LabCompany {
+  key: string
+  name: string
+  ticker: string
+  sector: string
+  about: string
+  risk_level: string
+  price_paise: number
+  change_paise: number
+  change_pct: number
+  since_start_pct: number
+  history_paise: number[]
+  held: number
+  in_focus: boolean
+}
+
+export interface LabHolding {
+  key: string
+  name: string
+  sector: string
+  quantity: number
+  avg_cost_paise: number
+  price_paise: number
+  value_paise: number
+  day_change_paise: number
+  day_change_pct: number
+  pnl_paise: number
+  pnl_pct: number
+  weight_pct: number
+}
+
+export interface LabEvent {
+  step: number
+  label: string
+  category: NewsCategory
+  headline: string
+  body: string
+  why: string
+  impact: Impact
+  affected: string[]
+  after: string | null
+  is_new: boolean
+}
+
+export interface JournalEntry {
+  id: number
+  step: number
+  label: string
+  action: 'buy' | 'sell' | 'hold'
+  key: string | null
+  name: string | null
+  qty: number
+  price_paise: number
+  reason: string
+  reason_label: string
+  at: string
+  outcome: { move_pct: number; effect_paise: number; text: string; causes: string[] } | null
+}
+
+export interface LabSession {
+  id: string
+  status: 'active' | 'completed' | 'abandoned'
+  scenario: {
+    key: string
+    title: string
+    kicker: string
+    summary: string
+    lesson: string | null
+    steps: number
+    unit: 'day' | 'year'
+    labels: string[]
+    event_steps: number[]
+  }
+  step: number
+  step_label: string
+  is_last_step: boolean
+  reference: { source: DataStatus; as_of: string | null }
+  cash_paise: number
+  starting_cash_paise: number
+  invested_paise: number
+  total_paise: number
+  pnl_paise: number
+  pnl_pct: number
+  day_change_paise: number
+  day_change_pct: number
+  drawdown_pct: number
+  max_drawdown_pct: number
+  risk: { score: number; level: 'Low' | 'Moderate' | 'High'; top_weight_pct: number; note: string }
+  allocation: { label: string; pct: number }[]
+  holdings: LabHolding[]
+  companies: LabCompany[]
+  series: { step: number; label: string; total_paise: number; benchmark_paise: number }[]
+  events: LabEvent[]
+  recap: {
+    label: string
+    market_pct: number
+    portfolio_change_paise: number
+    best: { key: string; name: string; pct: number }
+    worst: { key: string; name: string; pct: number }
+    headlines: string[]
+  } | null
+  journal: JournalEntry[]
+  actions_left: number
+  max_weight_pct: number
+  debrief: {
+    prompt: string
+    options: { key: string; text: string }[]
+    answer: string | null
+    correct: boolean | null
+    correct_key: string | null
+    explanation: string | null
+    reward: number | null
+  } | null
+}
+
+export interface LabOverview {
+  access: PortfolioAccess
+  disclaimer: string
+  starting_cash_paise: number
+  max_weight_pct: number
+  reasons: { key: string; label: string }[]
+  wallet_balance: number
+  scenarios: ScenarioCard[]
+  session: LabSession | null
+}
+
+export interface Streak {
+  today: string
+  weeks: number
+  days: { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }[]
+  current: number
+  longest: number
+  active_days: number
+  today_done: boolean
+  milestones: { days: number; label: string; reached: boolean }[]
+  next_milestone: number | null
+  habits: { key: string; label: string; done: boolean }[]
+}

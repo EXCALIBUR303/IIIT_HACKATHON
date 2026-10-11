@@ -2,6 +2,9 @@ import type { ApiErrorBody } from './types'
 
 const BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? ''
 
+/** An API-served file (e.g. a proxied news thumbnail) as a URL the page can load. */
+export const apiAsset = (path: string) => `${BASE}${path}`
+
 export class ApiError extends Error {
   readonly status: number
   readonly code: string

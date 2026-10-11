@@ -26,6 +26,7 @@ AMOUNTS: dict[str, int] = {
     "reflect_correct": 10,
     "explorer_stop": 10,
     "explorer_complete": 25,
+    "market_debrief": 15,  # once per Market Lab scenario, for explaining its lesson
 }
 
 PASS_SCORE = 60

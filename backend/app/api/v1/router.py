@@ -7,6 +7,7 @@ from . import (
     content,
     educator,
     learning,
+    market,
     portfolio,
     progress,
     simulations,
@@ -27,6 +28,7 @@ for module in (
     educator,
     learning,
     portfolio,
+    market,
     tutor,
     wallet,
 ):

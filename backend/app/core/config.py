@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -45,6 +45,19 @@ class Settings(BaseSettings):
     quiz_cooldown_after_failures: int = 2  # failures before the cooldown starts
     # Directory holding private answer keys (never committed). See docs/content-privacy.md.
     private_content_dir: str = ""
+
+    # Market Lab reference data. Server-side only: these keys are never sent to the browser.
+    # Without them, clearly labelled demo prices and explainers are used.
+    alpha_vantage_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("ALPHA_VANTAGE_API_KEY", "RUPEERISE_ALPHA_VANTAGE_API_KEY"),
+    )
+    marketaux_api_token: str = Field(
+        default="",
+        validation_alias=AliasChoices("MARKETAUX_API_TOKEN", "RUPEERISE_MARKETAUX_API_TOKEN"),
+    )
+    market_data_ttl_minutes: int = 720  # Alpha Vantage free tier: ~25 calls/day, 9 per refresh
+    news_ttl_minutes: int = 45  # Marketaux free tier: ~100 calls/day, 2 per refresh
 
     # Portfolio Quest abuse control: trades per simulated year.
     portfolio_max_actions_per_round: int = 40  # buys, sells and transfers in one fictional year

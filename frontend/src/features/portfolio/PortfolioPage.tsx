@@ -1,5 +1,6 @@
 import { animate, svg } from 'animejs'
-import { ArrowRight, CalendarClock, LineChart as LineChartIcon, Lock, RotateCcw, Send } from 'lucide-react'
+import { ArrowRight, CalendarClock, CandlestickChart, LineChart as LineChartIcon, Lock, RotateCcw, Send } from 'lucide-react'
+import { Tabs } from 'radix-ui'
 import { useEffect, useRef, useState } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { DomainChip } from '@/components/common/rewards'
@@ -17,6 +18,8 @@ import { useAsync } from '@/lib/useAsync'
 import { cn } from '@/lib/utils'
 import { useAnime, useFlick } from '@/lib/anime'
 import { LockedJourney } from './LockedJourney'
+import { MarketLab } from './market/MarketLab'
+import { SegmentedTabs } from '@/components/motion/SegmentedTabs'
 
 const newRequestId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID().replace(/-/g, '') : `${Date.now()}${Math.random().toString(16).slice(2)}`.padEnd(16, '0')
@@ -55,6 +58,7 @@ export default function PortfolioPage() {
   const [event, setEvent] = useState<PortfolioEvent | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [tab, setTab] = useState('lab')
 
   async function run(action: () => Promise<PortfolioView>) {
     setBusy(true)
@@ -77,13 +81,30 @@ export default function PortfolioPage() {
       <PageHeader
         eyebrow="Fictional portfolio"
         title="Portfolio Quest"
-        description="Practise holding, buying and selling with pretend money while fictional markets move. It teaches judgement. It does not predict or recommend anything real."
+        description="Practise buying, selling and holding with pretend money while simulated markets react to news. It teaches judgement. It does not predict or recommend anything real."
         actions={<DomainChip domain="portfolio" />}
       />
       {state.loading && !current && <LoadingState rows={3} />}
       {state.error && !current && <ErrorState message={state.error.message} onRetry={state.reload} />}
-      {current && (
-        <PortfolioBody view={current} event={event} busy={busy} error={error} run={run} clearError={() => setError(null)} />
+      {current && !current.access.open && <LockedJourney view={current} />}
+      {current?.access.open && (
+        <Tabs.Root value={tab} onValueChange={setTab}>
+          <SegmentedTabs
+            id="pq-mode"
+            value={tab}
+            className="mb-6"
+            segments={[
+              { value: 'lab', label: 'Market lab', note: 'Real company names, news-driven days', icon: CandlestickChart },
+              { value: 'run', label: 'Ten-year run', note: 'Fictional baskets over a decade', icon: CalendarClock },
+            ]}
+          />
+          <Tabs.Content value="lab" className="outline-none">
+            <MarketLab />
+          </Tabs.Content>
+          <Tabs.Content value="run" className="outline-none">
+            <PortfolioBody view={current} event={event} busy={busy} error={error} run={run} clearError={() => setError(null)} />
+          </Tabs.Content>
+        </Tabs.Root>
       )}
     </div>
   )
@@ -98,7 +119,6 @@ function PortfolioBody({ view, event, busy, error, run, clearError }: {
   clearError: () => void
 }) {
   const p = view.portfolio
-  if (!view.access.open) return <LockedJourney view={view} />
   if (!p) {
     return (
       <Card className="p-6 sm:p-8">

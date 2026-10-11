@@ -40,6 +40,8 @@ services:
       # that proxy overwrites X-Forwarded-For, so its value can be trusted for rate limits.
       FORWARDED_ALLOW_IPS: "*"
       RUPEERISE_ANTHROPIC_API_KEY: ${RUPEERISE_ANTHROPIC_API_KEY:-}
+      ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
+      MARKETAUX_API_TOKEN: ${MARKETAUX_API_TOKEN:-}
     volumes:
       - ${PRIVATE_CONTENT_HOST_DIR:-./backend/private_content}:/run/private-content:ro
     depends_on:

@@ -27,13 +27,15 @@ If another proxy sits in front of the bundled nginx, make nginx use the real cli
 | `RUPEERISE_PRIVATE_CONTENT_DIR` | Folder containing `answer_keys.json` (see [content-privacy.md](content-privacy.md)). Required |
 | `FORWARDED_ALLOW_IPS` | The proxy addresses uvicorn may trust for `X-Forwarded-For` (compose uses `*` only because the API has no published port) |
 | `RUPEERISE_ANTHROPIC_API_KEY` | Optional; empty = deterministic tutor |
+| `ALPHA_VANTAGE_API_KEY` | Optional. Delayed end-of-day BSE closes for the Market Lab watchlist. Free tier ≈ 25 calls/day: one refresh is 9 calls, cached for `RUPEERISE_MARKET_DATA_TTL_MINUTES` (default 720). Empty or failing = labelled demo prices |
+| `MARKETAUX_API_TOKEN` | Optional. India market headlines with thumbnails. Free tier ≈ 100 calls/day: one refresh is 2 calls, cached for `RUPEERISE_NEWS_TTL_MINUTES` (default 45). Empty or failing = labelled demo explainers |
 
 Optional: `RUPEERISE_ENABLE_API_DOCS` (ignored in production), `RUPEERISE_RL_*` limits, `RUPEERISE_REFRESH_DAYS`, `RUPEERISE_QUIZ_COOLDOWN_SECONDS`, `RUPEERISE_PORTFOLIO_MAX_ACTIONS_PER_ROUND`. `RUPEERISE_COOKIE_SECURE=false` exists only for localhost HTTP and is rejected in production.
 
 ## First deployment (or upgrading from v2)
 
 1. Back up the database.
-2. Deploy the new images. The container start command applies migrations `0007` (security core), `0008` (learning integrity) and `0009` (portfolio snapshots/indexes), all additive.
+2. Deploy the new images. The container start command applies migrations `0007` (security core), `0008` (learning integrity) and `0009` (portfolio snapshots/indexes) and `0010` (Market Lab sessions), all additive.
 3. **Everyone must sign in again** once: old bearer tokens no longer exist.
 4. Install the private answer-key bundle and set `RUPEERISE_PRIVATE_CONTENT_DIR`.
 5. Create organisations and the first invitations as an operator:

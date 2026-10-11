@@ -27,6 +27,11 @@ import type {
   ExplorerJourney,
   LearningStatus,
   PortfolioView,
+  LabOverview,
+  LabSession,
+  MarketData,
+  NewsFeed,
+  Streak,
   ReflectionPrompt,
   ReflectionResult,
   TradeQuote,
@@ -47,6 +52,18 @@ export const api = {
     reset: (request_id: string) => http.post<PortfolioView>('/portfolio/reset', { request_id, confirm: true }),
     transfer: (request_id: string, amount: number) =>
       http.post<PortfolioView>('/portfolio/transfer', { request_id, amount, confirm: true }),
+  },
+  market: {
+    data: () => http.get<MarketData>('/portfolio/market-data'),
+    news: () => http.get<NewsFeed>('/portfolio/news'),
+    overview: () => http.get<LabOverview>('/portfolio/scenario'),
+    start: (request_id: string, scenario_key: string) =>
+      http.post<LabOverview>('/portfolio/scenario/start', { request_id, scenario_key }),
+    decide: (body: { request_id: string; action: 'buy' | 'sell' | 'hold'; company_key: string; quantity: number; reason: string }) =>
+      http.post<LabSession>('/portfolio/scenario/decisions', { ...body, confirm: true }),
+    advance: (request_id: string) => http.post<LabSession>('/portfolio/scenario/advance', { request_id }),
+    finish: (request_id: string, answer: string) => http.post<LabSession>('/portfolio/scenario/finish', { request_id, answer }),
+    streak: () => http.get<Streak>('/portfolio/streak'),
   },
   learning: {
     status: () => http.get<LearningStatus>('/learning/status'),

@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mockFetch, renderWithProviders } from '@/test/utils'
@@ -32,6 +32,66 @@ const portfolio = {
   gain_paise: 0, holdings: [], history: [{ round: 0, total_paise: 1000000 }],
 }
 
+const scenarios = [
+  { key: 'earnings_surprise', title: 'Results day surprise', kicker: 'Earnings', summary: 'Infosys reports results.', skills: ['Earnings'], steps: 6, unit: 'day', focus: ['Infosys'], attempts: 0, completed: 0, best_result_pct: null, understood: false, reward: 15 },
+  { key: 'rbi_policy', title: 'RBI policy day', kicker: 'Policy', summary: 'Rates.', skills: ['Interest rates'], steps: 6, unit: 'day', focus: ['HDFC Bank'], attempts: 1, completed: 1, best_result_pct: 2.5, understood: true, reward: 15 },
+]
+const quote = (key: string, name: string, price: number) => ({
+  key, name, ticker: key.toUpperCase(), symbol: `${key.toUpperCase()}.BSE`, sector: 'IT services', about: 'About.', risk_level: 'medium',
+  price_paise: price, prev_close_paise: price, change_paise: 0, change_pct: 0, history: [{ date: '2026-10-09', close_paise: price - 500 }, { date: '2026-10-10', close_paise: price }], as_of: '2026-10-10', source: 'demo',
+})
+const marketData = { status: 'demo', provider: 'Demo data', note: 'Demo reference prices.', as_of: null, disclaimer: 'Fictional.', quotes: [quote('infosys', 'Infosys', 150000), quote('tcs', 'Tata Consultancy Services', 305000)] }
+const newsFeed = {
+  status: 'demo', provider: 'Demo news', note: 'Demo explainers, not live news.',
+  items: [
+    { id: 'demo-0', title: 'Explainer: what an RBI rate hold means for banks', snippet: 's', source: 'RupeeRise demo desk', url: null, image_url: null, published_at: new Date().toISOString(), category: 'Policy', impact: 'Mixed', why: 'Borrowing costs matter most for banks.', affected: [], is_demo: true },
+    { id: 'demo-1', title: 'How TCS and Infosys are judged against estimates', snippet: 's', source: 'RupeeRise demo desk', url: null, image_url: null, published_at: new Date().toISOString(), category: 'Earnings', impact: 'Watch', why: 'The surprise moves the price.', affected: ['infosys'], is_demo: true },
+  ],
+}
+const streak = {
+  today: '2026-10-11', weeks: 12, current: 3, longest: 5, active_days: 9, today_done: true, next_milestone: 7,
+  days: Array.from({ length: 84 }, (_, i) => ({ date: `d${i}`, count: i % 5, level: (i % 5) as 0 | 1 | 2 | 3 | 4 })),
+  milestones: [7, 14, 30, 47, 84].map((d) => ({ days: d, label: `${d} days`, reached: false })),
+  habits: [{ key: 'decide', label: 'Make one Market Lab decision', done: true }],
+}
+const company = (key: string, name: string, hist: number[], held = 0) => ({
+  key, name, ticker: key.toUpperCase(), sector: 'IT services', about: 'About.', risk_level: 'medium', price_paise: hist[hist.length - 1],
+  change_paise: 0, change_pct: 1.2, since_start_pct: 1.2, history_paise: hist, held, in_focus: key === 'infosys',
+})
+const session = {
+  id: 's1', status: 'active',
+  scenario: { key: 'earnings_surprise', title: 'Results day surprise', kicker: 'Earnings', summary: 'Infosys reports results.', lesson: null, steps: 6, unit: 'day', labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6'], event_steps: [1, 2] },
+  step: 1, step_label: 'Day 2', is_last_step: false, reference: { source: 'demo', as_of: null },
+  cash_paise: 9250000, starting_cash_paise: 10000000, invested_paise: 760000, total_paise: 10010000, pnl_paise: 10000, pnl_pct: 0.1,
+  day_change_paise: 10000, day_change_pct: 0.1, drawdown_pct: 0, max_drawdown_pct: 0,
+  risk: { score: 12, level: 'Low', top_weight_pct: 7.6, note: 'A few holdings.' },
+  allocation: [{ label: 'IT services', pct: 7.6 }, { label: 'Cash', pct: 92.4 }],
+  holdings: [{ key: 'infosys', name: 'Infosys', sector: 'IT services', quantity: 5, avg_cost_paise: 150000, price_paise: 152000, value_paise: 760000, day_change_paise: 10000, day_change_pct: 1.33, pnl_paise: 10000, pnl_pct: 1.33, weight_pct: 7.6 }],
+  companies: [company('infosys', 'Infosys', [150000, 152000], 5), company('tcs', 'Tata Consultancy Services', [305000, 306000])],
+  series: [{ step: 0, label: 'Day 1', total_paise: 10000000, benchmark_paise: 10000000 }, { step: 1, label: 'Day 2', total_paise: 10010000, benchmark_paise: 10004000 }],
+  events: [{ step: 1, label: 'Day 2', category: 'Earnings', headline: 'Infosys results due after market hours tomorrow', body: 'b', why: 'The surprise moves the price.', impact: 'Watch', affected: ['infosys', 'tcs'], after: null, is_new: true }],
+  recap: { label: 'Day 2', market_pct: 0.4, portfolio_change_paise: 10000, best: { key: 'infosys', name: 'Infosys', pct: 1.33 }, worst: { key: 'tcs', name: 'Tata Consultancy Services', pct: 0.33 }, headlines: [] },
+  journal: [{ id: 1, step: 0, label: 'Day 1', action: 'buy', key: 'infosys', name: 'Infosys', qty: 5, price_paise: 150000, reason: 'news', reason_label: 'Reacting to the news', at: '2026-10-11T05:00:00Z', outcome: { move_pct: 1.33, effect_paise: 10000, text: 'Since you bought, Infosys moved +1.3%.', causes: ['Infosys results due after market hours tomorrow'] } }],
+  actions_left: 12, max_weight_pct: 25, debrief: null,
+}
+const overview = (withSession: boolean) => ({
+  access: access(true), disclaimer: 'Fictional portfolio with practice money.', starting_cash_paise: 10000000, max_weight_pct: 25,
+  reasons: [{ key: 'news', label: 'Reacting to the news' }, { key: 'long_term', label: 'Thinking long term' }],
+  wallet_balance: 75, scenarios, session: withSession ? session : null,
+})
+
+/** Market Lab endpoints answer with lab data; everything else falls through to ``rest``. */
+function lab(withSession: boolean, rest: (url: string, init?: RequestInit) => { status?: number; body?: unknown }) {
+  return (url: string, init?: RequestInit) => {
+    if (url.startsWith('/portfolio/scenario/decisions')) return { body: { ...session, journal: [{ ...session.journal[0], id: 2, action: 'buy', qty: 2, key: 'tcs', name: 'Tata Consultancy Services', reason_label: 'Thinking long term', outcome: null }, ...session.journal] } }
+    if (url.startsWith('/portfolio/scenario')) return { body: overview(withSession) }
+    if (url.startsWith('/portfolio/market-data')) return { body: marketData }
+    if (url.startsWith('/portfolio/news')) return { body: newsFeed }
+    if (url.startsWith('/portfolio/streak')) return { body: streak }
+    return rest(url, init)
+  }
+}
+
 describe('PortfolioPage', () => {
   it('explains why it is locked and links back to learning', async () => {
     mockFetch((url) =>
@@ -48,21 +108,26 @@ describe('PortfolioPage', () => {
     expect(screen.queryByRole('button', { name: /buy|sell|start portfolio quest/i })).not.toBeInTheDocument()
   })
 
-  it('invites an unlocked student to start with practice cash', async () => {
-    mockFetch(() => ({ body: { ...base, access: access(true), portfolio: null, instruments } }))
+  it('invites an unlocked student to start the ten-year run with practice cash', async () => {
+    const user = userEvent.setup()
+    mockFetch(lab(false, () => ({ body: { ...base, access: access(true), portfolio: null, instruments } })))
     renderWithProviders(<PortfolioPage />)
+    await user.click(await screen.findByRole('tab', { name: /ten-year run/i }))
     expect(await screen.findByText(/₹10,000 of practice cash/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /start portfolio quest/i })).toBeInTheDocument()
   })
 
   it('shows labelled readouts, locks single-company instruments and gives a quote before buying', async () => {
     const user = userEvent.setup()
-    mockFetch((url) => {
-      if (url.startsWith('/portfolio/quote'))
-        return { body: { instrument_key: 'steady_deposit', label: 'Steady Deposit', side: 'buy', quantity: 1, price_paise: 10000, total_paise: 10000, cash_after_paise: 990000, warnings: [], disclaimer: 'x' } }
-      return { body: { ...base, access: access(true), portfolio, instruments } }
-    })
+    mockFetch(
+      lab(false, (url) => {
+        if (url.startsWith('/portfolio/quote'))
+          return { body: { instrument_key: 'steady_deposit', label: 'Steady Deposit', side: 'buy', quantity: 1, price_paise: 10000, total_paise: 10000, cash_after_paise: 990000, warnings: [], disclaimer: 'x' } }
+        return { body: { ...base, access: access(true), portfolio, instruments } }
+      }),
+    )
     renderWithProviders(<PortfolioPage />)
+    await user.click(await screen.findByRole('tab', { name: /ten-year run/i }))
     expect(await screen.findByText('Practice cash')).toBeInTheDocument()
     expect(screen.getAllByText('₹10,000.00').length).toBeGreaterThan(0)
     expect(screen.getByText(/show you understand diversification/i)).toBeInTheDocument()
@@ -73,8 +138,57 @@ describe('PortfolioPage', () => {
   })
 
   it('marks losses with a sign and arrow, not colour alone', async () => {
-    mockFetch(() => ({ body: { ...base, access: access(true), portfolio: { ...portfolio, gain_paise: -28000, total_paise: 972000 }, instruments } }))
+    const user = userEvent.setup()
+    mockFetch(lab(false, () => ({ body: { ...base, access: access(true), portfolio: { ...portfolio, gain_paise: -28000, total_paise: 972000 }, instruments } })))
     renderWithProviders(<PortfolioPage />)
+    await user.click(await screen.findByRole('tab', { name: /ten-year run/i }))
     expect(await screen.findByText('▼ −₹280.00')).toBeInTheDocument()
+  })
+
+  it('opens on the market lab with scenarios, labelled demo data and no session yet', async () => {
+    mockFetch(lab(false, () => ({ body: { ...base, access: access(true), portfolio: null, instruments } })))
+    renderWithProviders(<PortfolioPage />)
+    expect(await screen.findByRole('button', { name: 'Start market day' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /start results day surprise/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /replay rbi policy day/i })).toBeInTheDocument()
+    expect(await screen.findByText('Reference prices:')).toBeInTheDocument()
+    expect(screen.getAllByText('Demo').length).toBeGreaterThan(0)
+    expect(screen.getByText(/practice money only · not financial advice/i)).toBeInTheDocument()
+    expect(await screen.findByText(/day.? in a row/i)).toBeInTheDocument()
+  })
+
+  it('shows the live scenario: value, breaking news, journal outcome and a filterable feed', async () => {
+    const user = userEvent.setup()
+    mockFetch(lab(true, () => ({ body: { ...base, access: access(true), portfolio: null, instruments } })))
+    renderWithProviders(<PortfolioPage />)
+    expect(await screen.findByRole('heading', { name: 'Portfolio value' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /start day 3/i })).toBeInTheDocument()
+    expect(screen.getByText(/breaking · day 2/i)).toBeInTheDocument()
+    expect(screen.getByText('Since you bought, Infosys moved +1.3%.')).toBeInTheDocument()
+    expect(screen.getByRole('meter', { name: /risk low/i })).toBeInTheDocument()
+
+    // Category filter is real: Policy hides the earnings items.
+    await user.click(await screen.findByRole('button', { name: 'Policy' }))
+    await waitFor(() => expect(screen.queryByText('How TCS and Infosys are judged against estimates')).not.toBeInTheDocument())
+    expect(screen.getByText('Explainer: what an RBI rate hold means for banks')).toBeInTheDocument()
+    const why = screen.getByRole('button', { name: /why this matters/i })
+    await user.click(why)
+    expect(why).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText('Borrowing costs matter most for banks.')).toBeInTheDocument()
+  })
+
+  it('needs a reason before a practice order and logs it in the journal', async () => {
+    const user = userEvent.setup()
+    const fetchMock = mockFetch(lab(true, () => ({ body: { ...base, access: access(true), portfolio: null, instruments } })))
+    renderWithProviders(<PortfolioPage />)
+    await user.click(await screen.findByRole('button', { name: /tata consultancy services, .*open details/i }))
+    const place = await screen.findByRole('button', { name: 'Place practice buy' })
+    expect(place).toBeDisabled()
+    await user.click(screen.getByRole('radio', { name: /thinking long term/i }))
+    expect(place).toBeEnabled()
+    await user.click(place)
+    expect(await screen.findByText(/bought 1 tata consultancy services/i)).toBeInTheDocument()
+    const call = fetchMock.mock.calls.find(([u]) => String(u).includes('/portfolio/scenario/decisions'))
+    expect(JSON.parse(String(call?.[1]?.body))).toMatchObject({ action: 'buy', company_key: 'tcs', quantity: 1, reason: 'long_term', confirm: true })
   })
 })

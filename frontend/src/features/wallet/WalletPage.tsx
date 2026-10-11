@@ -14,6 +14,9 @@ import { useAsync } from '@/lib/useAsync'
 const SOURCE_LABEL: Record<string, string> = {
   simulation: 'Mission',
   assessment: 'Check or quiz',
+  reflection: 'Reflection',
+  explorer: 'Banking Explorer',
+  market_lab: 'Market lab debrief',
 }
 
 export default function WalletPage() {

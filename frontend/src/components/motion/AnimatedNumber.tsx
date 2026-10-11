@@ -1,11 +1,12 @@
-import { animate } from 'motion/react'
+import { animate } from 'animejs'
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { prefersReducedMotion } from '@/lib/motion'
 
 /**
- * A number that counts from what is currently shown to the new value. Screen readers get only
- * the final value; the counting text is hidden from them. The counting span is written by this
- * component alone (React renders it empty), so React never fights over its text node.
+ * A number that counts from what is currently shown to the new value, driven by anime.js.
+ * Screen readers get only the final value; the counting text is hidden from them. The counting
+ * span is written by this component alone (React renders it empty), so React never fights over
+ * its text node, and reduced motion jumps straight to the final value.
  */
 export function AnimatedNumber({ value, format = (n) => String(Math.round(n)), duration = 0.8, className }: {
   value: number
@@ -39,8 +40,17 @@ export function AnimatedNumber({ value, format = (n) => String(Math.round(n)), d
       write(value)
       return
     }
-    const controls = animate(start, value, { duration, ease: [0.22, 1, 0.36, 1], onUpdate: write, onComplete: () => write(value) })
-    return () => controls.stop()
+    const state = { v: start }
+    const anim = animate(state, {
+      v: value,
+      duration: duration * 1000,
+      ease: 'outExpo',
+      onUpdate: () => write(state.v),
+      onComplete: () => write(value),
+    })
+    return () => {
+      anim.cancel()
+    }
   }, [value, duration])
 
   return (

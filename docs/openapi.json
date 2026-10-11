@@ -4441,6 +4441,29 @@
         ],
         "title": "RewardEntryOut"
       },
+      "RewardRuleOut": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "amount": {
+            "type": "integer",
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "amount"
+        ],
+        "title": "RewardRuleOut"
+      },
       "SavingsProjectionIn": {
         "properties": {
           "monthly_deposit": {
@@ -5224,6 +5247,13 @@
             "type": "array",
             "title": "History"
           },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/RewardRuleOut"
+            },
+            "type": "array",
+            "title": "Rules"
+          },
           "notice": {
             "type": "string",
             "title": "Notice"
@@ -5234,6 +5264,7 @@
           "balance",
           "total_earned",
           "history",
+          "rules",
           "notice"
         ],
         "title": "WalletOut"

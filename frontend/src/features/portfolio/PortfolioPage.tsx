@@ -1,8 +1,7 @@
 import { animate, svg } from 'animejs'
-import { ArrowRight, CalendarClock, CandlestickChart, LineChart as LineChartIcon, Lock, RotateCcw, Send } from 'lucide-react'
+import { CalendarClock, CandlestickChart, LineChart as LineChartIcon, Lock, RotateCcw, Send } from 'lucide-react'
 import { Tabs } from 'radix-ui'
 import { useEffect, useRef, useState } from 'react'
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { DomainChip } from '@/components/common/rewards'
 import { ErrorState, LoadingState, PageHeader } from '@/components/common/states'
 import { Alert } from '@/components/ui/alert'
@@ -16,7 +15,9 @@ import type { PortfolioEvent, PortfolioInstrument, PortfolioView, TradeQuote } f
 import { inr, inrPaise, relativeDate, signedPaise } from '@/lib/format'
 import { useAsync } from '@/lib/useAsync'
 import { cn } from '@/lib/utils'
-import { useAnime, useFlick } from '@/lib/anime'
+import { useAnime } from '@/lib/anime'
+import { AnimatedNumber } from '@/components/motion/AnimatedNumber'
+import { DecadeSimulator } from './DecadeSimulator'
 import { LockedJourney } from './LockedJourney'
 import { MarketLab } from './market/MarketLab'
 import { SegmentedTabs } from '@/components/motion/SegmentedTabs'
@@ -40,12 +41,15 @@ const KIND_LABEL: Record<string, string> = {
   reset: 'Practice reset',
 }
 
-function Readout({ label, value, tone, note }: { label: string; value: string; tone?: 'gain' | 'loss'; note?: string }) {
-  const ref = useFlick<HTMLParagraphElement>(value)
+function Readout({ label, paise, signed, note }: { label: string; paise: number; signed?: boolean; note?: string }) {
+  const tone = signed ? (paise > 0 ? 'gain' : paise < 0 ? 'loss' : undefined) : undefined
   return (
-    <div className="rounded-xl border border-line bg-surface p-4">
+    <div className="rounded-2xl border border-line bg-surface p-4 shadow-[var(--shadow-card)]">
       <p className="text-[0.68rem] font-bold uppercase tracking-wider text-muted">{label}</p>
-      <p ref={ref} className={cn('mt-1 text-2xl font-extrabold tabular', tone === 'gain' && 'text-accent-ink', tone === 'loss' && 'text-danger-ink')}>{value}</p>
+      <p className={cn('mt-1 text-2xl font-extrabold tabular', tone === 'gain' && 'text-accent-ink', tone === 'loss' && 'text-danger-ink')}>
+        {signed && paise !== 0 && <span aria-hidden>{paise > 0 ? '▲ +' : '▼ −'}</span>}
+        <AnimatedNumber value={signed ? Math.abs(paise) : paise} format={(n) => inrPaise(Math.round(n))} />
+      </p>
       {note && <p className="mt-0.5 text-xs text-muted">{note}</p>}
     </div>
   )
@@ -82,7 +86,14 @@ export default function PortfolioPage() {
         eyebrow="Fictional portfolio"
         title="Portfolio Quest"
         description="Practise buying, selling and holding with pretend money while simulated markets react to news. It teaches judgement. It does not predict or recommend anything real."
-        actions={<DomainChip domain="portfolio" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <DomainChip domain="portfolio" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 text-xs font-semibold text-ink-soft">
+              <span className="size-1.5 rounded-full bg-investing" aria-hidden /> Simulated learning
+            </span>
+          </div>
+        }
       />
       {state.loading && !current && <LoadingState rows={3} />}
       {state.error && !current && <ErrorState message={state.error.message} onRetry={state.reload} />}
@@ -93,9 +104,10 @@ export default function PortfolioPage() {
             id="pq-mode"
             value={tab}
             className="mb-6"
+            compact
             segments={[
-              { value: 'lab', label: 'Market lab', note: 'Real company names, news-driven days', icon: CandlestickChart },
-              { value: 'run', label: 'Ten-year run', note: 'Fictional baskets over a decade', icon: CalendarClock },
+              { value: 'lab', label: 'Market lab', icon: CandlestickChart },
+              { value: 'run', label: 'Ten-year run', icon: CalendarClock },
             ]}
           />
           <Tabs.Content value="lab" className="outline-none">
@@ -138,19 +150,13 @@ function PortfolioBody({ view, event, busy, error, run, clearError }: {
   return (
     <div className="space-y-6">
       <section aria-label="Portfolio summary" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Readout label="Practice cash" value={inrPaise(p.cash_paise)} />
-        <Readout label="Invested value" value={inrPaise(p.invested_paise)} />
-        <Readout label="Total value" value={inrPaise(p.total_paise)} note={`Put in so far: ${inrPaise(p.contributed_paise)}`} />
-        <Readout
-          label="Simulated gain / loss"
-          value={signedPaise(gain)}
-          tone={gain > 0 ? 'gain' : gain < 0 ? 'loss' : undefined}
-          note="Practice result only"
-        />
+        <Readout label="Practice cash" paise={p.cash_paise} />
+        <Readout label="Invested value" paise={p.invested_paise} />
+        <Readout label="Total value" paise={p.total_paise} note={`Put in so far: ${inrPaise(p.contributed_paise)}`} />
+        <Readout label="Simulated gain / loss" paise={gain} signed note="Practice result only" />
       </section>
 
-      <YearPanel view={view} event={event} busy={busy} error={error} run={run} />
-      <ValueChart view={view} />
+      <DecadeSimulator view={view} event={event} busy={busy} error={error} run={run} />
       <Market view={view} run={run} />
       <Holdings view={view} run={run} />
       <TransferPanel view={view} run={run} />
@@ -158,108 +164,6 @@ function PortfolioBody({ view, event, busy, error, run, clearError }: {
       <ResetPanel run={run} busy={busy} clearError={clearError} />
       <p className="text-xs text-muted">{view.disclaimer}</p>
     </div>
-  )
-}
-
-function YearPanel({ view, event, busy, error, run }: {
-  view: PortfolioView
-  event: PortfolioEvent | null
-  busy: boolean
-  error: string | null
-  run: (a: () => Promise<PortfolioView>) => Promise<PortfolioView | null>
-}) {
-  const p = view.portfolio!
-  const [open, setOpen] = useState(false)
-  const rid = useRef(newRequestId())
-  return (
-    <Card className="p-5 sm:p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-muted">Run {p.run_number}</p>
-          <h2 className="flex items-center gap-2 text-xl font-extrabold">
-            <CalendarClock className="size-5 text-investing" aria-hidden /> Year {p.round} of {p.max_round}
-          </h2>
-          <ol className="mt-3 flex gap-1" aria-label={`Year ${p.round} of ${p.max_round}`}>
-            {Array.from({ length: p.max_round }, (_, k) => (
-              <li
-                key={k}
-                className={cn(
-                  'h-2 w-6 rounded-full transition-colors duration-500',
-                  k < p.round ? 'bg-investing' : k === p.round ? 'animate-pulse bg-investing/40' : 'bg-line',
-                )}
-              />
-            ))}
-          </ol>
-          <p className="mt-2 text-sm text-ink-soft">
-            {p.complete ? 'This run is complete. Reset to try a different strategy.' : 'Trade now at today’s prices, then let a year pass to see what the fictional market does.'}
-          </p>
-        </div>
-        {!p.complete && (
-          <Button onClick={() => setOpen(true)} disabled={busy}>
-            Let a year pass <ArrowRight />
-          </Button>
-        )}
-      </div>
-      <ConfirmDialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Move to the next year?"
-        description="Prices will change. You cannot go back, but you can reset the run to practise again."
-        confirmLabel="Yes, next year"
-        busy={busy}
-        error={error}
-        onConfirm={async () => {
-          const out = await run(() => api.portfolio.advance(rid.current))
-          if (out) {
-            rid.current = newRequestId()
-            setOpen(false)
-          }
-        }}
-      />
-      {event && (
-        <div key={event.headline} data-reveal="" className="mt-5 rounded-xl border border-investing/30 border-l-4 border-l-investing bg-investing-soft p-4" role="status">
-          <p className="font-bold text-ink">{event.headline}</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-soft">
-            {event.reflection.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </Card>
-  )
-}
-
-function ValueChart({ view }: { view: PortfolioView }) {
-  const history = view.portfolio!.history
-  if (history.length < 2) return null
-  const data = history.map((h) => ({ year: `Y${h.round}`, value: h.total_paise / 100 }))
-  return (
-    <Card className="p-5 sm:p-6">
-      <h2 className="text-lg font-extrabold">Total value by year</h2>
-      <div className="mt-3 h-56" role="img" aria-label={`Total portfolio value by year: ${data.map((d) => `${d.year} ${inr(d.value)}`).join(', ')}`}>
-        <ResponsiveContainer>
-          <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke="var(--color-line)" vertical={false} />
-            <XAxis dataKey="year" tickLine={false} axisLine={false} fontSize={12} />
-            <YAxis tickFormatter={(v: number) => inr(v)} width={64} tickLine={false} axisLine={false} fontSize={12} />
-            <Tooltip formatter={(v) => inr(Number(v))} />
-            <Line type="monotone" dataKey="value" stroke="var(--color-investing)" strokeWidth={2.5} dot />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <table className="sr-only">
-        <caption>Total value by year</caption>
-        <tbody>
-          {data.map((d) => (
-            <tr key={d.year}>
-              <th scope="row">{d.year}</th>
-              <td>{inr(d.value)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </Card>
   )
 }
 
@@ -292,21 +196,29 @@ function Sparkline({ points, up }: { points: number[]; up: boolean }) {
 
 function Market({ view, run }: { view: PortfolioView; run: (a: () => Promise<PortfolioView>) => Promise<PortfolioView | null> }) {
   const [target, setTarget] = useState<{ instrument: PortfolioInstrument; side: 'buy' | 'sell' } | null>(null)
+  const p = view.portfolio!
+  const held = Object.fromEntries(p.holdings.map((h) => [h.instrument_key, h]))
   return (
     <section aria-labelledby="market-title">
-      <h2 id="market-title" className="mb-3 text-lg font-extrabold">
-        Fictional market
-      </h2>
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="market-title" className="text-lg font-extrabold">
+          Fictional market
+        </h2>
+        <p className="text-xs text-muted">Prices are simulated and start at ₹100.00. {p.complete ? 'This run has finished, so trading is closed.' : ''}</p>
+      </div>
       <div className="grid gap-3 sm:grid-cols-2">
         {view.instruments.map((i) => {
           const hist = i.price_history_paise ?? [i.price_paise]
           const change = hist.length > 1 ? hist[hist.length - 1] - hist[0] : 0
+          const h = held[i.key]
+          const cantAfford = p.cash_paise < i.price_paise
+          const buyOff = p.complete || cantAfford
           return (
-            <Card key={i.key} className={cn('flex flex-col p-4 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-raised)]', i.locked && 'border-dashed')}>
+            <Card key={i.key} className={cn('lift flex flex-col p-4', i.locked && 'border-dashed')}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-bold">{i.label}</h3>
-                  <p className="text-xs font-semibold text-investing">{RISK[i.risk_level]}</p>
+                  <p className="mt-0.5 text-xs font-semibold text-investing">{RISK[i.risk_level]}</p>
                 </div>
                 <div className="text-right">
                   <p className="tabular text-lg font-extrabold">{inrPaise(i.price_paise)}</p>
@@ -319,14 +231,28 @@ function Market({ view, run }: { view: PortfolioView; run: (a: () => Promise<Por
                 <Sparkline points={hist} up={change >= 0} />
               </div>
               <p className="mt-2 flex-1 text-sm text-ink-soft">{i.description}</p>
+              {h && (
+                <p className="mt-3 flex items-center justify-between gap-2 rounded-xl bg-investing-soft px-3 py-2 text-xs font-semibold text-investing">
+                  <span>You hold {h.quantity} units</span>
+                  <span className="tabular">{h.weight_pct}% of invested</span>
+                </p>
+              )}
               {i.locked ? (
                 <p className="mt-3 flex items-start gap-2 text-xs text-muted">
                   <Lock className="mt-0.5 size-3.5 shrink-0" aria-hidden /> {i.lock_reason}
                 </p>
               ) : (
-                <Button size="sm" variant="secondary" className="mt-3 self-start" onClick={() => setTarget({ instrument: i, side: 'buy' })} disabled={view.portfolio!.cash_paise < i.price_paise}>
-                  Buy {i.label}
-                </Button>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <Button size="sm" variant="secondary" className="min-h-11" onClick={() => setTarget({ instrument: i, side: 'buy' })} disabled={buyOff} title={cantAfford ? 'Not enough practice cash for one unit' : undefined}>
+                    Buy {i.label}
+                  </Button>
+                  {h && (
+                    <Button size="sm" variant="outline" className="min-h-11" onClick={() => setTarget({ instrument: i, side: 'sell' })} disabled={p.complete}>
+                      Sell {i.label}
+                    </Button>
+                  )}
+                  {cantAfford && !p.complete && <span className="text-xs text-muted">Not enough cash</span>}
+                </div>
               )}
             </Card>
           )

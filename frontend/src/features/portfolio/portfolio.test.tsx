@@ -29,7 +29,7 @@ const instruments = [
 const portfolio = {
   run_number: 1, round: 0, max_round: 10, complete: false, starting_cash_paise: 1000000, transferred_paise: 0,
   transfer_remaining_rupees: 5000, cash_paise: 1000000, invested_paise: 0, total_paise: 1000000, contributed_paise: 1000000,
-  gain_paise: 0, holdings: [], history: [{ round: 0, total_paise: 1000000 }],
+  gain_paise: 0, holdings: [], history: [{ round: 0, total_paise: 1000000 }], years: [],
 }
 
 const scenarios = [
@@ -142,7 +142,8 @@ describe('PortfolioPage', () => {
     mockFetch(lab(false, () => ({ body: { ...base, access: access(true), portfolio: { ...portfolio, gain_paise: -28000, total_paise: 972000 }, instruments } })))
     renderWithProviders(<PortfolioPage />)
     await user.click(await screen.findByRole('tab', { name: /ten-year run/i }))
-    expect(await screen.findByText('▼ −₹280.00')).toBeInTheDocument()
+    expect(await screen.findByText('▼ −')).toBeInTheDocument()
+    expect(screen.getAllByText('₹280.00').length).toBeGreaterThan(0)
   })
 
   it('opens on the market lab with scenarios, labelled demo data and no session yet', async () => {
@@ -154,7 +155,9 @@ describe('PortfolioPage', () => {
     expect(await screen.findByText('Reference prices:')).toBeInTheDocument()
     expect(screen.getAllByText('Demo').length).toBeGreaterThan(0)
     expect(screen.getByText(/practice money only · not financial advice/i)).toBeInTheDocument()
-    expect(await screen.findByText(/day.? in a row/i)).toBeInTheDocument()
+    // Streaks and coin balances live in the Learning Wallet, not in Portfolio Quest.
+    expect(screen.queryByText(/day.? in a row/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/RR coins and scenario badges/i)).not.toBeInTheDocument()
   })
 
   it('shows the live scenario: value, breaking news, journal outcome and a filterable feed', async () => {
@@ -190,5 +193,22 @@ describe('PortfolioPage', () => {
     expect(await screen.findByText(/bought 1 tata consultancy services/i)).toBeInTheDocument()
     const call = fetchMock.mock.calls.find(([u]) => String(u).includes('/portfolio/scenario/decisions'))
     expect(JSON.parse(String(call?.[1]?.body))).toMatchObject({ action: 'buy', company_key: 'tcs', quantity: 1, reason: 'long_term', confirm: true })
+  })
+
+  it('shows the decade timeline: completed years open a summary, future years stay locked', async () => {
+    const user = userEvent.setup()
+    const years = [
+      { round: 1, mood: 'crash', title: 'Year 1: Market crash', summary: 'Prices fell sharply.', market_change_pct: -28, total_before_paise: 1000000, total_after_paise: 950000, change_paise: -50000, change_pct: -5, best: { key: 'steady_deposit', label: 'Steady Deposit', return_pct: 6 }, worst: { key: 'growth_basket', label: 'Growth Basket', return_pct: -28 }, consequence: 'Holding steadier things reduced the damage.', prompt: 'A big fall is happening. Would you hold, add or sell, and why?' },
+      { round: 2, mood: 'recovery', title: 'Year 2: Recovery', summary: 'Prices bounced back.', market_change_pct: 18, total_before_paise: 950000, total_after_paise: 1010000, change_paise: 60000, change_pct: 6.3, best: { key: 'growth_basket', label: 'Growth Basket', return_pct: 18 }, worst: { key: 'steady_deposit', label: 'Steady Deposit', return_pct: 6 }, consequence: 'You recovered the fall.', prompt: 'Prices are recovering. Did waiting change how you feel about risk?' },
+    ]
+    mockFetch(lab(false, () => ({ body: { ...base, access: access(true), portfolio: { ...portfolio, round: 2, total_paise: 1010000, years, history: [{ round: 0, total_paise: 1000000 }, { round: 1, total_paise: 950000 }, { round: 2, total_paise: 1010000 }] }, instruments } })))
+    renderWithProviders(<PortfolioPage />)
+    await user.click(await screen.findByRole('tab', { name: /ten-year run/i }))
+    expect(await screen.findByRole('heading', { name: 'Year 2 of 10' })).toBeInTheDocument()
+    expect(screen.getByText('Year 2: Recovery')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /year 5, not reached yet/i })).toBeDisabled()
+    await user.click(screen.getByRole('button', { name: /year 1: market crash/i }))
+    expect(await screen.findByText('Holding steadier things reduced the damage.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Advance one year' })).toBeEnabled()
   })
 })

@@ -11,7 +11,21 @@ from sqlalchemy.orm import Session
 from app.core.db import advisory_lock
 from app.engine.money import SimulationError
 from app.models import RewardLedgerEntry, User
-from app.rewards.rules import Award
+from app.rewards.rules import AMOUNTS, Award
+
+# What each reward rule is paid for, shown in the Learning Wallet. Amounts come from AMOUNTS so
+# the screen can never disagree with what is actually paid. Profit is never a reason.
+RULE_LABELS: dict[str, str] = {
+    "sim_pass": "Finish a mission with sound choices",
+    "sim_strong": "Finish a mission with a strong approach (once per mission)",
+    "quiz_pass": "Pass a module quiz",
+    "quiz_strong": "Score strongly on a quiz",
+    "check_done": "Complete a quick check",
+    "reflect_correct": "Explain a result correctly in a reflection",
+    "explorer_stop": "Complete a Banking Explorer stop",
+    "explorer_complete": "Finish the whole Banking Explorer journey",
+    "market_debrief": "Explain a Market lab lesson correctly (once per scenario)",
+}
 
 
 def balance(db: Session, student_id: Any) -> int:
@@ -113,6 +127,7 @@ def wallet(db: Session, student: User, limit: int = 50) -> dict[str, Any]:
         "balance": balance(db, student.id),
         "total_earned": earned,
         "history": [entry_out(r) for r in rows],
+        "rules": [{"key": k, "label": RULE_LABELS[k], "amount": AMOUNTS[k]} for k in RULE_LABELS],
         "notice": (
             "Fictional learning money. It rewards what you understand, cannot be cashed out, "
             "and has nothing to do with real money or real investments."

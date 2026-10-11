@@ -594,10 +594,17 @@ export interface RewardEntry {
   created_at: string
 }
 
+export interface RewardRule {
+  key: string
+  label: string
+  amount: number
+}
+
 export interface Wallet {
   balance: number
   total_earned: number
   history: RewardEntry[]
+  rules: RewardRule[]
   notice: string
 }
 
@@ -657,6 +664,26 @@ export interface PortfolioState {
   gain_paise: number
   holdings: PortfolioHoldingRow[]
   history: { round: number; total_paise: number }[]
+  /** One entry per completed year (never a future year). */
+  years: YearSummary[]
+}
+
+export type YearMood = 'crash' | 'recovery' | 'rally' | 'sideways' | 'calm'
+
+export interface YearSummary {
+  round: number
+  mood: YearMood
+  title: string
+  summary: string
+  market_change_pct: number
+  total_before_paise: number
+  total_after_paise: number
+  change_paise: number
+  change_pct: number
+  best: { key: string; label: string; return_pct: number }
+  worst: { key: string; label: string; return_pct: number }
+  consequence: string
+  prompt: string
 }
 
 export interface PortfolioTx {

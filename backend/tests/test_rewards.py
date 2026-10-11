@@ -203,3 +203,15 @@ def test_ledger_rejects_zero_and_wrongly_signed_amounts(client, student):
 
 def test_good_budget_constant_is_still_valid():
     assert sum(GOOD_BUDGET.values()) == 1949
+
+
+def test_wallet_lists_the_real_reward_rules_and_never_profit(client, student):
+    body = client.get(WALLET, headers=student).json()
+    rules = {r["key"]: r for r in body["rules"]}
+    from app.rewards.rules import AMOUNTS
+
+    assert {k: r["amount"] for k, r in rules.items()} == {k: AMOUNTS[k] for k in rules}
+    assert "market_debrief" in rules and "sim_pass" in rules
+    assert not any(
+        "profit" in r["label"].lower() or "gain" in r["label"].lower() for r in rules.values()
+    )

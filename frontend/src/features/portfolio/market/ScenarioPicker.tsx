@@ -51,14 +51,14 @@ export function ScenarioPicker({ scenarios, activeKey, busyKey, onStart }: {
                 <span className="flex items-center gap-2 text-xs">
                   {s.understood ? (
                     <span className="inline-flex items-center gap-1 font-semibold text-reward-ink">
-                      <Award className="size-3.5" aria-hidden /> Badge earned
+                      <Award className="size-3.5" aria-hidden /> Lesson explained
                     </span>
                   ) : s.completed ? (
                     <span className="inline-flex items-center gap-1 font-semibold text-accent-ink">
                       <Check className="size-3.5" aria-hidden /> Played
                     </span>
                   ) : (
-                    <span className="text-muted">+{s.reward} RR coins for the lesson</span>
+                    <span className="text-muted">Ends with a short lesson debrief</span>
                   )}
                   {s.best_result_pct != null && <span className="text-muted">Best {s.best_result_pct > 0 ? '+' : ''}{s.best_result_pct.toFixed(1)}%</span>}
                 </span>

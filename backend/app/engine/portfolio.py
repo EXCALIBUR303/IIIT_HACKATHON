@@ -192,6 +192,102 @@ def year_event(path_key: str, round_no: int) -> dict[str, object]:
     }
 
 
+MOODS: dict[str, tuple[str, str]] = {
+    "crash": (
+        "Market crash",
+        "Prices fell sharply. Single companies and growth baskets fell the most.",
+    ),
+    "recovery": (
+        "Recovery",
+        "Prices bounced back after a hard stretch. Staying invested mattered.",
+    ),
+    "rally": ("Strong rally", "Most things rose. Riskier holdings rose the most."),
+    "sideways": (
+        "Sideways year",
+        "Prices barely moved, or dipped a little. Steady holdings held up.",
+    ),
+    "calm": ("Steady growth", "A normal year of gradual gains."),
+}
+PROMPTS: dict[str, str] = {
+    "crash": "A big fall is happening. Would you hold, add or sell, and why?",
+    "recovery": "Prices are recovering. Did waiting out the fall change how you feel about risk?",
+    "rally": "Everything is rising. Is your portfolio still balanced, or has one piece grown big?",
+    "sideways": "Not much happened. Is patience part of your plan, or are you tempted to act?",
+    "calm": "A quiet year. What would you do next?",
+}
+
+
+def year_summary(
+    path_key: str,
+    round_no: int,
+    total_before: int,
+    total_after: int,
+    accessible: list[str],
+) -> dict[str, object]:
+    """Everything the Decade Simulator shows about one completed year (1-based)."""
+    pcts = investing._MARKET_PATHS[path_key][1]  # noqa: SLF001
+    market = pcts[round_no - 1]
+    prev = pcts[round_no - 2] if round_no > 1 else 0
+    if market <= -10:
+        mood = "crash"
+    elif prev <= -5 and market >= 8:
+        mood = "recovery"
+    elif market >= 12:
+        mood = "rally"
+    elif -10 < market <= 5:
+        mood = "sideways"
+    else:
+        mood = "calm"
+    title, body = MOODS[mood]
+    returns = {k: investing.asset_return(k, path_key, round_no) * 100 for k in accessible}
+    best = max(returns, key=returns.__getitem__)
+    worst = min(returns, key=returns.__getitem__)
+    change = total_after - total_before
+    change_pct = round(change / total_before * 100, 1) if total_before else 0.0
+    if change == 0:
+        consequence = (
+            "Your balance did not change. Holding only cash means the market cannot hurt you, "
+            "or help you."
+        )
+    elif market < 0 and change_pct > market:
+        consequence = (
+            f"Your portfolio moved {change_pct:+.1f}% while the market fell {abs(market)}%. "
+            "Holding steadier things reduced the damage."
+        )
+    elif market > 0 and change_pct < market:
+        consequence = (
+            f"Your portfolio moved {change_pct:+.1f}% while the market rose {market}%. "
+            "Holding steadier things or cash traded some growth for a smoother ride."
+        )
+    else:
+        consequence = (
+            f"Your portfolio moved {change_pct:+.1f}% in a market that moved {market:+d}%."
+        )
+    return {
+        "round": round_no,
+        "mood": mood,
+        "title": f"Year {round_no}: {title}",
+        "summary": body,
+        "market_change_pct": market,
+        "total_before_paise": total_before,
+        "total_after_paise": total_after,
+        "change_paise": change,
+        "change_pct": change_pct,
+        "best": {
+            "key": best,
+            "label": investing.ASSETS[best].label,
+            "return_pct": round(returns[best], 1),
+        },
+        "worst": {
+            "key": worst,
+            "label": investing.ASSETS[worst].label,
+            "return_pct": round(returns[worst], 1),
+        },
+        "consequence": consequence,
+        "prompt": PROMPTS[mood],
+    }
+
+
 def reflection_lines(
     before: dict[str, object], after: dict[str, object], event: dict[str, object]
 ) -> list[str]:

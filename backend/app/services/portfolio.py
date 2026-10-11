@@ -181,6 +181,7 @@ def view(db: Session, student: User, *, extra: dict[str, Any] | None = None) -> 
     prices = engine.prices_at(path, p.round)
     val = engine.valuation(p.cash_paise, _holdings(p), prices, p.contributed_paise)
     transferred = _transferred_this_run(db, student, p.run_number)
+    history = _value_history(db, student, p)
     out["portfolio"] = {
         "run_number": p.run_number,
         "round": p.round,
@@ -194,7 +195,8 @@ def view(db: Session, student: User, *, extra: dict[str, Any] | None = None) -> 
         "actions_this_round": _actions_this_round(db, student, p),
         "max_actions_per_round": get_settings().portfolio_max_actions_per_round,
         **val,
-        "history": _value_history(db, student, p),
+        "history": history,
+        "years": _year_summaries(gate, p, path, val, history),
     }
     out["instruments"] = _instruments(gate, {k: v for k, v in prices.items()}, path, p.round)
     out["transactions"] = [
@@ -207,6 +209,29 @@ def view(db: Session, student: User, *, extra: dict[str, Any] | None = None) -> 
         )
     ]
     return {**out, **(extra or {})}
+
+
+def _year_summaries(
+    gate: dict[str, Any],
+    p: Portfolio,
+    path: str,
+    current: dict[str, Any],
+    history: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """What each completed year looked like (never a future year), from the stored snapshots."""
+    accessible = [
+        k
+        for k, a in investing.ASSETS.items()
+        if not a.single_company or gate["single_company_unlocked"]
+    ]
+    totals: dict[int, int] = {h["round"]: h["total_paise"] for h in history}
+    totals[p.round] = int(current["total_paise"])
+    out = []
+    for rnd in range(1, p.round + 1):
+        before = totals.get(rnd - 1, p.starting_cash_paise)
+        after = totals.get(rnd, before)
+        out.append(engine.year_summary(path, rnd, before, after, accessible))
+    return out
 
 
 def _transferred_this_run(db: Session, student: User, run_number: int) -> int:

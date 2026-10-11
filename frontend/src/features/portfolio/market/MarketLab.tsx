@@ -17,11 +17,9 @@ import { DecisionJournal } from './DecisionJournal'
 import { HoldingsTable } from './HoldingsTable'
 import { MarketNewsFeed } from './MarketNewsFeed'
 import { PortfolioSummary } from './PortfolioSummary'
-import { RewardsPanel } from './RewardsPanel'
 import { ScenarioPicker } from './ScenarioPicker'
 import { ScenarioTimeline } from './ScenarioTimeline'
 import { StockDrawer } from './StockDrawer'
-import { StreakHeatmap } from './StreakHeatmap'
 import { WatchlistPanel } from './WatchlistPanel'
 
 /** Reveal lower sections once as they scroll into view (Motion's whileInView, reduced-motion safe). */
@@ -38,7 +36,6 @@ export function MarketLab() {
   const overview = useAsync(() => api.market.overview(), [])
   const market = useAsync(() => api.market.data(), [])
   const news = useAsync(() => api.market.news(), [])
-  const streak = useAsync(() => api.market.streak(), [])
   const [local, setLocal] = useState<LabSession | null | undefined>(undefined)
   const session = local === undefined ? overview.data?.session ?? null : local
   const [openKey, setOpenKey] = useState<string | null>(null)
@@ -59,7 +56,6 @@ export function MarketLab() {
 
   function onSession(next: LabSession) {
     setLocal(next)
-    streak.reload()
     if (next.status === 'completed') overview.reload()
   }
 
@@ -165,13 +161,6 @@ export function MarketLab() {
           </div>
         </>
       )}
-
-      <Reveal className="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <div className="min-w-0 xl:col-span-7">{streak.data && <StreakHeatmap streak={streak.data} />}</div>
-        <div className="min-w-0 xl:col-span-5">
-          <RewardsPanel balance={ov.wallet_balance} scenarios={ov.scenarios} />
-        </div>
-      </Reveal>
 
       {session && <Reveal>{scenarios}</Reveal>}
 

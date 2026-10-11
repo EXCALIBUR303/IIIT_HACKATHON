@@ -449,3 +449,39 @@ def test_deleting_the_account_erases_portfolio_data(client, investor):
     with SessionLocal() as db:
         for model in (Portfolio, PortfolioHolding, PortfolioTransaction):
             assert db.scalar(select(func.count()).select_from(model)) == 0
+
+
+# --- decade simulator: per-year summaries ------------------------------------------
+
+
+def test_years_describe_only_completed_years_and_use_the_ledger_totals(client, investor):
+    opened(client, investor)
+    assert client.get(P, headers=investor).json()["portfolio"]["years"] == []
+    assert trade(client, investor, "balanced_basket", "buy", 20).status_code == 200
+    advance(client, investor)
+    advance(client, investor)
+    p = client.get(P, headers=investor).json()["portfolio"]
+    years = p["years"]
+    assert [y["round"] for y in years] == [1, 2]  # never a future year
+    assert years[0]["total_before_paise"] == START
+    assert years[0]["total_after_paise"] == years[1]["total_before_paise"]
+    assert years[1]["total_after_paise"] == p["total_paise"]
+    for y in years:
+        assert y["mood"] in {"crash", "recovery", "rally", "sideways", "calm"}
+        assert y["title"].startswith(f"Year {y['round']}: ")
+        assert y["change_paise"] == y["total_after_paise"] - y["total_before_paise"]
+        assert y["best"]["return_pct"] >= y["worst"]["return_pct"]
+        assert y["consequence"] and y["prompt"]
+    # No hint of the run's named future path (e.g. "Crash in the final year") is exposed.
+    assert "Crash in" not in str(years)
+
+
+def test_single_company_returns_are_not_used_for_movers_until_unlocked(client, investor):
+    opened(client, investor)
+    advance(client, investor)
+    y = client.get(P, headers=investor).json()["portfolio"]["years"][0]
+    assert {y["best"]["key"], y["worst"]["key"]} <= {
+        "steady_deposit",
+        "balanced_basket",
+        "growth_basket",
+    }

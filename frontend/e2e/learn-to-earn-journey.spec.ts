@@ -41,8 +41,10 @@ test('learn to earn: mission, reward, wallet, portfolio, market event and learni
 
   // 4. Wallet history lists the rewards with reasons.
   await page.goto('/app/wallet')
-  await expect(page.getByRole('heading', { name: 'Your learning wallet' })).toBeVisible()
-  await expect(page.getByTestId('wallet-balance')).not.toHaveText('₹0')
+  await expect(page.getByRole('heading', { name: 'Learning Wallet' })).toBeVisible()
+  await expect(page.getByTestId('wallet-balance')).not.toHaveText('0')
+  await expect(page.getByRole('heading', { name: 'Practice Streak' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'How coins are earned' })).toBeVisible()
   await expect(page.getByText(/Completed the mission with sound choices/)).toBeVisible()
   await expect(page.getByText(/Explained why your result happened/)).toBeVisible()
 
@@ -85,11 +87,12 @@ test('learn to earn: mission, reward, wallet, portfolio, market event and learni
   await expect(page.getByRole('row', { name: /Balanced Basket/ })).toBeVisible()
 
   // 10. Let a year pass: a deterministic market event with a reflection on the result.
-  await page.getByRole('button', { name: 'Let a year pass' }).click()
+  await page.getByRole('button', { name: 'Advance one year' }).click()
   await page.getByRole('button', { name: 'Yes, next year' }).click()
   await expect(page.getByRole('status').getByText(/the fictional market moved/)).toBeVisible()
   await expect(page.getByText(/Your practice portfolio (rose|fell|stayed)/).first()).toBeVisible()
-  await expect(page.getByText('Year 1 of 10')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Year 1 of 10' })).toBeVisible()
+  await expect(page.getByRole('button', { name: /^Year 1: / })).toBeVisible()
 
   // 10b. Market lab: real company names, a reasoned practice buy, then a news-driven day.
   await page.getByRole('tab', { name: /market lab/i }).click()

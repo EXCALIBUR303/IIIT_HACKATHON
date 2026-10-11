@@ -348,10 +348,17 @@ class RewardEntryOut(BaseModel):
     created_at: datetime
 
 
+class RewardRuleOut(BaseModel):
+    key: str
+    label: str
+    amount: int
+
+
 class WalletOut(BaseModel):
     balance: int
     total_earned: int
     history: list[RewardEntryOut]
+    rules: list[RewardRuleOut]
     notice: str
 
 

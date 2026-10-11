@@ -79,7 +79,7 @@ export const DebriefCard = forwardRef<HTMLElement, { session: LabSession; onSess
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className={cn('flex items-center gap-1.5 text-sm font-semibold', d.reward ? 'text-reward-ink' : 'text-muted')}>
               <Coins className="size-4" aria-hidden />
-              {d.reward ? `+${d.reward} RR coins earned for explaining the lesson` : d.correct ? 'Lesson already rewarded for this scenario' : 'No coins this time. Replay it to try again.'}
+              {d.reward ? `Learning reward added to your wallet: +${d.reward} RR coins` : d.correct ? 'Lesson already rewarded for this scenario' : 'No reward this time. Replay it to try again.'}
             </p>
             <Button onClick={onPlayAnother}>Play another scenario</Button>
           </div>

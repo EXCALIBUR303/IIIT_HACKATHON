@@ -15,16 +15,16 @@ export interface Segment {
  * Segmented control on top of Radix Tabs (so arrow keys, roles and focus are handled), with a
  * shared-layout pill that slides to the active segment. Must be rendered inside <Tabs>.
  */
-export function SegmentedTabs({ segments, value, id, className }: { segments: Segment[]; value: string; id: string; className?: string }) {
+export function SegmentedTabs({ segments, value, id, className, compact = false }: { segments: Segment[]; value: string; id: string; className?: string; compact?: boolean }) {
   return (
-    <TabsPrimitive.List className={cn('inline-grid w-full gap-1 rounded-2xl border border-line bg-canvas-deep/60 p-1 sm:w-auto', className)} style={{ gridTemplateColumns: `repeat(${segments.length}, minmax(0, 1fr))` }}>
+    <TabsPrimitive.List className={cn('inline-grid w-full gap-1 rounded-2xl border border-line bg-canvas-deep/60 p-1 sm:w-auto', compact && 'rounded-xl', className)} style={{ gridTemplateColumns: `repeat(${segments.length}, minmax(0, 1fr))` }}>
       {segments.map((s) => {
         const active = s.value === value
         return (
           <TabsPrimitive.Trigger
             key={s.value}
             value={s.value}
-            className="relative rounded-xl px-4 py-2.5 text-left outline-offset-2 transition-colors"
+            className={cn('relative min-h-11 rounded-xl text-left outline-offset-2 transition-colors', compact ? 'px-4 py-2' : 'px-4 py-2.5')}
           >
             {active && <motion.span layoutId={`seg-${id}`} className="absolute inset-0 rounded-xl border border-line bg-surface shadow-[var(--shadow-card)]" transition={SPRING} />}
             <span className="relative flex items-center gap-2.5">

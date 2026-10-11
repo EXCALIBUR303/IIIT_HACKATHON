@@ -283,9 +283,9 @@ def test_streak_counts_consecutive_learning_days(client):
 
 
 def _av_body(closes):
-    days = [
-        (datetime(2026, 10, 1) + timedelta(days=i)).date().isoformat() for i in range(len(closes))
-    ]
+    """Daily closes ending yesterday, so they always look recent."""
+    end = datetime.now(UTC).date() - timedelta(days=1)
+    days = [(end - timedelta(days=len(closes) - 1 - i)).isoformat() for i in range(len(closes))]
     return {
         "Time Series (Daily)": {d: {"4. close": str(c)} for d, c in zip(days, closes, strict=True)}
     }
@@ -378,6 +378,36 @@ def test_alpha_vantage_pauses_briefly_for_bursts_and_long_for_the_daily_quota(
     assert min_seconds <= wait <= max_seconds
 
 
+def test_a_renamed_company_falls_through_to_its_current_symbol(monkeypatch):
+    tried = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        sym = request.url.params["symbol"]
+        tried.append(sym)
+        if sym == "TMPV.BSE":
+            return httpx.Response(200, json=_av_body([411.0, 405.5]))
+        return httpx.Response(200, json={"Error Message": "Invalid API call"})
+
+    _mock_http(monkeypatch, handler)
+    assert lab.COMPANIES["tatamotors"].bse_symbols[0] == "TMPV.BSE"
+    q = providers.AlphaVantageProvider("k", 720, pause_seconds=0)
+    got = q.fetch_company(httpx.Client(), lab.COMPANIES["tatamotors"])
+    assert got and got["symbol"] == "TMPV.BSE" and got["price_paise"] == 40_550
+    assert tried[0] == "TMPV.BSE"
+
+
+def test_stale_history_from_a_delisted_symbol_is_not_shown_as_live(monkeypatch):
+    old = {
+        "Time Series (Daily)": {
+            "2025-10-01": {"4. close": "680.0"},
+            "2025-10-02": {"4. close": "690.0"},
+        }
+    }
+    _mock_http(monkeypatch, lambda r: httpx.Response(200, json=old))
+    q = providers.AlphaVantageProvider("k", 720, pause_seconds=0)
+    assert q.fetch_company(httpx.Client(), lab.COMPANIES["reliance"]) is None
+
+
 def test_alpha_vantage_unknown_symbol_is_remembered_not_retried(monkeypatch):
     calls = []
 
@@ -389,7 +419,9 @@ def test_alpha_vantage_unknown_symbol_is_remembered_not_retried(monkeypatch):
     p = providers.AlphaVantageProvider("k", 720, pause_seconds=0)
     for _ in range(4):
         out = _snapshot(p)
-    assert out["status"] == "demo" and len(calls) == len(lab.COMPANIES)
+    assert out["status"] == "demo"
+    # Each company is tried once under every symbol it has used, then remembered as missing.
+    assert len(calls) == sum(len(c.bse_symbols) for c in lab.COMPANIES.values())
 
 
 def test_marketaux_items_are_mapped_and_sanitised():

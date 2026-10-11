@@ -61,10 +61,16 @@ class Company:
     beta: float  # how strongly it follows the whole market
     risk_level: str
     about: str
+    # Other tickers the same company has traded under (renames, demergers), tried in order.
+    alt_tickers: tuple[str, ...] = ()
 
     @property
     def bse_symbol(self) -> str:
         return f"{self.ticker}.BSE"
+
+    @property
+    def bse_symbols(self) -> list[str]:
+        return [f"{t}.BSE" for t in (self.ticker, *self.alt_tickers)]
 
 
 COMPANIES: dict[str, Company] = {
@@ -82,8 +88,10 @@ COMPANIES: dict[str, Company] = {
                 "medium", "Private-sector bank with retail and business lending."),
         Company("sbi", "State Bank of India", "SBIN", "Banking", 860, 0.016, 1.15,
                 "medium", "India's largest public-sector bank."),
-        Company("tatamotors", "Tata Motors", "TATAMOTORS", "Auto", 680, 0.021, 1.35,
-                "high", "Cars, trucks and electric vehicles; sensitive to demand and rates."),
+        Company("tatamotors", "Tata Motors", "TMPV", "Auto", 280, 0.021, 1.35,
+                "high", "Cars and electric vehicles (the listed passenger-vehicle company, "
+                "formerly Tata Motors); sensitive to demand and rates.",
+                alt_tickers=("500570", "TATAMOTORS")),
         Company("airtel", "Bharti Airtel", "BHARTIARTL", "Telecom", 1950, 0.013, 0.75,
                 "medium", "Mobile, broadband and enterprise telecom services."),
         Company("lt", "Larsen & Toubro", "LT", "Infrastructure", 3700, 0.015, 1.1,

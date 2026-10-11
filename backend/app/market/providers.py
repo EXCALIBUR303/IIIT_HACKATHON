@@ -41,6 +41,7 @@ ALPHA_VANTAGE_URL = "https://www.alphavantage.co/query"
 MARKETAUX_URL = "https://api.marketaux.com/v1/news/all"
 HTTP_TIMEOUT = 5.0
 HISTORY_POINTS = 30
+MAX_AGE = timedelta(days=14)  # older closes mean the symbol is stale, not live
 NEWS_KEEP = 18
 
 
@@ -68,7 +69,9 @@ def _clip(text: object, limit: int) -> str:
     return s if len(s) <= limit else s[: limit - 1].rstrip() + "…"
 
 
-def _quote_from_history(c: lab.Company, history: list[tuple[str, int]], source: str) -> dict:
+def _quote_from_history(
+    c: lab.Company, history: list[tuple[str, int]], source: str, symbol: str | None = None
+) -> dict:
     """``history`` is oldest-first (date, close in paise)."""
     last_date, last = history[-1]
     prev = history[-2][1] if len(history) > 1 else last
@@ -77,7 +80,7 @@ def _quote_from_history(c: lab.Company, history: list[tuple[str, int]], source: 
         "key": c.key,
         "name": c.name,
         "ticker": c.ticker,
-        "symbol": c.bse_symbol,
+        "symbol": symbol or c.bse_symbol,
         "sector": c.sector,
         "about": c.about,
         "risk_level": c.risk_level,
@@ -150,12 +153,12 @@ class AlphaVantageProvider:
         self.pause = pause_seconds
         self.fallback = MockMarketDataProvider()
 
-    def fetch_company(self, client: httpx.Client, c: lab.Company) -> dict | None:
+    def fetch_symbol(self, client: httpx.Client, c: lab.Company, symbol: str) -> dict | None:
         r = client.get(
             ALPHA_VANTAGE_URL,
             params={
                 "function": "TIME_SERIES_DAILY",
-                "symbol": c.bse_symbol,
+                "symbol": symbol,
                 "outputsize": "compact",
                 "apikey": self.api_key,
             },
@@ -175,7 +178,19 @@ class AlphaVantageProvider:
             if close and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(day)):
                 rows.append((str(day), close))
         rows.sort()
-        return _quote_from_history(c, rows, "alpha_vantage") if rows else None
+        if not rows or date.fromisoformat(rows[-1][0]) < datetime.now(UTC).date() - MAX_AGE:
+            return None  # a delisted or renamed symbol can still return years-old history
+        return _quote_from_history(c, rows, "alpha_vantage", symbol)
+
+    def fetch_company(self, client: httpx.Client, c: lab.Company) -> dict | None:
+        """The first of the company's known symbols that returns recent closes."""
+        for i, symbol in enumerate(c.bse_symbols):
+            if i and self.pause:
+                time.sleep(self.pause)
+            quote = self.fetch_symbol(client, c, symbol)
+            if quote:
+                return quote
+        return None
 
     def refresh(self, db: Session, stale: list[str]) -> None:
         """Fetch up to ``BATCH`` of the stale companies and store whatever succeeds."""
@@ -302,7 +317,7 @@ NAME_HINTS: dict[str, tuple[str, ...]] = {
     "airtel": ("airtel",),
     "lt": ("larsen", "l&t"),
 }
-TICKER_TO_KEY = {c.ticker: k for k, c in lab.COMPANIES.items()}
+TICKER_TO_KEY = {t: k for k, c in lab.COMPANIES.items() for t in (c.ticker, *c.alt_tickers)}
 
 
 def categorise(text: str) -> str:

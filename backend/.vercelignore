@@ -1,0 +1,9 @@
+# Never upload secrets, local state or tests with the API.
+.env
+.env.*
+!.env.example
+.venv
+private_content
+tests
+__pycache__
+*.pyc

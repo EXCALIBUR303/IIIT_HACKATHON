@@ -43,3 +43,6 @@ Thumbs.db
 backend/private_content/
 private_content/
 **/answer_keys.json
+
+# Vercel link metadata
+.vercel

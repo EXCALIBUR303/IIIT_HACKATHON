@@ -354,9 +354,21 @@ class RewardRuleOut(BaseModel):
     amount: int
 
 
+class LevelOut(BaseModel):
+    xp: int
+    level: int
+    title: str
+    xp_into_level: int
+    xp_for_level: int
+    next_title: str | None
+    max_level: bool
+    sources: str
+
+
 class WalletOut(BaseModel):
     balance: int
     total_earned: int
+    level: LevelOut
     history: list[RewardEntryOut]
     rules: list[RewardRuleOut]
     notice: str

@@ -32,7 +32,7 @@ describe('WalletPage', () => {
     mockFetch((url) => {
       if (url.startsWith('/portfolio/streak')) return { body: { ...streak, current: 0, active_days: 0, today_done: false } }
       if (url.startsWith('/portfolio/scenario')) return { body: { scenarios } }
-      return { body: { balance: 0, total_earned: 0, history: [], rules: [], notice: 'Fictional learning money.' } }
+      return { body: { balance: 0, total_earned: 0, level, history: [], rules: [], notice: 'Fictional learning money.' } }
     })
     renderWithProviders(<WalletPage />)
     expect(await screen.findByText('No rewards yet')).toBeInTheDocument()
@@ -49,6 +49,8 @@ describe('WalletPage', () => {
     expect(await screen.findByText(/strong, well-reasoned/i)).toBeInTheDocument()
     expect(screen.getByText(/needs vs wants/i)).toBeInTheDocument()
     expect(screen.getByTestId('wallet-balance')).toHaveTextContent('75')
+    expect(screen.getByText('Level 2 · Budgeter')).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Level 2 progress' })).toHaveAttribute('aria-valuenow', '30')
     expect(screen.getByRole('heading', { name: 'Practice Streak' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Scenario Badges' })).toBeInTheDocument()
     expect(screen.getByText('Finish a mission with sound choices')).toBeInTheDocument()
@@ -64,9 +66,11 @@ const streak = {
   habits: [{ key: 'decide', label: 'Make one Market Lab decision', done: true }],
 }
 const scenarios = [{ key: 'earnings_surprise', title: 'Results day surprise', kicker: 'Earnings', summary: 's', skills: [], steps: 6, unit: 'day', focus: [], attempts: 1, completed: 1, best_result_pct: 1, understood: true, reward: 15 }]
+const level = { xp: 80, level: 2, title: 'Budgeter', xp_into_level: 30, xp_for_level: 100, next_title: 'Planner', max_level: false, sources: 'RR coins earned plus 5 XP for each practice day' }
 const wallet = {
   balance: 75,
   total_earned: 75,
+  level,
   rules: [{ key: 'sim_pass', label: 'Finish a mission with sound choices', amount: 25 }],
   history: [{ id: 2, entry_type: 'reward', amount: 50, reason: 'Strong, well-reasoned choices in the mission.', rule_key: 'sim_strong', source_type: 'simulation', source_ref: 'abc', concept: 'needs_vs_wants', created_at: new Date().toISOString() }],
   notice: 'Fictional learning money.',

@@ -215,3 +215,21 @@ def test_wallet_lists_the_real_reward_rules_and_never_profit(client, student):
     assert not any(
         "profit" in r["label"].lower() or "gain" in r["label"].lower() for r in rules.values()
     )
+
+
+def test_level_is_derived_from_understanding_and_practice_never_from_profit():
+    from app.services import levels
+
+    assert levels.level_for(0)["title"] == "Saver" and levels.level_for(0)["level"] == 1
+    mid = levels.level_for(160)
+    assert mid["level"] == 3 and mid["xp_into_level"] == 10 and mid["xp_for_level"] == 150
+    assert mid["next_title"] == "Investor in training"
+    top = levels.level_for(5000)
+    assert top["max_level"] and top["next_title"] is None and top["xp_for_level"] == 0
+    assert levels.xp(100, 4) == 120 and levels.xp(-5, -1) == 0
+
+
+def test_wallet_reports_a_level(client, student):
+    body = client.get(WALLET, headers=student).json()
+    assert body["level"]["level"] == 1 and body["level"]["xp"] == body["total_earned"]
+    assert "profit" not in body["level"]["sources"].lower()

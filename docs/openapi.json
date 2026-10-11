@@ -3494,6 +3494,61 @@
         ],
         "title": "JoinCohort"
       },
+      "LevelOut": {
+        "properties": {
+          "xp": {
+            "type": "integer",
+            "title": "Xp"
+          },
+          "level": {
+            "type": "integer",
+            "title": "Level"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "xp_into_level": {
+            "type": "integer",
+            "title": "Xp Into Level"
+          },
+          "xp_for_level": {
+            "type": "integer",
+            "title": "Xp For Level"
+          },
+          "next_title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Title"
+          },
+          "max_level": {
+            "type": "boolean",
+            "title": "Max Level"
+          },
+          "sources": {
+            "type": "string",
+            "title": "Sources"
+          }
+        },
+        "type": "object",
+        "required": [
+          "xp",
+          "level",
+          "title",
+          "xp_into_level",
+          "xp_for_level",
+          "next_title",
+          "max_level",
+          "sources"
+        ],
+        "title": "LevelOut"
+      },
       "LoginRequest": {
         "properties": {
           "username": {
@@ -5240,6 +5295,9 @@
             "type": "integer",
             "title": "Total Earned"
           },
+          "level": {
+            "$ref": "#/components/schemas/LevelOut"
+          },
           "history": {
             "items": {
               "$ref": "#/components/schemas/RewardEntryOut"
@@ -5263,6 +5321,7 @@
         "required": [
           "balance",
           "total_earned",
+          "level",
           "history",
           "rules",
           "notice"

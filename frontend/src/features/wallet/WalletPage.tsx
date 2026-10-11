@@ -33,7 +33,7 @@ export default function WalletPage() {
         <motion.div variants={staggerChildren(0.06)} initial="hidden" animate="show" className="space-y-6">
           <motion.div variants={fadeUp} className="grid items-start gap-6 lg:grid-cols-12">
             <div className="min-w-0 space-y-6 lg:col-span-7">
-              <VaultHero balance={w.balance} totalEarned={w.total_earned} history={w.history} holder={holder} />
+              <VaultHero balance={w.balance} totalEarned={w.total_earned} history={w.history} holder={holder} level={w.level} />
               {streak.data && <PracticeStreak streak={streak.data} />}
               {streak.error && <ErrorState message="The practice streak couldn’t load." onRetry={streak.reload} />}
             </div>

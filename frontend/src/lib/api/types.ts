@@ -600,9 +600,21 @@ export interface RewardRule {
   amount: number
 }
 
+export interface LevelProgress {
+  xp: number
+  level: number
+  title: string
+  xp_into_level: number
+  xp_for_level: number
+  next_title: string | null
+  max_level: boolean
+  sources: string
+}
+
 export interface Wallet {
   balance: number
   total_earned: number
+  level: LevelProgress
   history: RewardEntry[]
   rules: RewardRule[]
   notice: string

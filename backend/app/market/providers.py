@@ -28,17 +28,18 @@ from datetime import UTC, date, datetime, timedelta
 from typing import Any, Protocol
 
 import httpx
+from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.engine import market_lab as lab
 
-from .cache import BackgroundCache
+from . import store
 
 log = logging.getLogger(__name__)
 
 ALPHA_VANTAGE_URL = "https://www.alphavantage.co/query"
 MARKETAUX_URL = "https://api.marketaux.com/v1/news/all"
-HTTP_TIMEOUT = 8.0
+HTTP_TIMEOUT = 5.0
 HISTORY_POINTS = 30
 NEWS_KEEP = 18
 
@@ -106,7 +107,7 @@ def _trading_days(n: int, end: date) -> list[date]:
 class MarketDataProvider(Protocol):
     name: str
 
-    def snapshot(self, *, wait: bool = False) -> dict[str, Any]: ...
+    def snapshot(self, db: Session) -> dict[str, Any]: ...
 
 
 class MockMarketDataProvider:
@@ -126,22 +127,27 @@ class MockMarketDataProvider:
         rows = [(d.isoformat(), p) for d, p in zip(days, closes, strict=True)]
         return _quote_from_history(c, rows, "demo")
 
-    def snapshot(self, *, wait: bool = False) -> dict[str, Any]:
+    def snapshot(self, db: Session | None = None) -> dict[str, Any]:
         quotes = [self.quote(k) for k in lab.COMPANIES]
         return _snapshot(quotes, provider=self.name)
 
 
 class AlphaVantageProvider:
-    """Daily BSE closes from Alpha Vantage, refreshed in the background and cached."""
+    """Daily BSE closes from Alpha Vantage, cached in Postgres and refreshed a few at a time.
+
+    One request refreshes at most ``BATCH`` stale companies (so it stays well inside a
+    serverless time limit and the free tier's one-call-per-second pacing); the rest follow on
+    the next requests. A rate-limit reply pauses refreshing for an hour. Everything not yet
+    fetched falls back to labelled demo prices.
+    """
 
     name = "Alpha Vantage"
+    BATCH = 3
 
     def __init__(self, api_key: str, ttl_minutes: int, *, pause_seconds: float = 1.2):
         self.api_key = api_key
+        self.ttl = ttl_minutes * 60
         self.pause = pause_seconds
-        self.cache: BackgroundCache[dict[str, dict]] = BackgroundCache(
-            "alpha-vantage", ttl_minutes * 60, backoff_seconds=60 * 60
-        )
         self.fallback = MockMarketDataProvider()
 
     def fetch_company(self, client: httpx.Client, c: lab.Company) -> dict | None:
@@ -171,30 +177,60 @@ class AlphaVantageProvider:
         rows.sort()
         return _quote_from_history(c, rows, "alpha_vantage") if rows else None
 
-    def fetch_all(self, previous: dict[str, dict] | None) -> dict[str, dict] | None:
-        """One call per company, oldest data kept when a call fails. ``None`` = nothing new."""
-        out = dict(previous or {})
-        fresh = 0
+    def refresh(self, db: Session, stale: list[str]) -> None:
+        """Fetch up to ``BATCH`` of the stale companies and store whatever succeeds."""
+        fetched = 0
+        # The free tier allows about one call a second across all requests, not just within one.
+        last = store.load(db, "alpha:_last").get("alpha:_last")
+        if last and self.pause:
+            time.sleep(max(0.0, min(self.pause, self.pause - (time.time() - last[1]))))
         with httpx.Client(timeout=HTTP_TIMEOUT) as client:
-            for i, c in enumerate(lab.COMPANIES.values()):
-                if i and self.pause:
-                    time.sleep(self.pause)  # the free tier rejects bursts
+            for key in stale[: self.BATCH]:
+                if fetched and self.pause:
+                    time.sleep(self.pause)
+                c = lab.COMPANIES[key]
                 try:
-                    q = self.fetch_company(client, c)
+                    quote = self.fetch_company(client, c)
                 except ProviderLimited as exc:
-                    log.warning("Alpha Vantage limit reached: %s", exc)
-                    break
+                    # "25 requests per day" means stop for hours; a burst warning only needs a
+                    # moment, so other requests can carry on shortly.
+                    daily = "per day" in str(exc).lower() or "daily" in str(exc).lower()
+                    log.warning(
+                        "Alpha Vantage limit reached (%s): %s", "daily" if daily else "burst", exc
+                    )
+                    store.set_backoff(db, "alpha:_backoff", 6 * 3600 if daily else 30)
+                    return
                 except (httpx.HTTPError, ValueError) as exc:
                     log.warning("Alpha Vantage %s failed: %s", c.bse_symbol, exc)
+                    fetched += 1
                     continue
-                if q:
-                    out[c.key] = q
-                    fresh += 1
-        return out if fresh else None
+                fetched += 1
+                store.save(db, "alpha:_last", {"at": time.time()})
+                if quote:
+                    store.save(db, f"alpha:{key}", quote)
+                else:
+                    # An unknown symbol: remember the miss so it is not retried every request.
+                    store.save(db, f"alpha:{key}", {"missing": True})
 
-    def snapshot(self, *, wait: bool = False) -> dict[str, Any]:
-        real = self.cache.get(self.fetch_all, wait=wait) or {}
-        quotes = [real.get(k) or self.fallback.quote(k) for k in lab.COMPANIES]
+    def snapshot(self, db: Session) -> dict[str, Any]:
+        cached = store.load(db, "alpha:")
+        now = time.time()
+        stale = [
+            k
+            for k in lab.COMPANIES
+            if f"alpha:{k}" not in cached or now - cached[f"alpha:{k}"][1] > self.ttl
+        ]
+        if (
+            stale
+            and not store.backoff_active(db, "alpha:_backoff")
+            and store.try_refresh_lock(db, "alpha")
+        ):
+            self.refresh(db, stale)
+            cached = store.load(db, "alpha:")
+        quotes = []
+        for k in lab.COMPANIES:
+            payload = cached.get(f"alpha:{k}", ({}, 0))[0]
+            quotes.append(payload if payload.get("source") else self.fallback.quote(k))
         return _snapshot(quotes, provider=self.name)
 
 
@@ -297,9 +333,9 @@ def affected_keys(text: str, symbols: list[str]) -> list[str]:
 class NewsProvider(Protocol):
     name: str
 
-    def feed(self, *, wait: bool = False) -> dict[str, Any]: ...
+    def feed(self, db: Session) -> dict[str, Any]: ...
 
-    def image(self, item_id: str) -> tuple[bytes, str] | None: ...
+    def image(self, db: Session, item_id: str) -> tuple[bytes, str] | None: ...
 
 
 IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"}  # never SVG
@@ -359,7 +395,7 @@ class MockNewsProvider:
 
     name = "Demo news"
 
-    def image(self, item_id: str) -> tuple[bytes, str] | None:
+    def image(self, db: Session | None, item_id: str) -> tuple[bytes, str] | None:
         return None  # demo items draw their own thumbnails
 
     def items(self) -> list[dict[str, Any]]:
@@ -384,7 +420,7 @@ class MockNewsProvider:
             )
         return out
 
-    def feed(self, *, wait: bool = False) -> dict[str, Any]:
+    def feed(self, db: Session | None = None) -> dict[str, Any]:
         return {
             "status": "demo",
             "provider": self.name,
@@ -399,11 +435,11 @@ class MarketauxNewsProvider:
 
     name = "Marketaux"
 
+    KEY = "news:marketaux"
+
     def __init__(self, token: str, ttl_minutes: int):
         self.token = token
-        self.cache: BackgroundCache[list[dict[str, Any]]] = BackgroundCache(
-            "marketaux", ttl_minutes * 60, backoff_seconds=15 * 60
-        )
+        self.ttl = ttl_minutes * 60
         self.fallback = MockNewsProvider()
         self._images: OrderedDict[str, tuple[bytes, str]] = OrderedDict()
 
@@ -466,8 +502,25 @@ class MarketauxNewsProvider:
         items = sorted(merged.values(), key=lambda i: i["published_at"] or "", reverse=True)
         return items[:NEWS_KEEP]
 
-    def feed(self, *, wait: bool = False) -> dict[str, Any]:
-        items = self.cache.get(self.fetch, wait=wait)
+    def _items(self, db: Session) -> list[dict[str, Any]]:
+        """Cached headlines, refreshed (inline, two quick calls) when stale or empty."""
+        row = store.load(db, self.KEY).get(self.KEY)
+        items = list(row[0].get("items") or []) if row else []
+        stale = row is None or time.time() - row[1] > self.ttl
+        if (
+            (stale or not items)
+            and not store.backoff_active(db, "news:_backoff")
+            and store.try_refresh_lock(db, "news")
+        ):
+            fresh = self.fetch(items)
+            if fresh:
+                store.save(db, self.KEY, {"items": fresh})
+                return fresh
+            store.set_backoff(db, "news:_backoff", 15 * 60)
+        return items
+
+    def feed(self, db: Session) -> dict[str, Any]:
+        items = self._items(db)
         if not items:
             out = self.fallback.feed()
             out["note"] = "Live news is unavailable right now, so these are demo explainers."
@@ -489,14 +542,19 @@ class MarketauxNewsProvider:
             "items": public,
         }
 
-    def image(self, item_id: str) -> tuple[bytes, str] | None:
+    def image(self, db: Session, item_id: str) -> tuple[bytes, str] | None:
         """Fetch (and keep) a cached article's thumbnail so students' browsers never contact
         third-party image hosts. Only URLs the provider itself returned are ever fetched."""
         if item_id in self._images:
             self._images.move_to_end(item_id)
             return self._images[item_id]
+        row = store.load(db, self.KEY).get(self.KEY)
         source = next(
-            (i["image_source"] for i in self.cache.get(self.fetch) or [] if i["id"] == item_id),
+            (
+                i["image_source"]
+                for i in (row[0].get("items") if row else []) or []
+                if i["id"] == item_id
+            ),
             None,
         )
         if not source or not _public_host(httpx.URL(source).host):

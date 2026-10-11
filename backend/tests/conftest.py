@@ -37,7 +37,7 @@ from app.main import app  # noqa: E402
 from app.seed import seed_content  # noqa: E402
 
 USER_TABLES = (
-    "auth_sessions, market_lab_sessions, educator_invites, organization_transfers, "
+    "auth_sessions, market_lab_sessions, market_cache, educator_invites, organization_transfers, "
     "rate_limit_counters, "
     "explorer_progress, reflections, portfolio_round_snapshots, portfolio_transactions, "
     "portfolio_holdings, "

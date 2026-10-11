@@ -46,13 +46,16 @@ implementations. A provider is used only when its key is set on the **server**:
 
 | Variable | Provider | Free tier | What we do |
 |---|---|---|---|
-| `ALPHA_VANTAGE_API_KEY` | `AlphaVantageProvider` (`TIME_SERIES_DAILY`, `RELIANCE.BSE` …) | ~25 calls/day | 9 calls per refresh, refreshed in the background at most every `RUPEERISE_MARKET_DATA_TTL_MINUTES` (720); a rate-limit reply stops the batch and backs off 1 h; last good closes are kept |
-| `MARKETAUX_API_TOKEN` | `MarketauxNewsProvider` (`/v1/news/all`) | ~100 calls/day, 3 articles per call | 2 calls per refresh every `RUPEERISE_NEWS_TTL_MINUTES` (45); results are merged so the feed grows |
+| `ALPHA_VANTAGE_API_KEY` | `AlphaVantageProvider` (`TIME_SERIES_DAILY`, `RELIANCE.BSE` …) | ~25 calls/day | One call per company, refreshed at most every `RUPEERISE_MARKET_DATA_TTL_MINUTES` (720). Each request refreshes at most 3 stale companies (so it stays within serverless time limits and the 1 call/second pacing), so the full watchlist fills in over the first few page loads. A rate-limit reply pauses refreshing for an hour, for every instance |
+| `MARKETAUX_API_TOKEN` | `MarketauxNewsProvider` (`/v1/news/all`) | ~100 calls/day, 3 articles per call | 2 calls per refresh every `RUPEERISE_NEWS_TTL_MINUTES` (45); results are merged so the feed grows. A failure pauses refreshing for 15 minutes |
 
-Requests never wait on a provider: they get the cached value (or demo data) and a single thread
-refreshes it. Any missing key, error or quota reply falls back **per item** to
-`MockMarketDataProvider` / `MockNewsProvider`, whose output is always labelled demo. Demo news is
-educational explainers, not invented headlines. Nothing is scraped.
+Results are kept in the `market_cache` table (migration `0011`), not in process memory, because a
+serverless API instance can live for a single request and is frozen as soon as it responds, so an
+in-memory background refresh never finishes. A Postgres advisory lock makes sure only one request
+at a time spends provider quota; everyone else is served from the table. A cold start therefore
+serves the last real data immediately and spends no quota. Any missing key, error or quota reply
+falls back **per item** to `MockMarketDataProvider` / `MockNewsProvider`, whose output is always
+labelled demo. Demo news is educational explainers, not invented headlines. Nothing is scraped.
 
 Thumbnails: the browser never loads third-party images (the CSP allows `img-src 'self'`, and it
 keeps students' IP addresses away from unknown hosts). The API fetches only image URLs that the
@@ -63,7 +66,7 @@ GIF/AVIF only (no SVG), at most 1.5 MB each, and keeps the last 48 in memory.
 
 * Alpha Vantage BSE coverage and symbols change (for example after corporate actions); a symbol
   that fails simply shows demo data. Closes are end of day, never live.
-* Caches are per API process; several workers each refresh on their own.
+* The first request after an empty cache waits for up to three quick provider calls (a few seconds); after that, reads are instant.
 * Marketaux sentiment is coarse, so "possible impact" is a prompt to think, not a forecast.
 * Streak days use India time and count missions, checks, reflections, Portfolio Quest actions and
   Market Lab decisions. Streak milestones are badges only.

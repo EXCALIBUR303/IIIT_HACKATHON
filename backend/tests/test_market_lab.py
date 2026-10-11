@@ -1,6 +1,7 @@
 """Market Lab: engine, gating, server-side accounting, idempotency, rewards, providers, streaks."""
 
 import statistics
+import time
 import uuid
 from datetime import UTC, datetime, timedelta
 
@@ -11,7 +12,7 @@ from sqlalchemy import select, update
 from app.core.db import SessionLocal
 from app.engine import market_lab as lab
 from app.market import providers
-from app.models import MarketLabSession, RewardLedgerEntry, SimulationSession
+from app.models import MarketCache, MarketLabSession, RewardLedgerEntry, SimulationSession
 from tests.conftest import register_onboarded
 from tests.test_api_portfolio import complete_investing
 
@@ -290,40 +291,105 @@ def _av_body(closes):
     }
 
 
-def test_alpha_vantage_parses_closes_and_falls_back_per_company(monkeypatch):
-    def handler(request: httpx.Request) -> httpx.Response:
-        assert request.url.params["apikey"] == "k"
-        if request.url.params["symbol"] == "TCS.BSE":
-            return httpx.Response(200, json=_av_body([3000.5, 3010.25, 2990.0]))
-        return httpx.Response(200, json={"Error Message": "Invalid API call"})
-
+def _mock_http(monkeypatch, handler):
     real_client = httpx.Client
     monkeypatch.setattr(
         providers.httpx, "Client", lambda **kw: real_client(transport=httpx.MockTransport(handler))
     )
-    p = providers.AlphaVantageProvider("k", 60, pause_seconds=0)
-    snap = p.snapshot(wait=True)
-    tcs = next(q for q in snap["quotes"] if q["key"] == "tcs")
-    assert tcs["source"] == "alpha_vantage"
-    assert tcs["price_paise"] == 299_000 and tcs["prev_close_paise"] == 301_025
-    assert snap["status"] == "mixed"
-    assert sum(q["source"] == "demo" for q in snap["quotes"]) == len(lab.COMPANIES) - 1
 
 
-def test_alpha_vantage_rate_limit_note_stops_the_batch(monkeypatch):
+def _snapshot(provider):
+    """One request: read the cache, maybe refresh, commit (as the endpoint does)."""
+    with SessionLocal() as db:
+        out = provider.snapshot(db)
+        db.commit()
+    return out
+
+
+def test_alpha_vantage_refreshes_a_few_companies_per_request_and_keeps_them(monkeypatch):
+    calls = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url.params["apikey"] == "k"
+        calls.append(request.url.params["symbol"])
+        return httpx.Response(200, json=_av_body([3000.5, 3010.25, 2990.0]))
+
+    _mock_http(monkeypatch, handler)
+    p = providers.AlphaVantageProvider("k", 720, pause_seconds=0)
+    first = _snapshot(p)
+    assert len(calls) == p.BATCH  # bounded work per request
+    assert first["status"] == "mixed"
+    assert sum(q["source"] == "alpha_vantage" for q in first["quotes"]) == p.BATCH
+    real = next(q for q in first["quotes"] if q["source"] == "alpha_vantage")
+    assert real["price_paise"] == 299_000 and real["prev_close_paise"] == 301_025
+
+    # The next requests finish the watchlist, then nothing more is fetched while fresh.
+    _snapshot(p)
+    last = _snapshot(p)
+    assert last["status"] == "delayed" and len(calls) == len(lab.COMPANIES)
+    _snapshot(p)
+    assert len(calls) == len(lab.COMPANIES)
+
+
+def test_cached_closes_survive_a_cold_start(monkeypatch):
+    _mock_http(monkeypatch, lambda r: httpx.Response(200, json=_av_body([100.0, 101.0])))
+    for _ in range(3):
+        _snapshot(providers.AlphaVantageProvider("k", 720, pause_seconds=0))
+
+    def boom(request: httpx.Request) -> httpx.Response:
+        raise AssertionError("a fresh instance must not call the provider again")
+
+    _mock_http(monkeypatch, boom)
+    fresh_instance = providers.AlphaVantageProvider("k", 720, pause_seconds=0)
+    out = _snapshot(fresh_instance)
+    assert out["status"] == "delayed"
+
+
+def test_alpha_vantage_rate_limit_pauses_all_refreshing(monkeypatch):
     calls = []
 
     def handler(request: httpx.Request) -> httpx.Response:
         calls.append(request.url.params["symbol"])
         return httpx.Response(200, json={"Note": "Thank you for using Alpha Vantage! limit"})
 
-    real_client = httpx.Client
-    monkeypatch.setattr(
-        providers.httpx, "Client", lambda **kw: real_client(transport=httpx.MockTransport(handler))
-    )
-    p = providers.AlphaVantageProvider("k", 60, pause_seconds=0)
-    assert p.snapshot(wait=True)["status"] == "demo"
+    _mock_http(monkeypatch, handler)
+    p = providers.AlphaVantageProvider("k", 720, pause_seconds=0)
+    assert _snapshot(p)["status"] == "demo"
+    assert len(calls) == 1  # the first limit reply stops the batch
+    _snapshot(providers.AlphaVantageProvider("k", 720, pause_seconds=0))  # even a new instance
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize(
+    "message,min_seconds,max_seconds",
+    [
+        ("Burst pattern detected. Please spread requests more evenly.", 1, 120),
+        ("Our standard API rate limit is 25 requests per day.", 3600, 24 * 3600),
+    ],
+)
+def test_alpha_vantage_pauses_briefly_for_bursts_and_long_for_the_daily_quota(
+    monkeypatch, message, min_seconds, max_seconds
+):
+    _mock_http(monkeypatch, lambda r: httpx.Response(200, json={"Information": message}))
+    _snapshot(providers.AlphaVantageProvider("k", 720, pause_seconds=0))
+    with SessionLocal() as db:
+        row = db.get(MarketCache, "alpha:_backoff")
+        wait = float(row.payload["until"]) - time.time()
+    assert min_seconds <= wait <= max_seconds
+
+
+def test_alpha_vantage_unknown_symbol_is_remembered_not_retried(monkeypatch):
+    calls = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(1)
+        return httpx.Response(200, json={"Error Message": "Invalid API call"})
+
+    _mock_http(monkeypatch, handler)
+    p = providers.AlphaVantageProvider("k", 720, pause_seconds=0)
+    for _ in range(4):
+        out = _snapshot(p)
+    assert out["status"] == "demo" and len(calls) == len(lab.COMPANIES)
 
 
 def test_marketaux_items_are_mapped_and_sanitised():
@@ -346,18 +412,20 @@ def test_marketaux_items_are_mapped_and_sanitised():
     assert item["is_demo"] is False
 
 
+def _feed(provider):
+    with SessionLocal() as db:
+        out = provider.feed(db)
+        db.commit()
+    return out
+
+
 def test_marketaux_failure_falls_back_to_labelled_demo(monkeypatch):
-    real_client = httpx.Client
-    monkeypatch.setattr(
-        providers.httpx,
-        "Client",
-        lambda **kw: real_client(transport=httpx.MockTransport(lambda r: httpx.Response(429))),
-    )
-    feed = providers.MarketauxNewsProvider("t", 45).feed(wait=True)
+    _mock_http(monkeypatch, lambda r: httpx.Response(429))
+    feed = _feed(providers.MarketauxNewsProvider("t", 45))
     assert feed["status"] == "demo" and all(i["is_demo"] for i in feed["items"])
 
 
-def test_marketaux_feed_only_exposes_same_origin_image_paths(monkeypatch):
+def test_marketaux_feed_only_exposes_same_origin_image_paths_and_is_cached(monkeypatch):
     article = {
         "uuid": "a1b2-c3",
         "title": "Infosys shares rise after results",
@@ -365,19 +433,22 @@ def test_marketaux_feed_only_exposes_same_origin_image_paths(monkeypatch):
         "published_at": "2026-10-10T10:00:00Z",
         "entities": [],
     }
-    real_client = httpx.Client
-    monkeypatch.setattr(
-        providers.httpx,
-        "Client",
-        lambda **kw: real_client(
-            transport=httpx.MockTransport(lambda r: httpx.Response(200, json={"data": [article]}))
-        ),
-    )
-    feed = providers.MarketauxNewsProvider("t", 45).feed(wait=True)
+    calls = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(1)
+        return httpx.Response(200, json={"data": [article]})
+
+    _mock_http(monkeypatch, handler)
+    feed = _feed(providers.MarketauxNewsProvider("t", 45))
     assert feed["status"] == "live"
     item = feed["items"][0]
     assert item["image_url"] == "/api/v1/portfolio/news/a1b2-c3/image"
     assert "image_source" not in item and "img.example.com" not in str(feed)
+    spent = len(calls)
+    # A fresh instance (a serverless cold start) serves the stored headlines, no new calls.
+    again = _feed(providers.MarketauxNewsProvider("t", 45))
+    assert again["status"] == "live" and len(calls) == spent
 
 
 @pytest.mark.parametrize("host", ["localhost", "127.0.0.1", "10.0.0.8", "metadata.internal", ""])

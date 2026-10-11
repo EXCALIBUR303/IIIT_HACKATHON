@@ -56,14 +56,18 @@ class FinishIn(BaseModel):
 
 
 @router.get("/market-data")
-def market_data(user: Student) -> dict[str, Any]:
+def market_data(user: Student, db: DB) -> dict[str, Any]:
     """Reference closes for the watchlist (delayed real data or demo), never live trading data."""
-    return {**market_provider().snapshot(), "disclaimer": lab.DISCLAIMER}
+    out = {**market_provider().snapshot(db), "disclaimer": lab.DISCLAIMER}
+    db.commit()  # persists any refreshed closes and releases the refresh lock
+    return out
 
 
 @router.get("/news")
-def news(user: Student) -> dict[str, Any]:
-    return news_provider().feed()
+def news(user: Student, db: DB) -> dict[str, Any]:
+    out = news_provider().feed(db)
+    db.commit()
+    return out
 
 
 @router.get("/scenario")
@@ -118,9 +122,11 @@ def get_streak(user: Student, db: DB) -> dict[str, Any]:
 
 
 @router.get("/news/{item_id}/image")
-def news_image(user: Student, item_id: str = Path(pattern=r"^[A-Za-z0-9-]{1,64}$")) -> Response:
+def news_image(
+    user: Student, db: DB, item_id: str = Path(pattern=r"^[A-Za-z0-9-]{1,64}$")
+) -> Response:
     """A cached article thumbnail, served same-origin (the page never loads third-party images)."""
-    got = news_provider().image(item_id)
+    got = news_provider().image(db, item_id)
     if got is None:
         raise not_found("Image")
     body, ctype = got

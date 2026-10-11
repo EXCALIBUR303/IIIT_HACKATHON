@@ -441,7 +441,7 @@ def start(db: Session, student: User, scenario_key: str, request_id: str) -> dic
         )
         or 0
     )
-    snapshot = market_provider().snapshot()
+    snapshot = market_provider().snapshot(db)
     anchors = lab.default_anchors()
     anchors.update({q["key"]: q["price_paise"] for q in snapshot["quotes"] if q["price_paise"]})
     s = MarketLabSession(

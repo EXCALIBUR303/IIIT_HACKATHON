@@ -698,3 +698,17 @@ class MarketLabSession(Base):
             postgresql_where=text("status = 'active'"),
         ),
     )
+
+
+class MarketCache(Base):
+    """Shared cache for slow, rate-limited provider data (reference closes, news).
+
+    A serverless API instance may live for one request, so provider results are kept here
+    instead of in process memory. Rows are public reference data, never student data.
+    """
+
+    __tablename__ = "market_cache"
+
+    key: Mapped[str] = mapped_column(String(60), primary_key=True)
+    payload: Mapped[dict[str, Any]] = mapped_column(JsonType, default=dict)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

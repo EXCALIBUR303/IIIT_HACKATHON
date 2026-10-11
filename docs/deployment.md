@@ -35,7 +35,7 @@ Optional: `RUPEERISE_ENABLE_API_DOCS` (ignored in production), `RUPEERISE_RL_*` 
 ## First deployment (or upgrading from v2)
 
 1. Back up the database.
-2. Deploy the new images. The container start command applies migrations `0007` (security core), `0008` (learning integrity) and `0009` (portfolio snapshots/indexes) and `0010` (Market Lab sessions), all additive.
+2. Deploy the new images. The container start command applies migrations `0007` (security core), `0008` (learning integrity) and `0009` (portfolio snapshots/indexes) `0010` (Market Lab sessions) and `0011` (provider cache), all additive.
 3. **Everyone must sign in again** once: old bearer tokens no longer exist.
 4. Install the private answer-key bundle and set `RUPEERISE_PRIVATE_CONTENT_DIR`.
 5. Create organisations and the first invitations as an operator:

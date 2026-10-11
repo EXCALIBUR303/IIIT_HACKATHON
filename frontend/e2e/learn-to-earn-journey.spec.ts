@@ -70,7 +70,7 @@ test('learn to earn: mission, reward, wallet, portfolio, market event and learni
   await expect(page.getByText('Practice money only · Not financial advice')).toBeVisible()
   await page.getByRole('tab', { name: /ten-year run/i }).click()
   await page.getByRole('button', { name: 'Start Portfolio Quest' }).click()
-  await expect(page.getByText('Practice cash')).toBeVisible()
+  await expect(page.getByText('Practice cash', { exact: true }).first()).toBeVisible()
   await expect(page.getByText('₹10,000.00').first()).toBeVisible()
 
   // 8. Explicit, confirmed, one-way transfer from the learning wallet.
